@@ -1,0 +1,23 @@
+{
+  "name": "app-parcel",
+  "version": "1.0.0",
+  "source": "src/index.html",
+  "browserslist": "> 0.5%, last 2 versions, not dead",
+  "scripts": {
+    "start": "parcel --host 0.0.0.0",
+    "build": "parcel build"
+  },
+  "devDependencies": {
+    "@fullhuman/postcss-purgecss": "^5.0.0",
+    "@plasmohq/parcel-transformer-svelte3": "^0.2.2",
+    "autoprefixer": "^10.4.12",
+    "parcel": "latest",
+    "postcss": "^8.4.16",
+    "tailwindcss": "^3.1.8"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "svelte": "^3.50.1",
+    "svelte-routing": "^1.6.0"
+  }
+}
