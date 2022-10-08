@@ -1,17 +1,22 @@
 <script>
   import { Router, Link, Route } from "svelte-routing"
-  import Home from "./pages/Home.svelte"
+  import Drawer from "./comps/Drawer.svelte"
+  import Chunks from "./pages/Chunks.svelte"
   let url = ""
+
+  // Remove loading element
+  setTimeout(() => {
+    document.getElementById("loading")?.classList.add("close")
+    setTimeout(() => {
+      document.getElementById("preload")?.remove()
+      document.getElementById("loading")?.remove()
+    }, 1000)
+  }, 500)
 </script>
 
 <div class="main">
   <Router {url}>
-    <nav class="p12">
-      <Link to="/">Home</Link>
-    </nav>
-    
-    <Route path="/" component={Home}/>
-    
+    <Drawer />
+    <Route path="/" component={Chunks} />
   </Router>
 </div>
-

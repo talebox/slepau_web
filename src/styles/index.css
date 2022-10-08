@@ -1,0 +1,24 @@
+.round {
+	border-radius:10px;
+}
+
+.border{
+	border: 1px solid var(--agnostic-gray-dark);
+}
+
+svg{
+	height: 1.5em;
+	width: 1.5em;
+	/* max-height: max-content;
+	width: max-content; */
+}
+
+*{
+	box-sizing: border-box;
+}
+
+.f,.fr,.fc,.frw,.fcw{display: flex;}
+.fr{flex-direction: row;}
+.fc{flex-direction: column;}
+.frw{flex-flow: row wrap;}
+.fcw{flex-flow: column wrap;}
