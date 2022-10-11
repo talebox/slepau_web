@@ -9,8 +9,6 @@
 svg{
 	height: 1.5em;
 	width: 1.5em;
-	/* max-height: max-content;
-	width: max-content; */
 }
 
 *{
@@ -22,3 +20,12 @@ svg{
 .fc{flex-direction: column;}
 .frw{flex-flow: row wrap;}
 .fcw{flex-flow: column wrap;}
+
+.icon {
+	position: relative;
+}
+.icon svg {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}

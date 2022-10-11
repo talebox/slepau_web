@@ -1,7 +1,7 @@
 <script>
-  import button_icon from "bundle-text:@icons/justify.svg"
-  import theme_dark from "bundle-text:@icons/sun.svg"
-  import theme_light from "bundle-text:@icons/sun-fill.svg"
+  import button_icon from "bundle-text:@icons/chevron-right.svg"
+  import theme_dark from "bundle-text:@icons/circle.svg"
+  import theme_light from "bundle-text:@icons/circle-fill.svg"
   import { theme_set, theme_get } from "~/src/styles/theme/theme.js"
   import { fade, fly } from "svelte/transition"
   let is_light = theme_get()
@@ -62,7 +62,7 @@
     justify-content: center;
 
     gap: 10px;
-		z-index: 1;
+		z-index: 5;
   }
   .back {
     width: 100vw;

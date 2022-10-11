@@ -19,10 +19,11 @@
   },
   "license": "MIT",
   "dependencies": {
+    "commonmark": "^0.30.0",
     "svelte": "^3.50.1",
     "svelte-routing": "^1.6.0"
   },
-	"alias": {
-		"@icons/*": "./src/assets/icons/$1"
-	}
+  "alias": {
+    "@icons/*": "./src/assets/icons/$1"
+  }
 }
