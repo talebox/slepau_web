@@ -1,31 +1,99 @@
 .round {
-	border-radius:10px;
+	border-radius: 10px;
 }
 
-.border{
+.border {
 	border: 1px solid var(--agnostic-gray-dark);
 }
 
-svg{
+:root {
+	--button-icon-size: 64px;
+}
+
+body {
+	font-size: 18px;
+}
+
+svg {
 	height: 1.5em;
 	width: 1.5em;
 }
 
-*{
+* {
 	box-sizing: border-box;
 }
 
-.f,.fr,.fc,.frw,.fcw{display: flex;}
-.fr{flex-direction: row;}
-.fc{flex-direction: column;}
-.frw{flex-flow: row wrap;}
-.fcw{flex-flow: column wrap;}
-
-.icon {
-	position: relative;
+.grid-r {
+	display: grid;
+	--cols: 1;
+	grid-template-columns: repeat(var(--cols), 1fr);
 }
+
+@media (min-width: 36rem) {
+	.grid-r {
+		--cols: 2;
+	}
+}
+
+@media (min-width: 56rem) {
+	.grid-r {
+		--cols: 3;
+	}
+}
+
+@media (min-width: 72rem) {
+	.grid-r {
+		--cols: 4;
+	}
+}
+
+@media (min-width: 92em) {
+	.grid-r {
+		--cols: 5;
+	}
+}
+
+.f,
+.fr,
+.fc,
+.frw,
+.fcw {
+	display: flex;
+}
+
+.fr {
+	flex-direction: row;
+}
+
+.fc {
+	flex-direction: column;
+}
+
+.frw {
+	flex-flow: row wrap;
+}
+
+.fcw {
+	flex-flow: column wrap;
+}
+
+.tac{
+	text-align: center;
+}
+
+button.icon {
+	position: relative;
+	padding: 1em;
+}
+
+button.icon.fixed {
+	position: fixed;
+	margin: 0;
+	width: var(--button-icon-size);
+	height: var(--button-icon-size);
+}
+
 .icon svg {
-	position: absolute;
 	width: 100%;
 	height: 100%;
 }

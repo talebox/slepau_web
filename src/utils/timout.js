@@ -5,12 +5,13 @@
  * @param {*} time_ms Time to wait in ms
  * @param {*} id Name of delay id to use
  */
-export function useDelay(handler, time_ms, id) {
-	const t = () => setTimeout(handler, time_ms);
-	if (typeof id !== 'undefined') {
-		if (this[id]) clearTimeout(this[id]);
-		this[id] = t()
-	} else {
-		t()
+
+export const debounceG = () => {
+	const timers = {};
+	return (handler, time_ms, id) => {
+		clearTimeout(timers[id])
+		timers[id]=setTimeout(handler, time_ms);
 	}
 }
+
+export const useDebounce = debounceG();

@@ -1,9 +1,10 @@
 <script>
-  import { Router, Link, Route } from "svelte-routing"
+  import { Router, Link, Route  } from "svelte-routing"
   import Drawer from "./comps/Drawer.svelte"
-  import Chunks from "./pages/Notes.svelte"
+  import Notes from "./pages/Notes.svelte"
   import Status from "./Status.svelte"
   import Edit from "./pages/Edit.svelte"
+    import { basepath } from "./utils/routing"
 
   let url;
 
@@ -13,15 +14,21 @@
     document.getElementById("preload")?.remove()
     document.getElementById("loading")?.remove()
   }, 1000)
+	
+	let n=0;
+	$: console.log(n)
 </script>
 
 <div class="main">
   <Drawer />
   <Status />
-
-  <Router {url}>
-    <Route component={Chunks} />
-    <Route path="/chunks/:created" component={Edit} />
+	<Notes n/>
+	<!-- <Route component={} /> -->
+  <Router basepath={basepath} {url}>
+		
+		<!-- <Route component={Chunks} /> -->
+		
+    <Route path="/notes/:created" component={Edit} />
   </Router>
 </div>
 

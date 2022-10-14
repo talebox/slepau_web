@@ -1,11 +1,17 @@
+@keyframes rot {
+	from {
+		transform: rotate(0deg);
+	}
 
-@keyframes rot{
-	from{transform: rotate(0deg);}
-	to{transform: rotate(360deg);}
+	to {
+		transform: rotate(360deg);
+	}
 }
-#loading{
+
+#loading {
 	z-index: 10;
 	background: #000000;
+	color: white;
 	transition: all 1s;
 	opacity: 1;
 	position: fixed;
@@ -17,12 +23,14 @@
 	align-items: center;
 	justify-content: center;
 }
-#loading.close{
+
+#loading.close {
 	opacity: 0;
 }
-#loading img{
-	width: 50px;
-	height: 50px;
-	filter: invert(1);
+
+#loading svg {
+	width: 72px;
+	height: 72px;
+
 	animation: rot 1s infinite;
 }

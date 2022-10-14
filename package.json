@@ -4,7 +4,8 @@
   "source": "src/index.html",
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "scripts": {
-    "start": "parcel --host 0.0.0.0 --port 4005",
+    "start": "parcel serve --host 0.0.0.0 --port 4005",
+		"watch": "parcel watch --public-url /web",
     "build": "parcel build"
   },
   "devDependencies": {

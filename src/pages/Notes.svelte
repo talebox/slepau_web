@@ -1,105 +1,81 @@
 <script>
-  // export let location
   import { navigate } from "svelte-routing"
-  import chunk_new_icon from "bundle-text:@icons/plus-lg.svg"
-
   import { slide } from "svelte/transition"
-  import { useDelay } from "../utils/timout"
-  // import { fetchJson } from "../utils/network"
-  import { mdToHtml } from "../utils/commonmark"
+  import Chunk from "../comps/Chunk.svelte"
+  import { basepath } from "../utils/routing"
+
   import { chunks } from "../store"
   import "./chunk.css"
+  import { writable } from "svelte/store"
 
-  let selected = undefined
+  let selected$ = writable(undefined)
+  // let selected = $selected$;
 </script>
 
 {#if $chunks !== undefined}
-  <div class="container">
-    {#each $chunks as chunk}
-      <div
-        class="chunk border"
-        class:selectable={!!selected}
-        class:selected={selected?.includes(chunk)}
-        on:click={() => {
-          if (!!selected) {
-            if (selected.includes(chunk))
-              selected = selected.filter((v) => v !== chunk)
-            else {
-              selected.push(chunk)
-              selected = selected
-            }
-          } else {
-            navigate(`/chunks/${chunk.created}`)
-          }
-        }}
-        transition:slide
-      >
-        {@html mdToHtml(chunk.value)}
-      </div>
+  <div class="container grid-r">
+    {#each Object.values($chunks) as [chunk, chunk$]}
+      {#if chunk$}
+        <Chunk {selected$} {chunk$} />
+      {/if}
     {/each}
   </div>
 {/if}
 
-{#if selected === undefined}
+{#if $selected$ === undefined}
   <button
-    class="new"
+    class="new icon fixed"
     transition:slide
     on:click={() => chunks.put({ value: "# New Chunk" })}
   >
-    {@html chunk_new_icon}
+    <svg fill="currentColor" viewBox="0 0 16 16">
+      <path
+        fill-rule="evenodd"
+        d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"
+      />
+    </svg>
   </button>
 {:else}
-  <button class="del" transition:slide on:click={() => chunks.del(selected)}>
-    R
+  <button
+    class="del icon fixed"
+    transition:slide
+    on:click={() => chunks.del($selected$).then(() => ($selected$ = undefined))}
+  >
+    <svg fill="currentColor" viewBox="0 0 16 16">
+      <path
+        d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+      />
+      <path
+        fill-rule="evenodd"
+        d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+      />
+    </svg>
   </button>
 {/if}
 
 <button
-  class="select"
+  class="select icon fixed"
   transition:slide
-  on:click={() => (selected = selected ? undefined : [])}
+  on:click={() => ($selected$ = $selected$ ? undefined : [])}
 >
-  S
+  <svg fill="currentColor" viewBox="0 0 16 16">
+    <path
+      d="M12.354 4.354a.5.5 0 0 0-.708-.708L5 10.293 1.854 7.146a.5.5 0 1 0-.708.708l3.5 3.5a.5.5 0 0 0 .708 0l7-7zm-4.208 7-.896-.897.707-.707.543.543 6.646-6.647a.5.5 0 0 1 .708.708l-7 7a.5.5 0 0 1-.708 0z"
+    />
+    <path d="m5.354 7.146.896.897-.707.707-.897-.896a.5.5 0 1 1 .708-.708z" />
+  </svg>
 </button>
 
+<slot />
+
 <style>
-  .chunk {
-    /* transform: scale(.5); */
-    font-size: 0.7em;
-    border-radius: 2em;
-    cursor: pointer;
-    padding: 1em;
-		flex: 180px 1 1;
-		max-height: 200px;
-		overflow: hidden;
-		
-  }
-
-  .chunk:hover {
-    background: var(--background-alt);
-  }
-  .chunk.selectable {
-    border: 1px dashed blue;
-  }
-  .chunk.selected {
-    border: 1px solid blue;
-  }
-
   .container {
-    display: flex;
-		gap: 20px;
-		flex-flow: row wrap;
+    gap: 20px;
   }
-	
+
   .new,
   .select,
   .del {
-    position: fixed;
-    padding: 5px;
-    margin: 0;
-    width: 50px;
-    height: 50px;
-    border-radius: 0;
     opacity: 1;
     transition: opacity 1s;
   }
@@ -109,7 +85,7 @@
   }
   .select {
     bottom: 0;
-    right: 50px;
+    right: var(--button-icon-size);
     border-top-left-radius: 20px;
   }
   .del {
