@@ -1,20 +1,15 @@
 <script>
   import { slide, fly, fade } from "svelte/transition"
   import { useDelay } from "../utils/timout"
-  import { chunks, preview_show } from "../store"
+  import { chunks, preview_show, is_phone } from "../store"
   import { navigate } from "svelte-routing"
   import { mdToHtml } from "../utils/commonmark"
 
   export let created
 
-  $: [chunk, chunk$] = $chunks?.[created] ?? [undefined,undefined]
+  $: [chunk, chunk$] = $chunks?.[created] ?? [undefined, undefined]
 
-  function is_preview_always() {
-    return window.matchMedia("(min-width:1000px)").matches
-  }
-
-  // let preview_show = false
-  let preview_always = is_preview_always()
+  $: preview_always = !$is_phone
   // Update preview if enabled
   let preview
   $: preview =
@@ -23,7 +18,10 @@
       : preview
 </script>
 
-<svelte:window on:resize={() => (preview_always = is_preview_always())} />
+<!-- <svelte:window
+  on:resize={() =>
+    (preview_always = )}
+/> -->
 <div class="container">
   {#if $chunk$}
     <textarea class="edit" bind:value={$chunk$.value} />
@@ -72,15 +70,17 @@
 <style>
   .container {
     background: var(--background-body);
-
     position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
-    height: calc(100vh - 40px);
-    height: calc(100svh - 40px);
+    /* height: calc(100vh - 40px);
+    height: calc(100svh - 40px); */
+    height: 100vh;
+    height: 100dvh;
     width: 100%;
     z-index: 1;
-		overflow-y:visible;
+    overflow-y: visible;
   }
 
   .edit,
@@ -91,15 +91,20 @@
     left: 0;
     height: 100%;
     background: var(--background-body);
-		overflow-y:auto;
-		padding-bottom: 30em;
+    overflow-y: auto;
+    padding-bottom: 30em;
   }
   /* .preview{
 	} */
   .edit {
     resize: none;
+    border-radius: 0;
+  }
+  .edit:focus {
+    box-shadow: none;
   }
 
+  
   .close,
   .preview-btn {
     position: absolute;
@@ -110,13 +115,16 @@
     height: var(--button-icon-size);
     border-radius: 0 6px 0 24px;
   }
+	.close {
+    border-top-right-radius: 0;
+  }
   .preview-btn {
     top: unset;
     bottom: 0;
     border-radius: 24px 0 6px;
   }
 
-  @media (min-width: 1000px) {
+  @media (min-width: 768px) {
     .preview,
     .edit {
       width: 50%;
@@ -130,23 +138,6 @@
         background: var(--background-transparent);
         backdrop-filter: blur(5px);
       }
-    }
-  }
-  @media (max-width: 2000px) {
-    .container {
-      position: fixed;
-      height: 100vh;
-      height: 100dvh;
-    }
-    .edit {
-      border-radius: 0;
-      /* background: var(--background-body); */
-    }
-    .edit:focus {
-      box-shadow: none;
-    }
-    .close {
-      border-top-right-radius: 0;
     }
   }
 </style>

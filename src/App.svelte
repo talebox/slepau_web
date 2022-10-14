@@ -4,7 +4,7 @@
   import Notes from "./pages/Notes.svelte"
   import Status from "./Status.svelte"
   import Edit from "./pages/Edit.svelte"
-    import { basepath } from "./utils/routing"
+    // import { basepath } from "./utils/routing"
 
   let url;
 
@@ -15,16 +15,15 @@
     document.getElementById("loading")?.remove()
   }, 1000)
 	
-	let n=0;
-	$: console.log(n)
+	
 </script>
 
 <div class="main">
   <Drawer />
   <Status />
-	<Notes n/>
+	<Notes />
 	<!-- <Route component={} /> -->
-  <Router basepath={basepath} {url}>
+  <Router {url}>
 		
 		<!-- <Route component={Chunks} /> -->
 		

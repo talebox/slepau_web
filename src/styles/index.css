@@ -10,8 +10,11 @@
 	--button-icon-size: 64px;
 }
 
-body {
+/* body {
 	font-size: 18px;
+} */
+html {
+	font-size: calc(15px + 0.390625vw);
 }
 
 svg {
@@ -83,7 +86,7 @@ svg {
 
 button.icon {
 	position: relative;
-	padding: 1em;
+	padding: 16px;
 }
 
 button.icon.fixed {

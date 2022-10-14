@@ -1,8 +1,8 @@
 <script>
-  import { navigate } from "svelte-routing"
+  // import { navigate } from "svelte-routing"
   import { slide } from "svelte/transition"
   import Chunk from "../comps/Chunk.svelte"
-  import { basepath } from "../utils/routing"
+  // import { basepath } from "../utils/routing"
 
   import { chunks } from "../store"
   import "./chunk.css"
@@ -71,6 +71,8 @@
 <style>
   .container {
     gap: 20px;
+		padding-bottom: 40vh;
+		padding-bottom: 40lvh;
   }
 
   .new,

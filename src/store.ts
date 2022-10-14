@@ -93,10 +93,16 @@ const createResource = <T>(endpoint, key_name, update_time = 2000) => {
 export const store = {
 	chunks: createResource<Chunk>("/chunks", 'created'),
 	preview_show: (() => {
-		const { subscribe, set,update } = writable(localStorage.getItem("preview_show"))
+		const { subscribe, set,update } = writable(localStorage.getItem("preview_show") === 'true')
 		return { subscribe, set: (v) => { set(v); localStorage.setItem("preview_show", v),update } }
 	})(),
+	is_phone: (() => {
+		const _is_phone = () => !window.matchMedia("(min-width:768px)").matches;
+		const { subscribe, set } = writable(_is_phone())
+		addEventListener("resize", () => set(_is_phone()))
+		return { subscribe }
+	})()
 }
-export const { chunks, preview_show } = store
+export const { chunks, preview_show, is_phone } = store
 
 chunks.get()

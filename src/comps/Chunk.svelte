@@ -3,7 +3,7 @@
 
   import { navigate } from "svelte-routing"
   import { mdToHtml } from "../utils/commonmark"
-  import { basepath } from "../utils/routing"
+  // import { basepath } from "../utils/routing"
 </script>
 
 <div
@@ -19,7 +19,7 @@
         $selected$ = $selected$
       }
     } else {
-      navigate(`${basepath}/notes/${$chunk$.created}`)
+      navigate(`/notes/${$chunk$.created}`)
     }
   }}
 >
