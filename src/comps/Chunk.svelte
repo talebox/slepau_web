@@ -38,6 +38,7 @@
     min-height: 200px;
     max-height: 270px;
     transition: box-shadow 0.1s;
+		outline: var(--border) solid 1px;
   }
 
   .chunk:hover {

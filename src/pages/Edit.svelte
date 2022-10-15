@@ -1,7 +1,7 @@
 <script>
   import { slide, fly, fade } from "svelte/transition"
   import { useDelay } from "../utils/timout"
-  import { chunks, preview_show, is_phone } from "../store"
+  import { chunks, wants_preview, is_phone } from "../store"
   import { navigate } from "svelte-routing"
   import { mdToHtml } from "../utils/commonmark"
 
@@ -9,28 +9,23 @@
 
   $: [chunk, chunk$] = $chunks?.[created] ?? [undefined, undefined]
 
-  $: preview_always = !$is_phone
   // Update preview if enabled
+  $: showing_preview = $wants_preview || !$is_phone
+
   let preview
   $: preview =
-    ($preview_show || preview_always) && $chunk$?.value
-      ? mdToHtml($chunk$.value)
-      : preview
+    showing_preview && $chunk$?.value ? mdToHtml($chunk$.value) : preview
 </script>
 
-<!-- <svelte:window
-  on:resize={() =>
-    (preview_always = )}
-/> -->
 <div class="container">
   {#if $chunk$}
     <textarea class="edit" bind:value={$chunk$.value} />
   {:else}
     Bad chunk
   {/if}
-  {#if preview && ($preview_show || preview_always)}
-    <div class="preview">{@html preview}</div>
-  {/if}
+
+  <div class="preview" class:showing_preview>{@html preview}</div>
+
   <button class="close icon" on:click={() => navigate("/")}>
     <svg fill="currentColor" viewBox="0 0 16 16">
       <path
@@ -38,12 +33,13 @@
       />
     </svg>
   </button>
-  {#if !preview_always}
+  {#if $is_phone}
     <button
       class="preview-btn icon"
-      on:click={() => ($preview_show = !$preview_show)}
+      in:slide
+      on:click={() => ($wants_preview = !$wants_preview)}
     >
-      {#if $preview_show}
+      {#if showing_preview}
         <svg fill="currentColor" viewBox="0 0 16 16">
           <path
             d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H5z"
@@ -69,15 +65,15 @@
 <!-- <div></div> -->
 <style>
   .container {
-    background: var(--background-body);
-    position: absolute;
+    /* background: var(--background-body); */
+    /* position: absolute; */
     position: fixed;
-    top: 0;
-    left: 0;
+    top: -2px;
+    left: -2px;
     /* height: calc(100vh - 40px);
     height: calc(100svh - 40px); */
-    height: 100vh;
-    height: 100dvh;
+    height: calc(100vh + 4px);
+    height: calc(100dvh + 4px);
     width: 100%;
     z-index: 1;
     overflow-y: visible;
@@ -85,17 +81,24 @@
 
   .edit,
   .preview {
-    background: none;
+    background: var(--background-body);
     position: absolute;
     top: 0;
     left: 0;
     height: 100%;
-    background: var(--background-body);
+		width: 100%;
+
     overflow-y: auto;
     padding-bottom: 30em;
   }
-  /* .preview{
-	} */
+
+  .preview {
+    display: none;
+		padding: 1em;
+  }
+  .preview.showing_preview {
+    display: initial;
+  }
   .edit {
     resize: none;
     border-radius: 0;
@@ -104,7 +107,6 @@
     box-shadow: none;
   }
 
-  
   .close,
   .preview-btn {
     position: absolute;
@@ -115,7 +117,7 @@
     height: var(--button-icon-size);
     border-radius: 0 6px 0 24px;
   }
-	.close {
+  .close {
     border-top-right-radius: 0;
   }
   .preview-btn {
@@ -128,13 +130,16 @@
     .preview,
     .edit {
       width: 50%;
-      background: unset;
     }
     .preview {
       left: 50%;
     }
+  }
+  /* To disable blurring on slow mobile devices */
+  @media (hover: hover) and (pointer: fine) {
     @supports (backdrop-filter: blur(5px)) {
-      .container {
+      .preview,
+      .edit {
         background: var(--background-transparent);
         backdrop-filter: blur(5px);
       }

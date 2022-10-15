@@ -1,18 +1,25 @@
 <script>
   import { status } from "./store"
   import Loading from "./comps/Loading.svelte"
-	
-	let size = "15px";
+
+  let size = "15px"
 	
 </script>
 
 <div class="container">
   {#await $status}
-    <Loading size={size} />
+    <div class="status-container">
+      <Loading {size} />
+    </div>
   {:then}
-    <div class="status" style:width={size} style:height={size}/>
-  {:catch}
-    <div class="status bad" style:width={size} style:height={size}/>
+    <div class="status-container">
+      <div class="status" style:width={size} style:height={size} />
+    </div>
+  {:catch err}
+    <div class="status-container">
+      <div class="status bad" style:width={size} style:height={size} />
+    </div>
+    <div class="text-container">{err}</div>
   {/await}
 </div>
 
@@ -20,9 +27,6 @@
   .status {
     background: green;
     border-radius: 99px;
-    /* display: inline-block; */
-    /* width: 10px;
-    height: 10px; */
   }
   .status.bad {
     background: red;
@@ -32,10 +36,20 @@
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
+    z-index: 5;
+  }
+  .text-container,
+  .status-container {
     padding: 10px;
     background-color: var(--button-base);
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-		z-index: 5;
+  }
+  .text-container {
+    min-width: 40px;
+    border-radius: 20px 20px 0 0;
+  }
+  .status-container {
+    margin: auto;
+		width: fit-content;
+    border-radius: 20px 20px 0 0;
   }
 </style>

@@ -1,5 +1,5 @@
 import { Writable, Readable, writable, Updater } from "svelte/store"
-import { fetchJson } from './utils/network'
+import { fetchE, fetchJson } from './utils/network'
 import { debounceG } from "./utils/timout"
 
 
@@ -31,31 +31,43 @@ const createResource = <T>(endpoint, key_name, update_time = 2000) => {
 		const rv = [i, {
 			subscribe,
 			set: (v: T, callback: any) => {
-				// console.log("Set ", v)
+				// Set value
 				rv[0] = v
-				_set(rv[0]); _put(rv[0], callback)
+				set_update_common(callback);
 			},
 			update: (v: Updater<T>, callback: any) => {
-				// console.log("Update ", v)
 				rv[0] = v(rv[0])
-				_set(rv[0]); _put(rv[0], callback)
+				set_update_common(callback);
 			},
 		}] as [T, Writable<T>]
+		const set_update_common = (callback) => {
+			// Immediately propagate UI change
+			_set(rv[0])
+			// Creates a debounce to notify API of change
+			_put(rv[0], (item) => {
+				// Set value with API response
+				rv[0] = item
+				// Propagate to UI
+				_set(rv[0])
+				callback?.(item)
+			})
+		}
 		return [i[key_name], rv]
 	}
 
-	const get = () => setStatus(fetch(endpoint)
+	const get = () => setStatus(fetchE(endpoint)
 		.then((v) => { return v.json() })
 		.then((items: T[]) => {
 			if (!Array.isArray(items)) throw "Resource has to be an array"
 			resource.set(Object.fromEntries(items.map(item_to_store)))
 		}))
 
-
-	const __put = (item) => setStatus(fetchJson(endpoint, item, "PUT"))
+		
+	const __put = (item) => setStatus(fetchJson(endpoint, item, "PUT").then(r => r.json()))
 	const _put = (item: T, callback) => upstreamDelay(() => __put(item).then(callback), update_time, item[key_name])
 
-	const put = (item: T) => __put(item).then(r => r.json()).then((item) =>
+	// This put handles change to resource object, like adding a new item
+	const put = (item: T) => __put(item).then((item) =>
 		// Add new object to store
 		resource.update((v) => Object.assign(v, Object.fromEntries([item_to_store(item)])))
 	)
@@ -75,7 +87,8 @@ const createResource = <T>(endpoint, key_name, update_time = 2000) => {
 		subscribe,
 		/**
 		 * Add new item to resource list,
-		 * Should not be modifying items with this, but it is possible
+		 * If you're just modifying an item, this is inneficient. 
+		 * Use the item's store specifically
 		 */
 		put,
 		/**
@@ -92,17 +105,17 @@ const createResource = <T>(endpoint, key_name, update_time = 2000) => {
 
 export const store = {
 	chunks: createResource<Chunk>("/chunks", 'created'),
-	preview_show: (() => {
-		const { subscribe, set,update } = writable(localStorage.getItem("preview_show") === 'true')
-		return { subscribe, set: (v) => { set(v); localStorage.setItem("preview_show", v),update } }
+	wants_preview: (() => {
+		const { subscribe, set, update } = writable(localStorage.getItem("preview_show") === 'true')
+		return { subscribe, set: (v) => { set(v); localStorage.setItem("preview_show", v), update } }
 	})(),
 	is_phone: (() => {
-		const _is_phone = () => !window.matchMedia("(min-width:768px)").matches;
+		const _is_phone = () => !window.matchMedia("(min-width:768px)").matches
 		const { subscribe, set } = writable(_is_phone())
 		addEventListener("resize", () => set(_is_phone()))
 		return { subscribe }
 	})()
 }
-export const { chunks, preview_show, is_phone } = store
+export const { chunks, wants_preview, is_phone } = store
 
 chunks.get()
