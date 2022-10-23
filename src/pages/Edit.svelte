@@ -1,25 +1,28 @@
 <script>
-  import { slide, fly, fade } from "svelte/transition"
-  import { useDelay } from "../utils/timout"
+  import { slide } from "svelte/transition"
+  import { useDebounce } from "../utils/timout"
   import { chunks, wants_preview, is_phone } from "../store"
   import { navigate } from "svelte-routing"
   import { mdToHtml } from "../utils/commonmark"
 
-  export let created
+  export let id
 
-  $: [chunk, chunk$] = $chunks?.[created] ?? [undefined, undefined]
+  $: chunk = $chunks?.find(([c,acc]) => c.id == id)?.[0];
 
   // Update preview if enabled
   $: showing_preview = $wants_preview || !$is_phone
 
   let preview
-  $: preview =
-    showing_preview && $chunk$?.value ? mdToHtml($chunk$.value) : preview
+  $: preview = showing_preview && chunk?.value ? mdToHtml(chunk.value) : preview
 </script>
 
 <div class="container">
-  {#if $chunk$}
-    <textarea class="edit" bind:value={$chunk$.value} />
+  {#if chunk}
+    <textarea
+      class="edit"
+      bind:value={chunk.value}
+      on:input={() => useDebounce(() => chunks.put(chunk), 2000, chunk.id)}
+    />
   {:else}
     Bad chunk
   {/if}
@@ -86,7 +89,7 @@
     top: 0;
     left: 0;
     height: 100%;
-		width: 100%;
+    width: 100%;
 
     overflow-y: auto;
     padding-bottom: 30em;
@@ -94,7 +97,7 @@
 
   .preview {
     display: none;
-		padding: 1em;
+    padding-inline: 1em;
   }
   .preview.showing_preview {
     display: initial;

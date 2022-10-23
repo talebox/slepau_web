@@ -27,7 +27,7 @@
 		
 		<!-- <Route component={Chunks} /> -->
 		
-    <Route path="/notes/:created" component={Edit} />
+    <Route path="/notes/:id" component={Edit} />
   </Router>
 </div>
 

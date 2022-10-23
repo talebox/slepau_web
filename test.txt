@@ -1,0 +1,7 @@
+nohup: ignoring input
+yarn run v1.22.19
+warning ../../package.json: No license field
+$ /home/rubend/p/chunk-app/web/node_modules/.bin/parcel watch
+Building...
+Bundling...
+✨ Built in 1.19s
