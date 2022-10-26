@@ -5,13 +5,14 @@
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "scripts": {
     "start": "parcel serve --host 0.0.0.0 --port 4005",
-		"watch": "parcel watch --public-url /web",
+    "watch": "parcel watch --public-url /web",
     "build": "parcel build"
   },
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "^5.0.0",
     "@parcel/optimizer-data-url": "2.7.0",
     "@parcel/transformer-inline-string": "2.7.0",
+    "@parcel/transformer-sass": "^2.7.0",
     "@plasmohq/parcel-transformer-svelte3": "^0.2.2",
     "autoprefixer": "^10.4.12",
     "parcel": "latest",
@@ -21,10 +22,11 @@
   "license": "MIT",
   "dependencies": {
     "commonmark": "^0.30.0",
-    "svelte": "^3.50.1",
-    "svelte-routing": "^1.6.0"
+    "svelte": "^3.50.1"
   },
   "alias": {
-    "@icons/*": "./src/assets/icons/$1"
+    "@icons/*": "./src/assets/icons/$1",
+		"@styles/*": "./src/styles/$1",
+    "@deps/*": "./deps/$1"
   }
 }

@@ -1,0 +1,23 @@
+@use "sass:color";
+@import "@styles/cindex.scss";
+
+.left,
+.right {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 50%;
+	height: 100%;
+}
+
+.right {
+	left: 50%;
+}
+
+.left:hover {
+	background: color.change(get-color-material(red), $alpha: .1);
+}
+
+.right:hover {
+	background: color.change(get-color-material(blue), $alpha: .1);
+}

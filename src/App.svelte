@@ -1,38 +1,29 @@
 <script>
-  import { Router, Link, Route  } from "svelte-routing"
-  import Drawer from "./comps/Drawer.svelte"
-  import Notes from "./pages/Notes.svelte"
-  import Status from "./Status.svelte"
-  import Edit from "./pages/Edit.svelte"
-    // import { basepath } from "./utils/routing"
+    import Apps from "./pages/Apps.svelte";
+		import Drawer from "~/src/comps/Drawer.svelte";
+		import {Router, Route} from '@deps/routing';
+    import Login from "./pages/Login.svelte";
+		import Status from "./Status.svelte";
 
-  let url;
-
-  // Remove loading element
-  document.getElementById("loading")?.classList.add("close")
-  setTimeout(() => {
-    document.getElementById("preload")?.remove()
-    document.getElementById("loading")?.remove()
-  }, 1000)
-	
-	
+	// Remove loading element
+	document.getElementById("loading")?.classList.add("close");
+	setTimeout(() => {
+		document.getElementById("preload")?.remove();
+		document.getElementById("loading")?.remove();
+	}, 1000);
 </script>
 
 <div class="main">
-  <Drawer />
-  <Status />
-	<Notes />
-	<!-- <Route component={} /> -->
-  <Router {url}>
-		
-		<!-- <Route component={Chunks} /> -->
-		
-    <Route path="/notes/:id" component={Edit} />
-  </Router>
+	<Status />
+	<Drawer />
+	<Router>
+		<Route component={Apps}/>
+		<Route path="login/*" component={Login}/>
+	</Router>
 </div>
 
 <style>
-	.main{
+	.main {
 		position: relative;
 	}
 </style>

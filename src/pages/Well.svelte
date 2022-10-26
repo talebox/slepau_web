@@ -1,43 +1,66 @@
 <script>
 	import { slide } from "svelte/transition";
 	import { flip } from "svelte/animate";
-	import { db, editing_id } from "../store";
+	import { navigate } from "@deps/routing";
+	import { editing_id, db } from "../store";
+	import * as s from "./Well.module.scss";
 	import Chunk from "../comps/Chunk.svelte";
 
-	let chunks = db.subscribeTo("chunks", []);
+	export let id = "";
 
+	let root_title;
+	let well = [];
+	$: well$ = db.subscribeTo("views/well" + (id ? "/" + id : ""), [[], null]);
+
+	$: {
+		let [children, root] = $well$;
+		well = children;
+		root_title = root?.[1].title;
+	}
 	let selected = undefined;
-	const selected_toggle = () => (selected = selected ? undefined : []);
 
 	const chunk_del = () =>
 		db.actions.chunks.del(selected).then(() => (selected = undefined));
 </script>
 
+<div class="breadcrumb" in:slide>
+	<h1>{root_title ?? "Root"}</h1>
+</div>
+
 <div class="container grid-r">
-	{#if Array.isArray($chunks)}
-		{#each $chunks as id (id)}
-			<div
-				class="chunk border"
-				class:selected={selected?.includes(id)}
-				class:selectable={!!selected}
-				animate:flip={{ duration: 500 }}
-				on:click={() => {
-					if (selected) {
-						if (selected.includes(id))
-							selected = selected.filter((v) => v !== id);
-						else {
-							selected.push(id);
-							selected = selected;
-						}
-					} else {
+	{#each well as id (id)}
+		<div
+			class="chunk border"
+			class:selected={selected?.includes(id)}
+			class:selectable={!!selected}
+			animate:flip={{ duration: 500 }}
+			on:click={() => {
+				if (!selected) return;
+				if (selected.includes(id)) selected = selected.filter((v) => v !== id);
+				else {
+					selected.push(id);
+					selected = selected;
+				}
+			}}
+		>
+			{#if !selected}
+				<div
+					class={s.left}
+					on:click={() => {
+						// navigate(`/chunk/${id}`);
 						$editing_id = id;
-					}
-				}}
-			>
-				<Chunk {id} />
-			</div>
-		{/each}
-	{/if}
+					}}
+				/>
+				<div
+					class={s.right}
+					on:click={() => {
+						navigate(`/well/${id}`);
+					}}
+				/>
+			{/if}
+			<Chunk {id} />
+		</div>
+	{/each}
 </div>
 
 {#if selected === undefined}
@@ -63,7 +86,11 @@
 	</button>
 {/if}
 
-<button class="select icon fixed" in:slide on:click={selected_toggle}>
+<button
+	class="select icon fixed"
+	in:slide
+	on:click={() => (selected = selected ? undefined : [])}
+>
 	<svg fill="currentColor" viewBox="0 0 16 16">
 		<path
 			d="M12.354 4.354a.5.5 0 0 0-.708-.708L5 10.293 1.854 7.146a.5.5 0 1 0-.708.708l3.5 3.5a.5.5 0 0 0 .708 0l7-7zm-4.208 7-.896-.897.707-.707.543.543 6.646-6.647a.5.5 0 0 1 .708.708l-7 7a.5.5 0 0 1-.708 0z"
@@ -75,7 +102,29 @@
 <slot />
 
 <style>
+	.breadcrumb {
+		position: fixed;
+		background: var(--background-transparent);
+		top: 0;
+		left: 0;
+		height: 100px;
+		width: 100vw;
+		display: flex;
+		flex-flow: row;
+		justify-content: center;
+		align-items: center;
+		overflow: hidden;
+		z-index: 1;
+	}
+	.breadcrumb * {
+		transition: font-size 0.5s;
+	}
+	.current {
+		font-size: 1.8em;
+		font-weight: bold;
+	}
 	.container {
+		padding-top: 100px;
 		gap: 20px;
 		padding-bottom: 40vh;
 		padding-bottom: 40lvh;
@@ -83,6 +132,7 @@
 	.chunk {
 		background: var(--background-alt);
 		border-radius: 2em;
+		position: relative;
 		cursor: pointer;
 		padding: 1em;
 		white-space: nowrap;

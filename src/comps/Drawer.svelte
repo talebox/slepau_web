@@ -5,6 +5,7 @@
     prefers_light,
   } from "~/src/styles/theme/theme.js"
   import { fade, fly } from "svelte/transition"
+	import {navigate} from '@deps/routing'
 
   let is_light = theme_get()
 
@@ -42,7 +43,9 @@
   <div class="container">
     <button on:click={() => (open = false)}>Close</button>
     <div style="flex-grow: 1;" />
-    <div class="tac">Other Views go Here</div>
+    <button on:click={() => navigate("/chunks/")}>Chunks</button>
+		<button on:click={() => navigate("/well/")}>Well</button>
+		<button on:click={() => navigate("/login")}>Login</button>
     <div style="flex-grow: 1;" />
     <div class="fr">
       <button style="flex-grow:1" on:click={() => (open = false)}>Close</button>

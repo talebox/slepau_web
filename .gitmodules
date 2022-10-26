@@ -1,0 +1,3 @@
+[submodule "deps/routing"]
+	path = deps/routing
+	url = git+ssh://git@github.com/rubend056/svelte-routing

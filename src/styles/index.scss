@@ -14,7 +14,7 @@
 	font-size: 18px;
 } */
 html {
-	font-size: calc(15px + 0.390625vw);
+	font-size: calc(15px + 0.25vw);
 }
 
 svg {
@@ -80,8 +80,18 @@ svg {
 	flex-flow: column wrap;
 }
 
-.tac{
+.tac {
 	text-align: center;
+}
+.flex-center{
+	display: flex;
+	height: 100%;
+	flex-flow: column nowrap;
+	justify-content: center;
+	align-items: center;
+}
+.grow-c * {
+	flex-grow: 1;
 }
 
 button.icon {
