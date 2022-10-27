@@ -9,4 +9,7 @@
 	$: chunk = $chunk$;
 </script>
 
-{@html chunk?.value ? mdToHtml(chunk.value) : ""}
+{#if chunk?.value}
+	{@html chunk?.value ? mdToHtml(chunk.value) : ""}
+	<slot {chunk} />
+{/if}

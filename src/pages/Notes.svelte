@@ -1,8 +1,8 @@
 <script>
 	import { slide } from "svelte/transition";
-	import { flip } from "svelte/animate";
 	import { db, editing_id } from "../store";
-	import Chunk from "../comps/Chunk.svelte";
+	import Chunks from "../comps/Chunks.svelte";
+	import "./ChunkPage.scss";
 
 	let chunks = db.subscribeTo("chunks", []);
 
@@ -13,35 +13,30 @@
 		db.actions.chunks.del(selected).then(() => (selected = undefined));
 </script>
 
-<div class="container grid-r">
-	{#if Array.isArray($chunks)}
-		{#each $chunks as id (id)}
-			<div
-				class="chunk border"
-				class:selected={selected?.includes(id)}
-				class:selectable={!!selected}
-				animate:flip={{ duration: 500 }}
-				on:click={() => {
-					if (selected) {
-						if (selected.includes(id))
-							selected = selected.filter((v) => v !== id);
-						else {
-							selected.push(id);
-							selected = selected;
-						}
-					} else {
-						$editing_id = id;
-					}
-				}}
-			>
-				<Chunk {id} />
-			</div>
-		{/each}
-	{/if}
-</div>
+<Chunks chunks={$chunks} {selected} let:chunk>
+	<div
+		class="clickable"
+		on:click={() => {
+			if (selected) {
+				if (selected.includes(chunk.id))
+					selected = selected.filter((v) => v !== chunk.id);
+				else {
+					selected.push(chunk.id);
+					selected = selected;
+				}
+			} else {
+				$editing_id = chunk.id;
+			}
+		}}
+	/>
+</Chunks>
 
 {#if selected === undefined}
-	<button class="new icon fixed" in:slide on:click={db.actions.chunks.new}>
+	<button
+		class="chunk-new icon fixed"
+		in:slide
+		on:click={db.actions.chunks.new}
+	>
 		<svg fill="currentColor" viewBox="0 0 16 16">
 			<path
 				fill-rule="evenodd"
@@ -50,7 +45,7 @@
 		</svg>
 	</button>
 {:else}
-	<button class="del icon fixed" in:slide on:click={chunk_del}>
+	<button class="chunk-del icon fixed" in:slide on:click={chunk_del}>
 		<svg fill="currentColor" viewBox="0 0 16 16">
 			<path
 				d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
@@ -63,7 +58,7 @@
 	</button>
 {/if}
 
-<button class="select icon fixed" in:slide on:click={selected_toggle}>
+<button class="chunk-select icon fixed" in:slide on:click={selected_toggle}>
 	<svg fill="currentColor" viewBox="0 0 16 16">
 		<path
 			d="M12.354 4.354a.5.5 0 0 0-.708-.708L5 10.293 1.854 7.146a.5.5 0 1 0-.708.708l3.5 3.5a.5.5 0 0 0 .708 0l7-7zm-4.208 7-.896-.897.707-.707.543.543 6.646-6.647a.5.5 0 0 1 .708.708l-7 7a.5.5 0 0 1-.708 0z"
@@ -75,52 +70,11 @@
 <slot />
 
 <style>
-	.container {
-		gap: 20px;
-		padding-bottom: 40vh;
-		padding-bottom: 40lvh;
-	}
-	.chunk {
-		background: var(--background-alt);
-		border-radius: 2em;
-		cursor: pointer;
-		padding: 1em;
-		white-space: nowrap;
-		overflow: hidden;
-
-		min-height: 200px;
-		max-height: 270px;
-		transition: box-shadow 0.1s;
-		outline: var(--border) solid 1px;
-	}
-
-	.chunk:hover {
-		background: var(--background);
-	}
-	.chunk.selectable {
-		box-shadow: 0 0 0 2px var(--focus);
-	}
-	.chunk.selected {
-		box-shadow: 0 0 0 2px var(--links);
-	}
-
-	.new,
-	.select,
-	.del {
-		opacity: 1;
-		transition: opacity 1s;
-	}
-	.new {
-		bottom: 0;
-		right: 0;
-	}
-	.select {
-		bottom: 0;
-		right: var(--button-icon-size);
-		border-top-left-radius: 20px;
-	}
-	.del {
-		bottom: 0;
-		right: 0;
+	.clickable {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
 	}
 </style>

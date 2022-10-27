@@ -1,0 +1,49 @@
+.chunk-container {
+	gap: 20px;
+	padding-bottom: 40vh;
+	padding-bottom: 40lvh;
+}
+.chunk {
+	background: var(--background-alt);
+	border-radius: 2em;
+	cursor: pointer;
+	padding: 1em;
+	white-space: nowrap;
+	overflow: hidden;
+
+	min-height: 200px;
+	max-height: 270px;
+	transition: box-shadow 0.1s;
+	outline: var(--border) solid 1px;
+	position: relative;
+}
+
+.chunk:hover {
+	background: var(--background);
+}
+.chunk.selectable {
+	box-shadow: 0 0 0 2px var(--focus);
+}
+.chunk.selected {
+	box-shadow: 0 0 0 2px var(--links);
+}
+
+.chunk-new,
+.chunk-select,
+.chunk-del {
+	opacity: 1;
+	transition: opacity 1s;
+}
+.chunk-new {
+	bottom: 0;
+	right: 0;
+}
+.chunk-select {
+	bottom: 0;
+	right: var(--button-icon-size);
+	border-top-left-radius: 20px;
+}
+.chunk-del {
+	bottom: 0;
+	right: 0;
+}

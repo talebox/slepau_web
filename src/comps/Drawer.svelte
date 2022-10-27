@@ -92,6 +92,7 @@
     position: fixed;
     top: 0;
     left: 0;
+		z-index: 6;
   }
   .container {
     padding: 10px;
@@ -108,7 +109,7 @@
     justify-content: center;
 
     gap: 10px;
-    z-index: 6;
+    
   }
   .back {
     width: 100vw;

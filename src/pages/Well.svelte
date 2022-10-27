@@ -5,6 +5,7 @@
 	import { editing_id, db } from "../store";
 	import * as s from "./Well.module.scss";
 	import Chunk from "../comps/Chunk.svelte";
+	import "./ChunkPage.scss"
 
 	export let id = "";
 
@@ -27,7 +28,7 @@
 	<h1>{root_title ?? "Root"}</h1>
 </div>
 
-<div class="container grid-r">
+<div class="container chunk-container grid-r">
 	{#each well as id (id)}
 		<div
 			class="chunk border"
@@ -64,7 +65,7 @@
 </div>
 
 {#if selected === undefined}
-	<button class="new icon fixed" in:slide on:click={db.actions.chunks.new}>
+	<button class="chunk-new icon fixed" in:slide on:click={db.actions.chunks.new}>
 		<svg fill="currentColor" viewBox="0 0 16 16">
 			<path
 				fill-rule="evenodd"
@@ -73,7 +74,7 @@
 		</svg>
 	</button>
 {:else}
-	<button class="del icon fixed" in:slide on:click={chunk_del}>
+	<button class="chunk-del icon fixed" in:slide on:click={chunk_del}>
 		<svg fill="currentColor" viewBox="0 0 16 16">
 			<path
 				d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
@@ -87,7 +88,7 @@
 {/if}
 
 <button
-	class="select icon fixed"
+	class="chunk-select icon fixed"
 	in:slide
 	on:click={() => (selected = selected ? undefined : [])}
 >
@@ -107,7 +108,8 @@
 		background: var(--background-transparent);
 		top: 0;
 		left: 0;
-		height: 100px;
+		height: 70px;
+		/* padding-block: 1em; */
 		width: 100vw;
 		display: flex;
 		flex-flow: row;
@@ -124,53 +126,6 @@
 		font-weight: bold;
 	}
 	.container {
-		padding-top: 100px;
-		gap: 20px;
-		padding-bottom: 40vh;
-		padding-bottom: 40lvh;
-	}
-	.chunk {
-		background: var(--background-alt);
-		border-radius: 2em;
-		position: relative;
-		cursor: pointer;
-		padding: 1em;
-		white-space: nowrap;
-		overflow: hidden;
-
-		min-height: 200px;
-		max-height: 270px;
-		transition: box-shadow 0.1s;
-		outline: var(--border) solid 1px;
-	}
-
-	.chunk:hover {
-		background: var(--background);
-	}
-	.chunk.selectable {
-		box-shadow: 0 0 0 2px var(--focus);
-	}
-	.chunk.selected {
-		box-shadow: 0 0 0 2px var(--links);
-	}
-
-	.new,
-	.select,
-	.del {
-		opacity: 1;
-		transition: opacity 1s;
-	}
-	.new {
-		bottom: 0;
-		right: 0;
-	}
-	.select {
-		bottom: 0;
-		right: var(--button-icon-size);
-		border-top-left-radius: 20px;
-	}
-	.del {
-		bottom: 0;
-		right: 0;
+		padding-top: 70px;
 	}
 </style>

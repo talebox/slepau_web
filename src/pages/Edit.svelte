@@ -12,17 +12,29 @@
 	// import Loading from "../comps/Loading.svelte";
 
 	export let id = undefined;
+	let textarea;
+
 	$: _id = id || $editing_id;
-	
+	$: console.log(_id);
+
 	$: chunk$ = _id ? db.subscribeTo(`chunks/${_id}`) : undefined;
-	$: chunk = $chunk$
+	$: chunk = $chunk$;
+
+
+	$: {
+		if (chunk && textarea && (!chunk?.no_edit || !textarea.value)) {
+			textarea.value = chunk.value;
+		}
+	}
 
 	// Update preview if enabled
 	$: showing_preview = $wants_preview || !$is_phone;
 
 	let preview;
-	$: preview =
-		showing_preview && chunk?.value ? mdToHtml(chunk.value) : preview;
+	function update_preview(v) {
+		if (showing_preview && v) preview = mdToHtml(v);
+	}
+	$: chunk?.value && update_preview(chunk.value);
 
 	function close() {
 		if (id) {
@@ -41,8 +53,14 @@
 			</div> -->
 			<textarea
 				class="edit"
-				bind:value={chunk.value}
-				on:input={() => useDebounce(() => db.actions.chunks.put(chunk), 2000, chunk.id)}
+				bind:this={textarea}
+				on:input={(e) => {
+					useDebounce(
+						() => db.actions.chunks.put(chunk.id, e.target.value),
+						200,
+						chunk.id
+					);
+				}}
 			/>
 			<div class="preview" class:showing_preview>{@html preview}</div>
 		{/if}

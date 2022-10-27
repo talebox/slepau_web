@@ -25,8 +25,9 @@ interface Chunk {
 	modified: number,
 }
 interface SocketMessage {
-	type?: "Req" | "Res" | "C",
+	id?: number,
 	resource: string,
+	type?: "Req" | "Ok" | "Err" | "C",
 	value?: string,
 }
 
@@ -37,15 +38,16 @@ interface SocketMessage {
  */
 
 
-type RSub = { resource: string, subscribe, set, listeners: number }
+type RSub = { resource: string, listeners: number } & Writable<any>
 function createDb() {
-
-	let socket_new = () => {
-
+	
+	let subs: { [k: string]: RSub } = {}
+	
+	
+	let connection_new = () => {
 		let socket = new WebSocket(`${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.host}/api/stream`)
 		let messages = [] as string[]
-		let subs: { [k: string]: RSub } = {}
-
+		
 		function tick() {
 			if (!messages.length) return
 			if (socket.readyState === 1 /**Open*/) {
@@ -56,7 +58,15 @@ function createDb() {
 			} else setTimeout(tick, 1000) // Keep waiting for next opportunity
 		}
 
-		function send(v: SocketMessage) {
+		let last_message_id = 1,
+			// This saves callbacks to send, so they can later be called if response was successful
+			send_callbacks = {} as { [k: number]: [((v: any, sub?: RSub) => any) | undefined, ((v?: string, sub?: RSub) => any) | undefined] }
+		function send(v: SocketMessage, onSuccess?: (v: any, sub?: RSub) => any, onError?: (v?: string, sub?: RSub) => any) {
+			if (onSuccess || onError) {
+				let id = last_message_id++
+				v.id = id
+				send_callbacks[id] = [onSuccess, onError]
+			}
 			let m = JSON.stringify(v)
 			if (socket.readyState === 1 /**Open*/) {
 				socket.send(m)
@@ -69,50 +79,84 @@ function createDb() {
 		function react_to_incoming(m) {
 			let change = JSON.parse(m) as SocketMessage
 
-			if (change.value) {
-				const v = JSON.parse(change.value)
-				subs[change.resource]?.set(v)
-				// If an update was received on an item of a sub
-				let rs = change.resource.split('/')
-				if (rs[0] === 'chunks' && rs[1]) {
-					{ Object.entries(subs).forEach(([k, v]) => k === ("chunks") && v.listeners && send({ resource: k, type: 'Req' })) }
-					{ Object.entries(subs).forEach(([k, v]) => k.startsWith("views/well") && v.listeners && send({ resource: k, type: 'Req' })) }
+			if (['C', 'Ok'].includes(change.type || "")) {
+				// Set value on subscription
+				let v = change.value
+				if (change.value) {
+					v = JSON.parse(change.value)
+					subs[change.resource]?.set(v)
 				}
-			} else if (change.type === 'C') {
+
+				// Handle callback
+				if (change.type === 'Ok' && change.id) {
+					send_callbacks[change.id]?.[0]?.(v, subs[change.resource])
+					delete send_callbacks[change.id]
+				}
+			}
+			if (change.type === 'C') {
 				// Server is telling us this resource changed, so we request updates on the views that depend on it
-				if (change.resource == 'chunks') {
-					{ Object.entries(subs).forEach(([k, v]) => k === ("chunks") && v.listeners && send({ resource: k, type: 'Req' })) }
-					{ Object.entries(subs).forEach(([k, v]) => k.startsWith("views/well") && v.listeners && send({ resource: k, type: 'Req' })) }
+				function maybe_request_update(resource) {
+					let view = subs[resource]
+					if (view?.listeners) {
+						send({ resource, type: 'Req' })
+					}
 				}
+				if (change.resource == 'chunks') {
+					maybe_request_update("chunks")
+					Object.entries(subs).forEach(([k,v]) => {if(k.startsWith("views/well")) maybe_request_update(k)})
+				}
+			}
+			if (change.type === 'Err') {
+				// Handle callback
+				if (change.id) { 
+					send_callbacks[change.id]?.[1]?.(change.value, subs[change.resource]); 
+					delete send_callbacks[change.id] 
+				}
+
+				status.set(Promise.reject(change.value))
+				setTimeout(() => status.set(Promise.resolve()), 3000)
 			}
 		}
 		{
 			socket.onopen = (m) => { tick() }
-			// socket.onclose = (m) => console.log("Websocket closed",m)
-			// socket.onerror = (m) => console.log("Websocket error",m)
 			socket.onmessage = (m) => {
 				react_to_incoming(m.data)
 			}
 		}
-		return { send, tick, subs }
+		
+		//Do a refresh, in case this socket is new
+		Object.entries(subs).forEach(([k,v]) => v.listeners && send({resource:v.resource, type:'Req'}))
+		
+		return { send, socket }
 	}
-	let socket = socket_new()
-
+	let connection;
+	function attach() {
+		connection = connection_new()
+		connection.socket.onclose = () => setTimeout(()=>{console.log("Connection closed, retrying in 10secs");attach()}, 10000)
+	}
+	attach();
 
 
 	// This is called by UI when it wants to listen to something
 	function subscribeTo(resource: string, init) {
 
-		let sub = socket.subs[resource]
+		let sub = subs[resource]
 		if (!sub) {
 			//@ts-ignore
 			sub = { resource, listeners: 0 }
 			let { subscribe, ..._rest } = writable(init)
-			Object.assign(sub, { subscribe: extend_s(subscribe, () => { if(sub.listeners===0){socket.send({ resource, type: 'Req' })} ++sub.listeners }, () => { --sub.listeners }), ..._rest })
+			Object.assign(
+				sub,
+				{
+					subscribe: extend_s(
+						subscribe,
+						() => { if (sub.listeners === 0) { connection.send({ resource, type: 'Req' }) } ++sub.listeners },
+						() => { --sub.listeners }),
+					..._rest
+				}
+			)
 
-			socket.subs[resource] = sub
-
-			// socket.send({ resource, type: 'Req' })
+			subs[resource] = sub
 		}
 
 		return {
@@ -126,11 +170,16 @@ function createDb() {
 		actions: {
 			chunks: {
 				del: (v) => setStatus(fetchJson("/api/chunks", v, "DELETE")),
-				put: (v) => setStatus(fetchJson("/api/chunks", v, "PUT")),
+				put: (id: string, value: string) =>
+					connection.send(
+						{ resource: `chunks/${id}`, type: 'C', value },
+						(v, sub) => {sub?.update((v) => ({ ...v, value, no_edit:true }))},
+						(v, sub) => {sub?.update((v) => ({ ...v, no_edit:false }))},
+					),
 				new: () => setStatus(fetchJson("/api/chunks", { value: "# New Chunk\n\n" }, "PUT"))
 			},
 			login: (v) =>
-				setStatus(fetchJson("/api/login", v)).then(() => { socket = socket_new() })
+				setStatus(fetchJson("/api/login", v)).then(() => { connection = connection_new() })
 			,
 			reset: (v) =>
 				setStatus(fetchJson("/api/reset", v))
