@@ -6,25 +6,36 @@
 		editing_id,
 		wants_preview,
 		is_phone,
-		// setStatus,
 	} from "../store";
 	import { mdToHtml } from "../utils/commonmark";
-	// import Loading from "../comps/Loading.svelte";
+	import { applyDiff } from "../utils/general";
 
 	export let id = undefined;
-	let textarea;
+	let editor;
 
 	$: _id = id || $editing_id;
 	$: console.log(_id);
 
 	$: chunk$ = _id ? db.subscribeTo(`chunks/${_id}`) : undefined;
+	$: diff$ = _id
+		? db.subscribeTo(`chunks/${_id}/diff`, undefined, false)
+		: undefined;
+	$: diff = $diff$;
 	$: chunk = $chunk$;
 
-
 	$: {
-		if (chunk && textarea && (!chunk?.no_edit || !textarea.value)) {
-			textarea.value = chunk.value;
+		if (chunk && editor) {
+			if (!chunk?.no_edit || !editor.value) {
+				editor.value = chunk.value;
+			}
 		}
+	}
+	$: if (diff && editor?.value) {
+		let s = [editor.selectionStart, editor.selectionEnd];
+		const [right, _s] = applyDiff(editor.value, diff, s);
+		editor.value = right;
+		editor.selectionStart = _s[0];
+		editor.selectionEnd = _s[1];
 	}
 
 	// Update preview if enabled
@@ -45,15 +56,15 @@
 	}
 </script>
 
-{#if _id}
-	<div class="container">
+{#if chunk}
+	<div class="container" style:display={!_id ? "none" : "initial"}>
 		{#if chunk}
-			<!-- <div class="flex-center">
-				<Loading />
-			</div> -->
 			<textarea
 				class="edit"
-				bind:this={textarea}
+				spellcheck="false"
+				autocapitalize="off"
+				autocorrect="off"
+				bind:this={editor}
 				on:input={(e) => {
 					useDebounce(
 						() => db.actions.chunks.put(chunk.id, e.target.value),

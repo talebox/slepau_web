@@ -40,14 +40,14 @@ interface SocketMessage {
 
 type RSub = { resource: string, listeners: number } & Writable<any>
 function createDb() {
-	
+
 	let subs: { [k: string]: RSub } = {}
-	
-	
+
+
 	let connection_new = () => {
 		let socket = new WebSocket(`${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.host}/api/stream`)
 		let messages = [] as string[]
-		
+
 		function tick() {
 			if (!messages.length) return
 			if (socket.readyState === 1 /**Open*/) {
@@ -103,14 +103,14 @@ function createDb() {
 				}
 				if (change.resource == 'chunks') {
 					maybe_request_update("chunks")
-					Object.entries(subs).forEach(([k,v]) => {if(k.startsWith("views/well")) maybe_request_update(k)})
+					Object.entries(subs).forEach(([k, v]) => { if (k.startsWith("views/well")) maybe_request_update(k) })
 				}
 			}
 			if (change.type === 'Err') {
 				// Handle callback
-				if (change.id) { 
-					send_callbacks[change.id]?.[1]?.(change.value, subs[change.resource]); 
-					delete send_callbacks[change.id] 
+				if (change.id) {
+					send_callbacks[change.id]?.[1]?.(change.value, subs[change.resource])
+					delete send_callbacks[change.id]
 				}
 
 				status.set(Promise.reject(change.value))
@@ -123,36 +123,47 @@ function createDb() {
 				react_to_incoming(m.data)
 			}
 		}
-		
+
 		//Do a refresh, in case this socket is new
-		Object.entries(subs).forEach(([k,v]) => v.listeners && send({resource:v.resource, type:'Req'}))
-		
+		Object.entries(subs).forEach(([k, v]) => v.listeners && send({ resource: v.resource, type: 'Req' }))
+
 		return { send, socket }
 	}
-	let connection;
+	let connection, timeout
 	function attach() {
+		// Clear last timeout and close connection
+		if (connection?.socket) {
+			clearTimeout(timeout)
+			connection.socket.onclose = undefined
+			connection.socket.close()
+		}
+
+		// Make new connection
 		connection = connection_new()
-		connection.socket.onclose = () => setTimeout(()=>{console.log("Connection closed, retrying in 10secs");attach()}, 10000)
+		connection.socket.onclose = () => { timeout = setTimeout(() => { console.log("Connection closed, retrying in 10secs"); attach() }, 10000) }
 	}
-	attach();
+	attach()
 
 
 	// This is called by UI when it wants to listen to something
-	function subscribeTo(resource: string, init) {
+	function subscribeTo(resource: string, init, req_on_sub = true) {
 
 		let sub = subs[resource]
 		if (!sub) {
 			//@ts-ignore
 			sub = { resource, listeners: 0 }
-			let { subscribe, ..._rest } = writable(init)
+			let { subscribe, ...rest } = writable(init, (s) => {
+				if (sub.listeners === 0 && req_on_sub) { connection.send({ resource, type: 'Req' }) }
+				++sub.listeners
+				return () => {
+					--sub.listeners
+				}
+			})
 			Object.assign(
 				sub,
 				{
-					subscribe: extend_s(
-						subscribe,
-						() => { if (sub.listeners === 0) { connection.send({ resource, type: 'Req' }) } ++sub.listeners },
-						() => { --sub.listeners }),
-					..._rest
+					subscribe,
+					...rest
 				}
 			)
 
@@ -173,13 +184,13 @@ function createDb() {
 				put: (id: string, value: string) =>
 					connection.send(
 						{ resource: `chunks/${id}`, type: 'C', value },
-						(v, sub) => {sub?.update((v) => ({ ...v, value, no_edit:true }))},
-						(v, sub) => {sub?.update((v) => ({ ...v, no_edit:false }))},
+						(v, sub) => { sub?.update((v) => ({ ...v, value, no_edit: true })) },
+						(v, sub) => { sub?.update((v) => ({ ...v, no_edit: false })) },
 					),
 				new: () => setStatus(fetchJson("/api/chunks", { value: "# New Chunk\n\n" }, "PUT"))
 			},
 			login: (v) =>
-				setStatus(fetchJson("/api/login", v)).then(() => { connection = connection_new() })
+				setStatus(fetchJson("/api/login", v)).then(() => { attach() })
 			,
 			reset: (v) =>
 				setStatus(fetchJson("/api/reset", v))
