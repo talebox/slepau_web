@@ -1,20 +1,14 @@
 <script>
 	import { slide } from "svelte/transition";
 	import { useDebounce } from "../utils/timout";
-	import {
-		db,
-		editing_id,
-		wants_preview,
-		is_phone,
-	} from "../store";
+	import { db, editing_id, wants_preview, is_phone } from "../store";
 	import { mdToHtml } from "../utils/commonmark";
-	import { applyDiff } from "../utils/general";
+	import { applyDiff, REGEX_TITLE } from "../utils/utils";
 
 	export let id = undefined;
 	let editor;
 
 	$: _id = id || $editing_id;
-	$: console.log(_id);
 
 	$: chunk$ = _id ? db.subscribeTo(`chunks/${_id}`) : undefined;
 	$: diff$ = _id
@@ -43,7 +37,8 @@
 
 	let preview;
 	function update_preview(v) {
-		if (showing_preview && v) preview = mdToHtml(v);
+		if (showing_preview && v)
+			preview = mdToHtml(v.replace(REGEX_TITLE, (m, p1, p2) => `# ${p1} `));
 	}
 	$: chunk?.value && update_preview(chunk.value);
 

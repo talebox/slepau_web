@@ -42,3 +42,5 @@ export function applyDiff(left, diff, s) {
 	let s_new = sl.map(v => line_to_offset(right, v))
 	return [right, s_new]
 }
+
+export const REGEX_TITLE = new RegExp(process.env.REGEX_TITLE);

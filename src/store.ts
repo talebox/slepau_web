@@ -190,7 +190,7 @@ function createDb() {
 				new: () => setStatus(fetchJson("/api/chunks", { value: "# New Chunk\n\n" }, "PUT"))
 			},
 			login: (v) =>
-				setStatus(fetchJson("/api/login", v)).then(() => { attach() })
+				setStatus(fetchJson("/api/login", v)).then(() => {subs = {}; attach() })
 			,
 			reset: (v) =>
 				setStatus(fetchJson("/api/reset", v))
