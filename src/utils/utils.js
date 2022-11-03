@@ -1,5 +1,5 @@
-export function applyDiff(left, diff, s) {
-
+export function applyDiff(left, diff, s=[]) {
+	// if (!Array.isArray(diff))return ;
 	const offset_to_line = (str, offset) => {
 		if (offset > str.length) { return str.length }
 		let l = 0, i = 0, ll = 1;
@@ -44,3 +44,4 @@ export function applyDiff(left, diff, s) {
 }
 
 export const REGEX_TITLE = new RegExp(process.env.REGEX_TITLE);
+export const REGEX_ACCESS = new RegExp(process.env.REGEX_ACCESS_JS, "im");

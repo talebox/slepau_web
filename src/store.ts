@@ -1,7 +1,8 @@
 import { subscribe } from "svelte/internal"
-import { readable, Writable, writable } from "svelte/store"
+import { get, readable, Writable, writable } from "svelte/store"
 import { fetchE, fetchJson } from './utils/network'
 import { debounceG } from "./utils/timout"
+import { applyDiff } from "./utils/utils"
 
 
 export const status = writable<Promise<any> | undefined>(undefined)
@@ -45,6 +46,7 @@ function createDb() {
 
 
 	let connection_new = () => {
+		console.log("Making new connection");
 		let socket = new WebSocket(`${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.host}/api/stream`)
 		let messages = [] as string[]
 
@@ -78,18 +80,22 @@ function createDb() {
 		// Handles reactions to incoming messages
 		function react_to_incoming(m) {
 			let change = JSON.parse(m) as SocketMessage
+			let change_value = change.value
+			if (change_value) {
+				try {
+					change_value = JSON.parse(change_value)
+				} catch {}
+			}
 
 			if (['C', 'Ok'].includes(change.type || "")) {
 				// Set value on subscription
-				let v = change.value
-				if (change.value) {
-					v = JSON.parse(change.value)
-					subs[change.resource]?.set(v)
+				if (change_value) {
+					subs[change.resource]?.set(change_value)
 				}
 
 				// Handle callback
 				if (change.type === 'Ok' && change.id) {
-					send_callbacks[change.id]?.[0]?.(v, subs[change.resource])
+					send_callbacks[change.id]?.[0]?.(change_value, subs[change.resource])
 					delete send_callbacks[change.id]
 				}
 			}
@@ -104,6 +110,19 @@ function createDb() {
 				if (change.resource == 'chunks') {
 					maybe_request_update("chunks")
 					Object.entries(subs).forEach(([k, v]) => { if (k.startsWith("views/well")) maybe_request_update(k) })
+				}
+				if (change.resource.endsWith('/diff')) {
+					let resource = change.resource.replace(/\/diff$/, '')
+					let sub = subs[resource]
+					if (resource.startsWith('chunks/')) {
+						sub?.update((v) => {
+							if (!v)return v;
+							// console.log("Changing", v.value)
+							let r = applyDiff(v.value, change_value)[0]
+							// console.log("To", r)
+							return { ...v, value: r, no_edit: true }
+						})
+					}
 				}
 			}
 			if (change.type === 'Err') {
@@ -190,7 +209,7 @@ function createDb() {
 				new: () => setStatus(fetchJson("/api/chunks", { value: "# New Chunk\n\n" }, "PUT"))
 			},
 			login: (v) =>
-				setStatus(fetchJson("/api/login", v)).then(() => {subs = {}; attach() })
+				setStatus(fetchJson("/api/login", v)).then(() => { subs = {}; attach() })
 			,
 			reset: (v) =>
 				setStatus(fetchJson("/api/reset", v))

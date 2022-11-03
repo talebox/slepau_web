@@ -2,13 +2,16 @@
 	import { slide } from "svelte/transition";
 	import { useDebounce } from "../utils/timout";
 	import { db, editing_id, wants_preview, is_phone } from "../store";
-	import { mdToHtml } from "../utils/commonmark";
-	import { applyDiff, REGEX_TITLE } from "../utils/utils";
+	import { chunkValueToHtml } from "../utils/commonmark";
+	import { applyDiff } from "../utils/utils";
 
 	export let id = undefined;
 	let editor;
 
 	$: _id = id || $editing_id;
+
+	// Clear editor when opening new view
+	$: if (_id && editor) editor.value = "";
 
 	$: chunk$ = _id ? db.subscribeTo(`chunks/${_id}`) : undefined;
 	$: diff$ = _id
@@ -17,16 +20,21 @@
 	$: diff = $diff$;
 	$: chunk = $chunk$;
 
+	// Set editor value when chunk arrives
 	$: {
-		if (chunk && editor) {
+		if (chunk?.value && editor) {
+			// Fill editor if it's empty, or if chunk has a negative no_edit field
+			// (used to indicate that it's an update to other UI components and not this one)
 			if (!chunk?.no_edit || !editor.value) {
 				editor.value = chunk.value;
 			}
 		}
 	}
+	// Update editor value when diff arrives, usually an update from another user typing
 	$: if (diff && editor?.value) {
 		let s = [editor.selectionStart, editor.selectionEnd];
 		const [right, _s] = applyDiff(editor.value, diff, s);
+
 		editor.value = right;
 		editor.selectionStart = _s[0];
 		editor.selectionEnd = _s[1];
@@ -35,12 +43,12 @@
 	// Update preview if enabled
 	$: showing_preview = $wants_preview || !$is_phone;
 
+	// Triggers on chunk.value and showing_preview
 	let preview;
-	function update_preview(v) {
-		if (showing_preview && v)
-			preview = mdToHtml(v.replace(REGEX_TITLE, (m, p1, p2) => `# ${p1} `));
+	$: {
+		if (chunk?.value && showing_preview)
+			preview = chunkValueToHtml(chunk.value);
 	}
-	$: chunk?.value && update_preview(chunk.value);
 
 	function close() {
 		if (id) {
@@ -78,6 +86,7 @@
 				/>
 			</svg>
 		</button>
+
 		{#if $is_phone}
 			<button
 				class="preview-btn icon"
