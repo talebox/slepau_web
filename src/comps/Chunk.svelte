@@ -1,6 +1,6 @@
 <script>
 	import "./Chunk.css";
-	import { chunkValueToHtml } from "../utils/commonmark";
+	import { chunkValueToHtml } from "../utils/formatting";
 	import { db } from "../store";
 
 	export let id = undefined;

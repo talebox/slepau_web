@@ -10,6 +10,9 @@ export function mdToHtml(md) {
 }
 export function chunkValueToHtml(value){
 	value = value.replace(REGEX_TITLE, (m, p1, p2) => `# ${p1} `);
+	value = value.replace(/\[ \]/g, '&#x2610;');
+	value = value.replace(/\[x\]/g, '&#x2612;');
+	value = value.replace(/\[check\]/g, '&#x2713;');
 	value = value.replace(REGEX_ACCESS, "");
 	return mdToHtml(value);
 }

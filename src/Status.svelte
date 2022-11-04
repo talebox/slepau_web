@@ -1,26 +1,27 @@
 <script>
   import { status } from "./store"
   import Loading from "./comps/Loading.svelte"
+  import { slide } from "svelte/transition"
 
   let size = "15px"
-	
+  let err
+  $: $status?.finally(() => (err = undefined)).catch((e) => (err = e))
 </script>
 
 <div class="container">
-  {#await $status}
-    <div class="status-container">
+  <div class="status-container">
+    {#await $status}
       <Loading {size} />
-    </div>
-  {:then}
-    <div class="status-container">
+    {:then}
       <div class="status" style:width={size} style:height={size} />
-    </div>
-  {:catch err}
-    <div class="status-container">
+    {:catch}
       <div class="status bad" style:width={size} style:height={size} />
-    </div>
-    <div class="text-container">{err}</div>
-  {/await}
+    {/await}
+  </div>
+
+  {#if err}
+    <div class="text-container" transition:slide>{err}</div>
+  {/if}
 </div>
 
 <style>
@@ -49,7 +50,7 @@
   }
   .status-container {
     margin: auto;
-		width: fit-content;
+    width: fit-content;
     border-radius: 20px 20px 0 0;
   }
 </style>

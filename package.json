@@ -1,6 +1,6 @@
 {
   "name": "app-parcel",
-  "version": "1.0.0",
+  "version": "0.4.0",
   "source": "src/index.html",
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "scripts": {

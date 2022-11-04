@@ -6,7 +6,7 @@ export function cnf(s, ...v) {
 		.filter(v => !!v)
 		.join(' ')
 }
-function cnfc(s, ...v) {
-	return () => cnf(s, ...v)
+function cnfc(s) {
+	return (...v) => cnf(s, ...v)
 }
 export default cnfc;
