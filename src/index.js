@@ -3,6 +3,10 @@
  */
 import App from "./App.svelte"
 
+// if (location.protocol === 'https:' && navigator.serviceWorker) navigator.serviceWorker.register(
+// 	new URL('utils/service_worker.js', import.meta.url)
+// );
+navigator.serviceWorker.getRegistrations().then(console.log)
 
 // Remove loading element
 document.getElementById("loading")?.classList.add("close");
@@ -13,6 +17,6 @@ setTimeout(() => {
 
 
 const app = new App({
-  target: document.getElementById("app"),
-  props: {}
+	target: document.getElementById("app"),
+	props: {}
 })

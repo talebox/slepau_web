@@ -1,0 +1,50 @@
+{
+  "short_name": "Chunk",
+  "name": "Chunk",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "256x256 128x128 64x64 48x48 16x16",
+      "type": "image/x-icon",
+			"purpose": "any"
+    },
+    {
+      "src": "maskable.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#161f27",
+  "display": "fullscreen",
+  "scope": "/",
+  "theme_color": "#202b38",
+  "shortcuts": [
+    {
+      "name": "Well",
+      "url": "/well",
+      "description": ""
+    }
+  ],
+  "description": "A chunking based notes app.",
+  "screenshots": [
+    {
+      "src": "screen0.png",
+      "sizes": "555x961",
+      "type": "image/png"
+    },
+		{
+      "src": "screen1.png",
+      "sizes": "1005x955",
+      "type": "image/png"
+    }
+  ],
+  "dir": "auto",
+  "lang": "en",
+  "orientation": "any",
+  "categories": [
+    "productivity",
+    "utilities"
+  ]
+}

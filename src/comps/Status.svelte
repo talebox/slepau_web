@@ -1,6 +1,6 @@
 <script>
-  import { status } from "./store"
-  import Loading from "./comps/Loading.svelte"
+  import { status } from "../store"
+  import Loading from "./Loading.svelte"
   import { slide } from "svelte/transition"
 
   let size = "15px"

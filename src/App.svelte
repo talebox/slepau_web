@@ -1,21 +1,22 @@
 <script>
-	import Apps from "./pages/Apps.svelte";
-	import Drawer from "~/src/comps/Drawer.svelte";
+	import Editor from "./pages/Apps.svelte";
+	
 	import { Router, Route } from "@deps/routing";
-	import Login from "./pages/Login.svelte";
-	import Status from "./Status.svelte";
+	
+	import Edit from "./pages/Edit.svelte";
+	
 </script>
 
 <div class="main">
-	
-		<Router>
-			<Route component={Apps} />
-			<Route path="login/*" component={Login} />
-		</Router>
-	
-	<Status />
-
-	<Drawer />
+	<Router>
+		<!-- Editor -->
+		<Route component={Editor}/>
+		<!-- Public Previews -->
+		<Route path="/chunk/:id" component={Edit} />
+		<Route path="/chunks/:id" component={Edit} />
+		<Route path="/note/:id" component={Edit} />
+		<Route path="/notes/:id" component={Edit} />
+	</Router>
 </div>
 
 <style>

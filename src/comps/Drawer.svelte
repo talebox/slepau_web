@@ -84,8 +84,9 @@
   .container {
     padding: 10px;
     width: 300px;
-    height: 100vh;
-    height: 100dvh;
+    /* height: 100vh;
+    height: 100dvh; */
+		height: 100%;
     /* padding-bottom: calc(100lvh -); */
 
     background: var(--background-transparent);
