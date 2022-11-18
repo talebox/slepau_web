@@ -30,8 +30,17 @@ export const notifications = (() => {
 })()
 export const status = writable<Promise<any> | undefined>(undefined)
 
-export const setStatus = (v: Promise<any>) => {
-	status.set(v)
+export const setStatus = (v: Promise<any>, options?: { timeout?: number, on_resolve?: string,on_reject?: string }) => {
+	options = { ...{ timeout: 3000 }, ...options }
+	let s = v
+	if (options.on_resolve) s = s.then(() => options?.on_resolve);
+	if (options.on_reject) s = s.catch(() => options?.on_reject);
+	
+	status.set(s)
+	
+	// Reset status to green
+	debounce(() => status.set(Promise.resolve()), options.timeout, 'status')
+	
 	return v
 }
 
@@ -160,8 +169,8 @@ function createDb() {
 					delete send_callbacks[change.id]
 				}
 
-				status.set(Promise.reject(change.value))
-				debounce(() => status.set(Promise.resolve()), 3000, 'status')
+				setStatus(Promise.reject(change.value))
+
 			}
 		}
 		{
@@ -175,10 +184,10 @@ function createDb() {
 
 		// Request all subscriptions that have listeners, and aren't diffs
 		Object.entries(subs).forEach(
-			([k, v]) => 
-			v.listeners && 
-			!v.resource.endsWith('/diff') && 
-			send({ resource: v.resource, type: "Req" })
+			([k, v]) =>
+				v.listeners &&
+				!v.resource.endsWith('/diff') &&
+				send({ resource: v.resource, type: "Req" })
 		)
 
 		return { send, socket }
