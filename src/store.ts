@@ -1,4 +1,5 @@
 import { subscribe } from "svelte/internal"
+import { navigate } from '../deps/routing'
 import { get, readable, Writable, writable } from "svelte/store"
 import { delete_cookie } from "./utils/cookie"
 import { fetchE, fetchJson } from "./utils/network"
@@ -30,17 +31,17 @@ export const notifications = (() => {
 })()
 export const status = writable<Promise<any> | undefined>(undefined)
 
-export const setStatus = (v: Promise<any>, options?: { timeout?: number, on_resolve?: string,on_reject?: string }) => {
+export const setStatus = (v: Promise<any>, options?: { timeout?: number, on_resolve?: string, on_reject?: string }) => {
 	options = { ...{ timeout: 3000 }, ...options }
 	let s = v
-	if (options.on_resolve) s = s.then(() => options?.on_resolve);
-	if (options.on_reject) s = s.catch(() => options?.on_reject);
-	
+	if (options.on_resolve) s = s.then(() => options?.on_resolve)
+	if (options.on_reject) s = s.catch(() => options?.on_reject)
+
 	status.set(s)
-	
+
 	// Reset status to green
 	debounce(() => status.set(Promise.resolve()), options.timeout, 'status')
-	
+
 	return v
 }
 
@@ -270,7 +271,7 @@ function createDb() {
 					),
 			},
 			login: (v) =>
-				setStatus(fetchJson("/api/login", v)).then(() => {
+				setStatus(fetchJson("/api/login", v), { on_resolve: "Logged in!" }).then(() => {
 					// Reset subscriptions, so local view cache is cleared, hopefully views make new subs and let go of the old ones
 					// subs = {}
 					// On second thought, let's not do this, simply reset the values
@@ -285,12 +286,18 @@ function createDb() {
 				//@ts-ignore
 				delete_cookie("auth", { path: "/", samesite: "Strict" })
 
+				navigate("/login")
+
 				Object.values(subs).forEach(({ reset }) => reset())
 				// Reattach socket, so socket with new auth cookie is created
+				subs = {} // Reset subscriptions, so attach doesn't try to fetch things which this user can't see;
 				attach()
+
+				// Notify user of action
+				setStatus(Promise.resolve(), { on_resolve: "Logged out!" })
 			},
-			reset: (v) => setStatus(fetchJson("/api/reset", v)),
-			register: (v) => setStatus(fetchJson("/api/register", v)),
+			reset: (v) => setStatus(fetchJson("/api/reset", v), { on_resolve: "Password reset!" }),
+			register: (v) => setStatus(fetchJson("/api/register", v), { on_resolve: "User registered!" }),
 		},
 	} as const
 }

@@ -1,20 +1,22 @@
 <script>
 	import Editor from "./pages/Apps.svelte";
-	
-	import { Router, Route } from "@deps/routing";
-	
+	import Login from "./pages/Login.svelte";
 	import Edit from "./pages/Edit.svelte";
-	
+	import Home from "./pages/Home.svelte";
+
+	import { Router, Route } from "@deps/routing";
 </script>
 
 <div class="main">
 	<Router>
 		<!-- Editor -->
-		<Route component={Editor}/>
+		<Route path="" component={Home} />
+		<Route path="app/*" component={Editor} />
 		<!-- Public Previews -->
-		<Route path="/preview/:id" component={Edit} />
-		<Route path="/chunk/:id" component={Edit} />
-		<Route path="/note/:id" component={Edit} />
+		<Route path="preview/:id" component={Edit} />
+		<Route path="chunk/:id" component={Edit} />
+		<Route path="note/:id" component={Edit} />
+		<Route path="login/*" component={Login} />
 	</Router>
 </div>
 

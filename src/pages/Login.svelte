@@ -1,6 +1,7 @@
 <script>
   import { db } from "../store"
   import { fetchJson } from "../utils/network"
+	import Status from "../comps/Status.svelte";
   import { Router, Route, Link, navigate } from "@deps/routing"
   import * as s from "./Login.module.scss"
   import cnfc from "../utils/classname"
@@ -18,13 +19,13 @@
     return Object.values(values)
   }
   function onLogin(e) {
-    db.actions.login(getValues()).then(() => navigate("/chunks"))
+    db.actions.login(getValues()).then(() => navigate("/app"))
   }
   function onReset(e) {
-    db.actions.reset(getValues())
+    db.actions.reset(getValues()).then(() => navigate("/login"))
   }
   function onRegister(e) {
-    db.actions.register(getValues())
+    db.actions.register(getValues()).then(() => navigate("/login"))
   }
 
   const linkProps = ({ isCurrent }) => ({
@@ -32,12 +33,13 @@
   })
 </script>
 
+<Status />
 <Router>
   <form class="container fc">
     <nav class="frw grow-c" style="margin-block: 20px;">
-      <Link to="./" getProps={linkProps}>Login</Link>
-      <Link to="register" getProps={linkProps}>Register</Link>
-      <Link to="reset" getProps={linkProps}>Reset</Link>
+      <Link to="./" replace getProps={linkProps}>Login</Link>
+      <Link to="register" replace getProps={linkProps}>Register</Link>
+      <Link to="reset" replace getProps={linkProps}>Reset</Link>
     </nav>
     <Route>
       <label>
