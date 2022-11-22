@@ -5,10 +5,10 @@
 
 	let size = "15px";
 	let text;
-	$: $status?.finally((v) => {
+	const onBoth = (v) => {
 		text = typeof v === "string" ? v : undefined;
-		// is_err = false;
-	});
+	};
+	$: $status?.then(onBoth, onBoth);
 </script>
 
 <div class="container">
