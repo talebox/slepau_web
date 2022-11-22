@@ -12,10 +12,9 @@
 		<!-- Editor -->
 		<Route component={Editor}/>
 		<!-- Public Previews -->
+		<Route path="/preview/:id" component={Edit} />
 		<Route path="/chunk/:id" component={Edit} />
-		<Route path="/chunks/:id" component={Edit} />
 		<Route path="/note/:id" component={Edit} />
-		<Route path="/notes/:id" component={Edit} />
 	</Router>
 </div>
 

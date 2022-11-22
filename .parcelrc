@@ -6,6 +6,4 @@
 		"*.svelte":["@plasmohq/parcel-transformer-svelte3"], 
 		"raw:*":["@parcel/transformer-raw"]
 	}
-	
-
 }

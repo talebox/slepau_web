@@ -78,6 +78,7 @@ export function applyDiff(left, diff, s = []) {
 export const REGEX_TITLE = new RegExp(process.env.REGEX_TITLE);
 export const REGEX_ACCESS = new RegExp(process.env.REGEX_ACCESS, "im");
 export const REGEX_MEDIA = new RegExp (`\\(media\\/(${process.env.REGEX_PROQUINT})\\)`, 'g');
+export const REGEX_CHUNK = new RegExp (`\\(chunk\\/(${process.env.REGEX_PROQUINT})\\)`, 'g');
 
 export function str_insert(source, index, string) {
 	if (index > 0) {

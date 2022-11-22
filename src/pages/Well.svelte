@@ -42,7 +42,7 @@
   <h1>{root_title ?? "Root"}</h1>
 </div>
 
-<div class="container chunk-container grid-r">
+<div class="container chunk-container grid-r" style="gap: 20px">
   {#each well as id (id)}
     <div
       class="chunk border"

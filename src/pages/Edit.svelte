@@ -9,12 +9,17 @@
 		notifications,
 		setStatus,
 	} from "../store";
-	import { chunkValueToHtml } from "../utils/formatting";
-	import { applyDiff, str_insert, str_remove } from "../utils/utils";
+	import { mdToHtml, valueTransform } from "../utils/formatting";
+	import {
+		applyDiff,
+		REGEX_CHUNK,
+		str_insert,
+		str_remove,
+	} from "../utils/utils";
 	import { fetchE } from "../utils/network";
 
 	export let id = undefined;
-	let editor;
+	let editor,fileInput;
 
 	$: _id = id || $editing_id;
 
@@ -54,8 +59,15 @@
 	// Triggers on chunk.value and showing_preview
 	let preview;
 	$: {
-		if (chunk?.value && (id || showing_preview))
-			preview = chunkValueToHtml(chunk.value);
+		if (chunk?.value && (id || showing_preview)) {
+			let value = chunk.value;
+			value = valueTransform(value);
+
+			value = value.replace(REGEX_CHUNK, (m, id) =>
+				id ? `(/page/${id})` : `(/preview/${id})`
+			);
+			preview = mdToHtml(value);
+		}
 	}
 
 	function close() {
@@ -76,7 +88,7 @@
 		notifications.add("Id copied.");
 	}
 	function update_value(value) {
-		debounce(() => db.actions.chunks.put(chunk.id, value), 200, chunk.id);
+		debounce(() => db.actions.chunks.put(chunk.id, value), 500, chunk.id);
 	}
 	function get_editor(e) {
 		let _editor = e ? e.target : editor;
@@ -114,21 +126,37 @@
 			console.log("no files selected");
 			return;
 		}
-		const files = Array.from(this.files)
+		const files = Array.from(this.files);
 
 		setStatus(
 			Promise.all(
 				files.map((f) =>
 					fetchE("/api/media", { method: "POST", body: f }).then((v) =>
-						v.text()
+						v.json()
 					)
 				)
 			),
 			{
 				on_resolve: "Upload success!",
 			}
-		).then((ids) => {
-			editor_type(ids.map((id) => `![](media/${id})`).join("\n"));
+		).then((items) => {
+			let [v, selection] = get_editor();
+			// If only 1 file selected, and there is a textarea selection, then replace with path, instead of markdown images :)
+			if (items.length === 1 && selection[1] > selection[0]) {
+				editor_type(`/api/media/${items[0].id}`);
+			} else {
+				editor_type(
+					items
+						.map((item) =>
+							item.type === "Image"
+								? `![](media/${item.id})`
+								: item.type === "Video"
+								? `<video controls> <source src="/api/media/${items[0].id}"/> </video>`
+								: item.id
+						)
+						.join("\n")
+				);
+			}
 		});
 	}
 	function keydown(e) {
@@ -206,9 +234,16 @@
 				e.preventDefault();
 				update_value(v);
 			}
+		} else {
+			if (process.env.NODE_ENV === "development") {
+				console.log(e);
+			}
 		}
 	}
-	let fileInput;
+	function paste(e) {
+		let clip = e.clipboardData || window.clipboardData;
+		
+	}
 </script>
 
 {#if id}
@@ -232,6 +267,7 @@
 					autocorrect="off"
 					on:keydown={keydown}
 					on:keypress={keypress}
+					on:paste={paste}
 					bind:this={editor}
 					on:input={(e) => {
 						// console.log(e)
@@ -372,6 +408,7 @@
 		border-radius: 0;
 
 		overflow-y: auto;
+		overscroll-behavior: contain;
 		padding-bottom: 30em;
 	}
 	.textarea:focus {
@@ -394,7 +431,7 @@
 	.action:first-of-type {
 		border-top-left-radius: 24px;
 	}
-	.action:first-of-type {
+	.action:last-of-type {
 		border-bottom-left-radius: 24px;
 	}
 
