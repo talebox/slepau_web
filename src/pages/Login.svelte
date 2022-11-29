@@ -85,17 +85,6 @@
   </form>
 </Router>
 
-<!-- <form class="container fc" on:submit|preventDefault={onSubmit}>
-	<label>
-		User
-		<input name="user" />
-	</label>
-	<label>
-		Pass
-		<input type="password" name="pass" />
-	</label>
-	<button type="submit">Login</button>
-</form> -->
 <style>
   input {
     width: 100%;

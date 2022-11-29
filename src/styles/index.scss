@@ -9,13 +9,7 @@
 :root {
 	--button-icon-size: 64px;
 }
-// #app{
-// 	height: 100%;
-// }
 
-/* body {
-	font-size: 18px;
-} */
 html {
 	font-size: calc(15px + 0.25vw);
 }
@@ -23,6 +17,13 @@ html {
 svg {
 	height: 1.5em;
 	width: 1.5em;
+}
+
+a.button {
+	display: inline-block;
+	padding: .7em;
+	border-radius: 10px;
+	border: 2px solid
 }
 
 * {
@@ -86,7 +87,8 @@ svg {
 .tac {
 	text-align: center;
 }
-.flex-center{
+
+.flex-center {
 	display: flex;
 	height: 100%;
 	flex-flow: column nowrap;

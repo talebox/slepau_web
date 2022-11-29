@@ -69,7 +69,7 @@
         <div
           class={s.right}
           on:click={() => {
-            navigate(`/well/${id}`)
+            navigate(id)
           }}
         />
       {/if}

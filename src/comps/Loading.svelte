@@ -18,12 +18,9 @@
     }
   }
   .loading {
-		/* display: inline-block; */
+		display: inline-block;
 		position: relative;
     animation: rot 1s linear infinite;
   }
-	/* svg{
-		display: block;
-	} */
 	
 </style>

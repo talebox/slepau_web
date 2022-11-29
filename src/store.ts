@@ -285,16 +285,17 @@ function createDb() {
 			logout: () => {
 				//@ts-ignore
 				delete_cookie("auth", { path: "/", samesite: "Strict" })
-
 				navigate("/login")
 
-				Object.values(subs).forEach(({ reset }) => reset())
-				// Reattach socket, so socket with new auth cookie is created
-				subs = {} // Reset subscriptions, so attach doesn't try to fetch things which this user can't see;
-				attach()
-
-				// Notify user of action
-				setStatus(Promise.resolve(), { on_resolve: "Logged out!" })
+				setTimeout(() => {
+					Object.values(subs).forEach(({ reset }) => reset())
+					// Reattach socket, so socket with new auth cookie is created
+					subs = {} // Reset subscriptions, so attach doesn't try to fetch things which this user can't see;
+					attach()
+					
+					// Notify user of action
+					setStatus(Promise.resolve(), { on_resolve: "Logged out!" })
+				}, 30)
 			},
 			reset: (v) => setStatus(fetchJson("/api/reset", v), { on_resolve: "Password reset!" }),
 			register: (v) => setStatus(fetchJson("/api/register", v), { on_resolve: "User registered!" }),

@@ -19,7 +19,7 @@
 	import { fetchE } from "../utils/network";
 
 	export let id = undefined;
-	let editor,fileInput;
+	let editor, fileInput;
 
 	$: _id = id || $editing_id;
 
@@ -242,7 +242,6 @@
 	}
 	function paste(e) {
 		let clip = e.clipboardData || window.clipboardData;
-		
 	}
 </script>
 
@@ -307,7 +306,9 @@
 
 			<div class="preview-c" class:showing_preview>
 				<div class="preview">
-					{@html preview}
+					<div style="max-width:800px;margin:auto">
+						{@html preview}
+					</div>
 				</div>
 				<div class="actions">
 					<button class="action share icon" on:click={share}>

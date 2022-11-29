@@ -23,7 +23,7 @@
 	</div>
 
 	{#if text}
-		<div class="text-container" transition:slide>{text}</div>
+		<div class="text-container" >{text}</div>
 	{/if}
 </div>
 

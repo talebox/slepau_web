@@ -16,6 +16,9 @@
 		<Route path="preview/:id" component={Edit} />
 		<Route path="chunk/:id" component={Edit} />
 		<Route path="note/:id" component={Edit} />
+		<!-- Temporary, server will answer this request soon -->
+		<Route path="page/:id" component={Edit} />
+		
 		<Route path="login/*" component={Login} />
 	</Router>
 </div>
