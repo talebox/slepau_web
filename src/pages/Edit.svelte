@@ -224,7 +224,7 @@
 			}
 			let line = v.substring(lineStart, selection[0]);
 			console.log(line);
-			let f = line.match(/^[ \t]*\- /);
+			let f = line.match(/^[ \t]*\- (?:\[[ \-x]\])?[ \t]*/);
 			if (f) {
 				const toadd = "\n" + f[0];
 				v = str_insert(v, selection[0], toadd);
@@ -242,6 +242,7 @@
 	}
 	function paste(e) {
 		let clip = e.clipboardData || window.clipboardData;
+		console.log(clip);
 	}
 </script>
 

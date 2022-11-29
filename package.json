@@ -30,5 +30,23 @@
     "@icons/*": "./src/assets/icons/$1",
     "@styles/*": "./src/styles/$1",
     "@deps/*": "./deps/$1"
+  },
+  "targets": {
+    "default": {
+      "source": "src/index.html"
+    },
+    "page": {
+      "source": "src/page.html"
+    },
+    "format": {
+      "engines": {
+        "browsers": "firefox >= 100"
+      },
+      "context": "browser",
+      "source": "src/format.js",
+      "distDir": "./dist/backend",
+      "isLibrary": false,
+      "outputFormat": "global"
+    }
   }
 }
