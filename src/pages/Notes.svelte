@@ -5,7 +5,7 @@
 	import "./ChunkPage.scss";
 	import { debounce } from "../utils/timout";
 
-	let chunks = db.subscribeTo("chunks", []);
+	let chunks = db.subscribeTo("chunks", { init: [] });
 	let chunks_in_viewport = 3;
 	let chunks_shown = 0;
 	// $: console.log(chunks_shown);
@@ -61,25 +61,23 @@
 	const on_new = () => {
 		db.actions.chunks.new();
 	};
+	const on_click = (node) => {
+		if (selected) {
+			if (selected.includes(node.id))
+				selected = selected.filter((v) => v !== node.id);
+			else {
+				selected.push(node.id);
+				selected = selected;
+			}
+		} else {
+			$editing_id = node.id;
+		}
+	};
 </script>
 
 <svelte:window on:scroll={onscroll} on:resize={onresize} />
 <Chunks chunks={chunks_slice} {selected} let:chunk>
-	<div
-		class="clickable"
-		on:click={() => {
-			if (selected) {
-				if (selected.includes(chunk.id))
-					selected = selected.filter((v) => v !== chunk.id);
-				else {
-					selected.push(chunk.id);
-					selected = selected;
-				}
-			} else {
-				$editing_id = chunk.id;
-			}
-		}}
-	/>
+	<div class="clickable" on:click={() => on_click(chunk)} />
 	<div slot="footer" style="margin-top: 1em;opacity:0.7;text-align:center;">
 		{#if chunks_shown < ($chunks?.length ?? 0)}
 			Scroll for more... 🖱️👇

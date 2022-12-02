@@ -65,7 +65,10 @@ function createDb() {
 	let subs: { [k: string]: RSub } = {}
 
 	let connection_new = () => {
-		console.log("Making new connection")
+		//@ts-ignore
+		if (process.env.NODE_ENV === "development") {
+			console.log("Making new connection")
+		}
 		let socket = new WebSocket(
 			`${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.host
 			}/api/stream`
@@ -142,7 +145,7 @@ function createDb() {
 				if (change.resource == "chunks") {
 					maybe_request_update("chunks")
 					Object.entries(subs).forEach(([k, v]) => {
-						if (k.startsWith("views/well")) maybe_request_update(k)
+						if (k.startsWith("views/well") || k.startsWith("views/graph")) maybe_request_update(k)
 					})
 				}
 				if (change.resource.endsWith("/diff")) {
@@ -206,7 +209,10 @@ function createDb() {
 		connection = connection_new()
 		connection.socket.onclose = () => {
 			timeout = setTimeout(() => {
-				console.log("Connection closed, retrying in 10secs")
+				//@ts-ignore
+				if (process.env.NODE_ENV === "development") {
+					console.log("Connection closed, retrying in 10secs")
+				}
 				attach()
 			}, 10000)
 		}
@@ -214,13 +220,14 @@ function createDb() {
 	attach()
 
 	// This is called by UI when it wants to listen to something
-	function subscribeTo(resource: string, init, req_on_sub = true) {
+	function subscribeTo(resource: string, { init, req_on }: { init?, req_on?: "undef" | "sub" | false } = {}) {
+		if (req_on === undefined) req_on = "undef"
 		let sub = subs[resource]
 		if (!sub) {
 			//@ts-ignore
 			sub = { resource, listeners: 0 }
 			let { subscribe, set, update } = writable(init, (s) => {
-				if (sub.listeners === 0 && req_on_sub) {
+				if (req_on === "undef" ? (get(sub) === init) : req_on === "sub") {
 					connection.send({ resource, type: "Req" })
 				}
 				++sub.listeners
@@ -236,6 +243,8 @@ function createDb() {
 					set(init)
 				},
 			})
+
+
 
 			subs[resource] = sub
 		}
@@ -292,7 +301,7 @@ function createDb() {
 					// Reattach socket, so socket with new auth cookie is created
 					subs = {} // Reset subscriptions, so attach doesn't try to fetch things which this user can't see;
 					attach()
-					
+
 					// Notify user of action
 					setStatus(Promise.resolve(), { on_resolve: "Logged out!" })
 				}, 30)
@@ -306,6 +315,7 @@ function createDb() {
 export const db = createDb()
 
 export const editing_id = writable<string | undefined>(undefined)
+export const zoom = writable<number>(1)
 export const store = {
 	wants_preview: (() => {
 		const { subscribe, set, update } = writable(

@@ -23,12 +23,7 @@
 .chunk:hover {
   background: var(--background);
 }
-.chunk.selectable {
-  box-shadow: 0 0 0 4px get-color(primary);
-}
-.chunk.selected {
-  box-shadow: 0 0 0 4px get-color(error);
-}
+
 
 
 .chunk-new,

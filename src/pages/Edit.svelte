@@ -28,7 +28,7 @@
 
 	$: chunk$ = _id ? db.subscribeTo(`chunks/${_id}`) : undefined;
 	$: diff$ = _id
-		? db.subscribeTo(`chunks/${_id}/diff`, undefined, false)
+		? db.subscribeTo(`chunks/${_id}/diff`, { req_on: false })
 		: undefined;
 	$: diff = $diff$;
 	$: chunk = $chunk$;
@@ -137,6 +137,7 @@
 				)
 			),
 			{
+				timeout: 40000,
 				on_resolve: "Upload success!",
 			}
 		).then((items) => {
@@ -223,8 +224,15 @@
 				--lineStart;
 			}
 			let line = v.substring(lineStart, selection[0]);
-			console.log(line);
-			let f = line.match(/^[ \t]*\- (?:\[[ \-x]\])?[ \t]*/);
+
+			let f;
+			for (let regex of [
+				/^[ \t]*\- (?:\[[ \-x]\])?[ \t]*/,
+				/^[ \t]*\d+\. (?:\[[ \-x]\])?[ \t]*/,
+			]) {
+				f = line.match(regex);
+				if (f) break;
+			}
 			if (f) {
 				const toadd = "\n" + f[0];
 				v = str_insert(v, selection[0], toadd);
@@ -417,25 +425,7 @@
 		box-shadow: none;
 	}
 
-	.actions {
-		display: flex;
-		flex-direction: column;
-		position: absolute;
-		right: 0;
-		bottom: calc(var(--button-icon-size) + 30px);
-	}
-	.action {
-		margin: 0;
-		border-radius: 0;
-		width: var(--button-icon-size);
-		height: var(--button-icon-size);
-	}
-	.action:first-of-type {
-		border-top-left-radius: 24px;
-	}
-	.action:last-of-type {
-		border-bottom-left-radius: 24px;
-	}
+	
 
 	.close,
 	.preview-btn {

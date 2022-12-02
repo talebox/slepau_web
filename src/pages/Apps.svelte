@@ -5,15 +5,14 @@
 	import Well from "./Well.svelte";
 	import Drawer from "../comps/Drawer.svelte";
 	import Status from "../comps/Status.svelte";
-	import Notifications from "../comps/Notifications.svelte";
 	import { get_cookie } from "../utils/cookie";
+	import Graph from "./Graph.svelte";
 
 	if (!get_cookie("auth")) {
 		navigate("/login", { replace: true });
 	}
 </script>
 
-<Notifications />
 <Edit />
 <Status />
 <Drawer />
@@ -21,4 +20,5 @@
 	<Route component={Notes} />
 	<Route path="notes" component={Notes} />
 	<Route path="well/:?id" component={Well} />
+	<Route path="graph/:?id" component={Graph} />
 </Router>
