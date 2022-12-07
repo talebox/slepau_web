@@ -13,7 +13,7 @@
 }
 
 html {
-	font-size: calc(15px + 0.25vw);
+	font-size: min(calc(15px + 0.25vw), 19px);
 }
 
 svg {
@@ -90,7 +90,11 @@ a.button {
 	text-align: center;
 }
 
-
+.app-info{
+	position: absolute;
+	top:0;
+	left:0;
+}
 
 .flex-center {
 	display: flex;
@@ -138,7 +142,7 @@ svg{
 	box-shadow: 0 0 0 4px get-color(error);
 }
 
-.actions {
+.side-actions {
 	display: flex;
 	flex-direction: column;
 	position: absolute;

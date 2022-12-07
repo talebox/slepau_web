@@ -254,6 +254,12 @@ function createDb() {
 		}
 	}
 
+	function mediaPost(v) {
+		return fetchE("/api/media", { method: "POST", body: v }).then((v) =>
+			v.json()
+		)
+	}
+
 	return {
 		// subscribe,
 		subscribeTo,
@@ -306,6 +312,22 @@ function createDb() {
 					setStatus(Promise.resolve(), { on_resolve: "Logged out!" })
 				}, 30)
 			},
+			media: {
+				post: (v) => setStatus(
+					mediaPost(v),
+					{
+						timeout: 40000,
+						on_resolve: "Upload success!",
+					}
+				),
+				post_many: (va: any[]) => setStatus(
+					Promise.all(va.map((v) => mediaPost(v))),
+					{
+						timeout: 40000,
+						on_resolve: "Upload success!",
+					}
+				)
+			},
 			reset: (v) => setStatus(fetchJson("/api/reset", v), { on_resolve: "Password reset!" }),
 			register: (v) => setStatus(fetchJson("/api/register", v), { on_resolve: "User registered!" }),
 		},
@@ -314,8 +336,19 @@ function createDb() {
 
 export const db = createDb()
 
+
+export const user = db.subscribeTo("user")
 export const editing_id = writable<string | undefined>(undefined)
-export const zoom = writable<number>(1)
+export const zoom = (() => {
+	const { subscribe, set, update } = writable<number>(Number(localStorage.getItem("zoom") ?? 1) || 1)
+	return {
+		subscribe,
+		set: (v) => {
+			set(v)
+			localStorage.setItem("zoom", v)
+		},
+	}
+})()
 export const store = {
 	wants_preview: (() => {
 		const { subscribe, set, update } = writable(

@@ -7,15 +7,19 @@
 	import Status from "../comps/Status.svelte";
 	import { get_cookie } from "../utils/cookie";
 	import Graph from "./Graph.svelte";
-
-	if (!get_cookie("auth")) {
+	import { user } from "../store";
+	
+	// Will boot user to login if cookie is false or server said this client is "public"
+	$: if (!get_cookie("auth") || $user?.user === "public") {
 		navigate("/login", { replace: true });
 	}
 </script>
 
+<Drawer />
+
 <Edit />
 <Status />
-<Drawer />
+
 <Router>
 	<Route component={Notes} />
 	<Route path="notes" component={Notes} />

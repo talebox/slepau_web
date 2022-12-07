@@ -8,19 +8,22 @@
 	import Chunk from "../comps/Chunk.svelte";
 	import "./ChunkPage.scss";
 
+	// VVVVV This is Common to Views VVVVV
 	export let id = "";
 
 	const root = { id: "", title: "Root" };
 	let nodes = [],
 		parents = [root];
 	$: view$ = db.subscribeTo("views/well" + (id ? "/" + id : ""), {
-		init: [[], []],
+		init: null,
 	});
 
 	$: {
-		let [_nodes, _parents] = $view$;
-		nodes = _nodes;
-		parents = [..._parents, root];
+		if ($view$) {
+			let [nodes_incoming, parents_incoming] = $view$;
+			nodes = nodes_incoming;
+			parents = [...parents_incoming, root];
+		}
 	}
 	let selected = undefined;
 
@@ -44,6 +47,7 @@
 			navigate(id, { state: id });
 		}
 	};
+	// ^^^^ This is Common to Views ^^^^
 </script>
 
 <div class="breadcrumb" in:slide>
@@ -57,29 +61,25 @@
 			</svg>
 		</button>
 	{/if}
-	{#if parents.length}
-		{#each parents.reverse() as parent, i (parent.id)}
-			{#if i === parents.length - 1}
-				<h1 in:slide>{parent.title}</h1>
-			{:else}
-				<h3
-					in:slide
-					style="cursor:pointer;"
-					on:click={() => {
-						on_click(parent);
-					}}
-				>
-					{parent.title}
-				</h3>
-				<hr style="width: 1em;" />
-			{/if}
-		{/each}
-	{:else}
-		<h1>Root</h1>
-	{/if}
+
+	{#each parents.reverse() as parent, i (parent.id)}
+		<div
+			in:slide
+			animate:flip={{ duration: 500 }}
+			style={`cursor:pointer;padding-right:.5em`}
+			style:font-size={i === parents.length - 1 ? "1.6em" : "1em"}
+			style:border-right={i === parents.length - 1 ? "initial" : "1px solid #8888"}
+			on:click={() => {
+				on_click(parent);
+			}}
+		>
+			{parent.title}
+		</div>
+	{/each}
 </div>
 
 <div class="container chunk-container grid-r" style="gap: 20px">
+	
 	{#each nodes as id (id)}
 		<div
 			class="chunk border"
@@ -89,13 +89,13 @@
 			on:click={() => on_click({ id })}
 		>
 			{#if !selected}
-				<div class={s.left} />
 				<div
-					class={s.right}
+					class={s.left}
 					on:click|stopPropagation={() => {
-						navigate(id);
+						$editing_id = id;
 					}}
 				/>
+				<div class={s.right} />
 			{/if}
 			<Chunk {id} />
 		</div>
@@ -121,7 +121,7 @@
 		left: 0;
 		height: 70px;
 		/* padding-block: 1em; */
-		gap: 0.4em;
+		gap: 0.7em;
 		width: 100vw;
 		display: flex;
 		flex-flow: row nowrap;
@@ -135,10 +135,6 @@
 	}
 	.breadcrumb * {
 		transition: font-size 0.5s;
-	}
-	.current {
-		font-size: 1.8em;
-		font-weight: bold;
 	}
 	.container {
 		padding-top: 70px;

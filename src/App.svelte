@@ -7,6 +7,8 @@
 	import { Router, Route } from "@deps/routing";
 	import Notifications from "./comps/Notifications.svelte";
 	import Settings from "./pages/Settings.svelte";
+	import Test from "./pages/Test.svelte";
+	import "./page.scss";
 </script>
 
 <Notifications />
@@ -16,6 +18,7 @@
 		<Route path="" component={Home} />
 		<Route path="app/*" component={Editor} />
 		<Route path="settings/*" component={Settings} />
+		<Route path="test/*" component={Test} />
 		<!-- Public Previews -->
 		<Route path="preview/:id" component={Edit} />
 		<Route path="chunk/:id" component={Edit} />

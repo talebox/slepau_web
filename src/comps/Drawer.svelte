@@ -5,7 +5,7 @@
 		prefers_light,
 	} from "~/src/styles/theme/theme.js";
 	import { navigate } from "@deps/routing";
-	import { db } from "../store";
+	import { db, user } from "../store";
 	import User from "./User.svelte";
 
 	let is_light = theme_get();
@@ -24,9 +24,6 @@
 	};
 
 	let open = false;
-
-	const user$ = db.subscribeTo("user", { user: "public" });
-	$: user = $user$;
 </script>
 
 <button class="toggle icon fixed" on:click={() => (open = !open)}>
@@ -41,9 +38,11 @@
 {#if open}
 	<div class="back" on:click={() => (open = false)} />
 	<div class="container fc">
-		<h2 class="user fc">{user.user}</h2>
+		<div style="font-size:1rem">
+			<User />
+		</div>
 
-		{#if user.user !== "public"}
+		{#if $user?.user !== "public"}
 			<button class="menu" on:click={() => navigate("/settings/")}>
 				<svg fill="currentColor" viewBox="0 0 16 16" class="icon">
 					<path
@@ -198,19 +197,7 @@
 
 		bottom: 0;
 		left: 0;
+		border-radius: none;
 		border-top-right-radius: 20px;
-	}
-
-	.user {
-		margin: auto;
-		border-radius: 999px;
-		background: var(--background-transparent);
-		outline: 1px solid var(--text-main);
-		/* text-align: center; */
-		/* padding-block: 1em; */
-		width: 100px;
-		height: 100px;
-		justify-content: center;
-		align-items: center;
 	}
 </style>

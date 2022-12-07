@@ -128,19 +128,7 @@
 		}
 		const files = Array.from(this.files);
 
-		setStatus(
-			Promise.all(
-				files.map((f) =>
-					fetchE("/api/media", { method: "POST", body: f }).then((v) =>
-						v.json()
-					)
-				)
-			),
-			{
-				timeout: 40000,
-				on_resolve: "Upload success!",
-			}
-		).then((items) => {
+		db.actions.media.post_many(files).then((items) => {
 			let [v, selection] = get_editor();
 			// If only 1 file selected, and there is a textarea selection, then replace with path, instead of markdown images :)
 			if (items.length === 1 && selection[1] > selection[0]) {
@@ -256,7 +244,7 @@
 
 {#if id}
 	{#if chunk}
-		<div style="max-width:800px;margin:auto">
+		<div class="page">
 			{@html preview}
 		</div>
 	{:else}
@@ -282,7 +270,7 @@
 						update_value(e.target.value);
 					}}
 				/>
-				<div class="actions">
+				<div class="side-actions">
 					<input
 						bind:this={fileInput}
 						on:change={add_media}
@@ -315,11 +303,11 @@
 
 			<div class="preview-c" class:showing_preview>
 				<div class="preview">
-					<div style="max-width:800px;margin:auto">
+					<div class="page">
 						{@html preview}
 					</div>
 				</div>
-				<div class="actions">
+				<div class="side-actions">
 					<button class="action share icon" on:click={share}>
 						<svg fill="currentColor" viewBox="0 0 16 16">
 							<path
@@ -424,8 +412,6 @@
 	.textarea:focus {
 		box-shadow: none;
 	}
-
-	
 
 	.close,
 	.preview-btn {

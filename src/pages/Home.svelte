@@ -14,7 +14,7 @@
 		<Loading size="64px" />
 	</div>
 {:then preview}
-	<div style="max-width:800px;margin:auto">
+	<div class="page">
 		{@html preview}
 	</div>
 {/await}
