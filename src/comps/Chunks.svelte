@@ -1,26 +1,37 @@
 <script>
 	import { flip } from "svelte/animate";
-	import Chunk from "./Chunk.svelte";
 	export let selected = undefined;
 	export let chunks = [];
+	import ChunkCard from "./ChunkCard.svelte";
 </script>
 
 <div class="chunk-container">
 	<div style="gap: 20px;" class="grid-r">
 		{#if Array.isArray(chunks)}
-			{#each chunks as id (id)}
+			{#each chunks as chunk (chunk?.id)}
 				<div
-					class={"chunk border "}
-					class:selected={selected?.includes(id)}
-					class:selectable={!!selected}
+					class="chunk"
 					animate:flip={{ duration: 500 }}
 				>
-					<Chunk {id} let:chunk>
+					<ChunkCard {chunk} selected={selected?.includes(chunk?.id)}
+					selectable={!!selected}>
 						<slot {chunk} />
-					</Chunk>
+					</ChunkCard>
 				</div>
 			{/each}
 		{/if}
 	</div>
 	<slot name="footer" />
 </div>
+
+<style>
+	.chunk-container {
+		padding-bottom: 40vh;
+		padding-bottom: 40lvh;
+	}
+	.chunk {
+		min-height: 200px;
+		max-height: 270px;
+		position: relative;
+	}
+</style>

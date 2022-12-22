@@ -1,48 +1,4 @@
 @use "sass:color";
 @import "@styles/cindex.scss";
 
-.chunk-container {
-  padding-bottom: 40vh;
-  padding-bottom: 40lvh;
-}
-.chunk {
-  background: var(--background-alt);
-  border-radius: 2em;
-  cursor: pointer;
-  padding: 1em;
-  white-space: nowrap;
-  overflow: hidden;
 
-  min-height: 200px;
-  max-height: 270px;
-  transition: box-shadow 0.1s;
-  outline: var(--border) solid 1px;
-  position: relative;
-}
-
-.chunk:hover {
-  background: var(--background);
-}
-
-
-
-.chunk-new,
-.chunk-select,
-.chunk-del {
-  opacity: 1;
-  transition: opacity 1s;
-  bottom: 0;
-}
-.chunk-new {
-  right: 0;
-  border-radius: 0;
-}
-.chunk-select {
-  right: var(--button-icon-size);
-  border-radius: 20px 0 0 0;
-}
-.chunk-del {
-  right: 0;
-  color: get-color(error);
-  border-radius: 0;
-}

@@ -135,11 +135,13 @@ svg{
 }
 
 .selectable {
-	box-shadow: 0 0 0 4px get-color(primary);
+	// box-shadow: 0 0 0 4px get-color(primary);
+	outline: 4px solid get-color(primary) !important;
 }
 
 .selected {
-	box-shadow: 0 0 0 4px get-color(error);
+	// box-shadow: 0 0 0 4px get-color(error);
+	outline: 4px solid get-color(error) !important;
 }
 
 .side-actions {
@@ -160,4 +162,8 @@ svg{
 }
 .action:last-of-type {
 	border-bottom-left-radius: 24px;
+}
+
+.chunk h1 {
+	margin-top: 0;
 }

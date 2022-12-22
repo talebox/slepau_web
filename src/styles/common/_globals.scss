@@ -15,10 +15,6 @@ $theme-current: $theme-default;
 	@return if($theme-current == '', '', if($prefix, $prefix, '') + $theme-current + if($suffix, $suffix, ''));
 }
 
-.c {
-	background: linear-gradient();
-}
-
 // #de5395
 // #5a53a7
 

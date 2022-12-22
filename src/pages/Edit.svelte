@@ -79,7 +79,7 @@
 	}
 	function share() {
 		navigator.clipboard.writeText(
-			`${location.protocol}//${location.host}/note/${_id}`
+			`${location.protocol}//${location.host}/page/${_id}`
 		);
 		notifications.add("Link copied.");
 	}
@@ -270,6 +270,9 @@
 						update_value(e.target.value);
 					}}
 				/>
+				<div class="props">
+					
+				</div>
 				<div class="side-actions">
 					<input
 						bind:this={fileInput}
@@ -446,8 +449,11 @@
 			.preview-c,
 			.edit {
 				background: var(--background-transparent);
-				backdrop-filter: blur(5px);
+				backdrop-filter: blur(8px);
 			}
 		}
+	}
+	.props {
+		
 	}
 </style>

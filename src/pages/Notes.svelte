@@ -2,13 +2,13 @@
 	import { db, editing_id } from "../store";
 	import Chunks from "../comps/Chunks.svelte";
 	import SelectedButtons from "../comps/SelectedButtons.svelte";
-	import "./ChunkPage.scss";
 	import { debounce } from "../utils/timout";
 
-	let chunks = db.subscribeTo("chunks", { init: [] });
+	let chunks = db.subscribeTo("views/notes", { init: [] });
+	// $: console.log($chunks);
 	let chunks_in_viewport = 3;
 	let chunks_shown = 0;
-	// $: console.log(chunks_shown);
+
 	// Making sure if user resizes, more chunks are loaded
 	$: if (chunks_shown < chunks_in_viewport) chunks_shown += chunks_in_viewport;
 	$: chunks_slice = $chunks?.slice(0, chunks_shown) ?? [];
@@ -62,6 +62,7 @@
 		db.actions.chunks.new();
 	};
 	const on_click = (node) => {
+		if (!node) return;
 		if (selected) {
 			if (selected.includes(node.id))
 				selected = selected.filter((v) => v !== node.id);

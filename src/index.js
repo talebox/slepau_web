@@ -3,10 +3,10 @@
  */
 import App from "./App.svelte"
 
-// if (location.protocol === 'https:' && navigator.serviceWorker) navigator.serviceWorker.register(
-// 	new URL('utils/service_worker.js', import.meta.url)
-// );
-navigator.serviceWorker?.getRegistrations().then(console.log)
+if (location.protocol === 'https:' && navigator.serviceWorker) navigator.serviceWorker.register(
+	new URL('utils/service_worker.js', import.meta.url)
+);
+navigator.serviceWorker?.getRegistrations().then(reg => console.log("Registrations:", reg))
 
 // Remove loading element
 document.getElementById("loading")?.classList.add("close");

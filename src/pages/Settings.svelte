@@ -22,9 +22,7 @@
 <div class="page">
 	<h1>Settings</h1>
 
-	This will be the settings page.
-
-	<p>We're under construction 🚧</p>
+	<p>Under construction 🚧</p>
 	<hr />
 
 	<div class="sections">

@@ -177,7 +177,6 @@
 		/* padding-bottom: calc(100lvh -); */
 
 		background: var(--background-transparent);
-		backdrop-filter: blur(5px);
 
 		justify-content: center;
 		/* align-items: center; */
@@ -190,6 +189,14 @@
 		height: 100vh;
 		background: var(--background-transparent);
 		/* z-index: 0; */
+	}
+	/* To disable blurring on slow mobile devices */
+	@media (hover: hover) and (pointer: fine) {
+		@supports (backdrop-filter: blur(5px)) {
+			.back {
+				backdrop-filter: blur(8px);
+			}
+		}
 	}
 
 	.toggle {

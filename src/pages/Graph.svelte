@@ -5,11 +5,13 @@
 	import { db, editing_id, zoom } from "../store";
 	import SelectedButtons from "../comps/SelectedButtons.svelte";
 	import "./ChunkPage.scss";
+	import { setContext } from "svelte";
+    import { seconds_to_short } from "../utils/utils";
 
 	// VVVVV This is Common to Views VVVVV
 	export let id = "";
 
-	const root = { id: "", title: "Root" };
+	const root = { id: "", props: { title: "Root" } };
 	let nodes = [],
 		parents = [root];
 	$: view$ = db.subscribeTo("views/graph" + (id ? "/" + id : ""), {
@@ -18,9 +20,9 @@
 
 	$: {
 		if ($view$) {
-			let [nodes_incoming, parents_incoming] = $view$;
-			nodes = nodes_incoming;
-			parents = [...parents_incoming, root];
+			let [id, children] = $view$;
+			parents = id ? [id, root] : [root];
+			nodes = children;
 		}
 	}
 	let selected = undefined;
@@ -45,6 +47,8 @@
 			navigate(id, { state: id });
 		}
 	};
+
+	setContext("view_type", "graph");
 	// ^^^^ This is Common to Views ^^^^
 
 	function offset_to_em(v) {
@@ -60,7 +64,7 @@
 		// m = m ;
 		x += Math.cos(radians) * m;
 		y += Math.sin(radians) * m;
-		return [x, y].map(v => v*zoom);
+		return [x, y].map((v) => v * zoom);
 	}
 	function parent_offset(nodes, index, [x, y] = [0, 0]) {
 		const size = nodes?.length || 0;
@@ -71,7 +75,7 @@
 		return [x, y];
 	}
 
-	function flatten_nodes(nodes,zoom, depth = 0, offset = [0, 0]) {
+	function flatten_nodes(nodes, zoom, depth = 0, offset = [0, 0]) {
 		if (!nodes?.length) return [];
 		return nodes.flatMap(([n, c], index) => {
 			let o = child_offset(nodes, zoom, index, offset).map((v) => v);
@@ -113,7 +117,7 @@
 					</svg>
 				</div>
 			{/if}
-			<div class="content">{node.title}</div>
+			<div class="content">{node.props?.title ??  "<" + seconds_to_short (node?.props_dynamic?.modified) + ">"}</div>
 		</div>
 	{/each}
 
