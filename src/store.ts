@@ -49,7 +49,7 @@ interface SocketMessage {
 	id?: number
 	resource?: string
 	type?: "Ok" | "Err"
-	value?: string  | null
+	value?: string | null
 }
 
 /**
@@ -64,6 +64,7 @@ type RSub = {
 } & Writable<any>
 function createDb() {
 	let subs: { [k: string]: RSub } = {}
+
 
 	let connection_new = () => {
 		//@ts-ignore
@@ -83,7 +84,7 @@ function createDb() {
 					socket.send(m)
 				})
 				messages = []
-			} else setTimeout(tick, 1000) // Keep waiting for next opportunity
+			}
 		}
 
 		let last_message_id = 1,
@@ -91,20 +92,20 @@ function createDb() {
 			callbacks = {} as {
 				[k: number]: [
 					((v: any) => any) | undefined,
-					((v?: string|null) => any) | undefined
+					((v?: string | null) => any) | undefined
 				]
 			}
 		function send(
 			m: SocketMessage,
 			onSuccess?: (v?: any, sub?: RSub) => any,
-			onError?: (v?: string|null, sub?: RSub) => any
+			onError?: (v?: string | null, sub?: RSub) => any
 		) {
 			if (onSuccess || onError) {
 				const id = last_message_id++
 				m.id = id
-				const sub = m.resource ? subs[m.resource] : undefined;
+				const sub = m.resource ? subs[m.resource] : undefined
 				callbacks[id] = [
-					(v) => onSuccess?.(v, sub), 
+					(v) => onSuccess?.(v, sub),
 					(v) => onError?.(v, sub)
 				]
 			}
@@ -113,14 +114,19 @@ function createDb() {
 				socket.send(m_str)
 			} else {
 				messages.push(m_str)
-				setTimeout(tick, 1000)
+				// setTimeout(tick, 1000)
 			}
 		}
 		function maybe_request_update(resource) {
 			let view = subs[resource]
 			if (view?.listeners) {
-				send({ resource})
+				send({ resource })
 			}
+		}
+		function maybe_request_views() {
+			Object.entries(subs).forEach(([k, v]) => {
+				if (k.startsWith("views")) maybe_request_update(k)
+			})
 		}
 		/**
 		 * React to an incoming websocket message
@@ -139,28 +145,31 @@ function createDb() {
 
 			// Default to setting the value on the subscription
 			// `resource + value`
-			if (m.resource && m.value) {
+			if (m.resource && value) {
 				// Update the subscription with the new value
 				subs[m.resource]?.set(value)
-				
+
 				// If it's a diff for a chunk
 				// update the chunk's subscription by applying it
 				// So views on everyone change when just sending them diffs
 				if (m.resource.endsWith("/diff")) {
-					let resource = m.resource.replace(/\/diff$/, "")
-					let sub = subs[resource]
+					const resource = m.resource.replace(/\/diff$/, "")
+					const sub = subs[resource]
+
 					if (resource.startsWith("chunks/")) {
-						sub?.update((v) => {
-							if (!v) {
-								// If v is null, another user gave us access
-								// but we can't apply diff because we don't have base value yet.
-								// Try requesting a value if anyone is listening.
-								maybe_request_update(resource)
-								return v
-							}
-							let r = applyDiff(v.value, value)[0]
-							return { ...v, value: r, no_edit: true }
-						})
+						if (resource.endsWith("/value")) {
+							sub?.update((v) => {
+								if (!v) {
+									// If v is null, another user gave us access
+									// but we can't apply diff because we don't have base value yet.
+									// Try requesting a value if anyone is listening.
+									// maybe_request_update(resource)
+									return v
+								}
+								let r = applyDiff(v, value)[0]
+								return r
+							})
+						}
 					}
 				}
 			}
@@ -168,23 +177,20 @@ function createDb() {
 			// `id + type + value`
 			if (m.id && m.type) {
 				switch (m.type) {
-					case 'Ok':callbacks[m.id]?.[0]?.(value);break;
-					case 'Err':callbacks[m.id]?.[1]?.(value);break;
+					case 'Ok': callbacks[m.id]?.[0]?.(value); break
+					case 'Err':
+						callbacks[m.id]?.[1]?.(value)
+						setStatus(Promise.reject(value))
+						break
 				}
 				delete callbacks[m.id]
 			}
-
 			// Resource changes
-			if (m.resource && !m.value) {
-				
-				if (m.resource == "chunks") {
-					maybe_request_update("chunks")
-					Object.entries(subs).forEach(([k, v]) => {
-						if (k.startsWith("views/well") || k.startsWith("views/graph")) maybe_request_update(k)
-					})
+			if (m.resource && !value) {
+				if (m.resource === "chunks") {
+					maybe_request_views()
 				}
 			}
-			
 		}
 		{
 			socket.onopen = tick
@@ -198,14 +204,14 @@ function createDb() {
 				send({ resource: v.resource })
 		)
 
-		return { send, socket }
+		return { send, socket, maybe_request_update, maybe_request_views }
 	}
-	let connection, timeout
+	let connection: ReturnType<typeof connection_new>, timeout
 	function attach() {
 		// Clear last timeout and close connection
 		if (connection?.socket) {
 			clearTimeout(timeout)
-			connection.socket.onclose = undefined
+			connection.socket.onclose = null
 			connection.socket.close()
 		}
 
@@ -232,7 +238,7 @@ function createDb() {
 			sub = { resource, listeners: 0, req_on }
 			let { subscribe, set, update } = writable(init, (s) => {
 				if (req_on === "undef" ? (get(sub) === init) : req_on === "sub") {
-					connection.send({ resource})
+					connection.send({ resource })
 				}
 				++sub.listeners
 				return () => {
@@ -265,20 +271,17 @@ function createDb() {
 	}
 
 	return {
-		// subscribe,
+		_subs: subs,
+		get_connection: () => connection,
 		subscribeTo,
 		actions: {
 			chunks: {
 				del: (v) => setStatus(fetchJson("/api/chunks", v, "DELETE")),
-				put: (id: string, value: string) => 
+				put: (id: string, value: string) =>
 					connection.send(
-						{ resource: `chunks/${id}`, value },
-						(v, sub) => {
-							sub?.update((v) => ({ ...v, value, no_edit: true }))
-						},
-						(v, sub) => {
-							sub?.update((v) => ({ ...v, no_edit: false }))
-						}
+						{ resource: `chunks/${id}/value`, value },
+						(v, sub) => sub?.update(v => value),
+						(v, sub) => sub?.update(v => v)
 					),
 				new: (value?) =>
 					setStatus(
@@ -340,36 +343,58 @@ function createDb() {
 
 export const db = createDb()
 
-export const user = db.subscribeTo("user", {req_on:"undef"})
-export const editing_id = writable<string | undefined>(undefined)
-export const zoom = (() => {
-	const { subscribe, set, update } = writable<number>(Number(localStorage.getItem("zoom") ?? 1) || 1)
-	return {
-		subscribe,
-		set: (v) => {
-			set(v)
-			localStorage.setItem("zoom", v)
-		},
-	}
-})()
+export const user$ = db.subscribeTo("user", { req_on: "undef" })
+/**
+ * Variable used by UI to signal that the live editing component should show.
+ */
+// export const editing_id$ = (() => {
+// 	const { set, ...o } = writable<string | undefined>(undefined)
+// 	return {
+// 		// Reset active view (if any) when closing live editing
+// 		set: (v) => { if (!v) db.get_connection().maybe_request_views(); set(v) },
+// 		...o
+// 	}
+// })()
+// export const zoom$ = (() => {
+// 	const { subscribe, set, update } = writable<number>(Number(localStorage.getItem("zoom") ?? 1) || 1)
+// 	return {
+// 		subscribe,
+// 		set: (v) => {
+// 			set(v)
+// 			localStorage.setItem("zoom", v)
+// 		},
+// 	}
+// })()
+
 export const store = {
-	wants_preview: (() => {
-		const { subscribe, set, update } = writable(
-			localStorage.getItem("preview_show") === "true"
-		)
+	local_settings$: (() => {
+		const _default = {
+			wants_preview: false,
+			editing_id: undefined,
+			zoom: 1,
+		}
+		function get() {
+			try {
+				const settings = localStorage.getItem("settings")
+				return settings && JSON.parse(settings) || _default
+			} catch {
+				return _default
+			}
+		}
+		const { set, ...o } = writable(get())
 		return {
-			subscribe,
 			set: (v) => {
+				if (typeof v == 'object') localStorage.setItem("settings", JSON.stringify(v))
 				set(v)
-				localStorage.setItem("preview_show", v), update
 			},
+			...o
 		}
 	})(),
-	is_phone: (() => {
+	is_phone$: (() => {
 		const _is_phone = () => !window.matchMedia("(min-width:768px)").matches
 		const { subscribe, set } = writable(_is_phone())
 		addEventListener("resize", () => set(_is_phone()))
 		return { subscribe }
 	})(),
 }
-export const { wants_preview, is_phone } = store
+export const { local_settings$, is_phone$ } = store

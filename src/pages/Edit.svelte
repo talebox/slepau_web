@@ -1,13 +1,11 @@
 <script>
-	import { slide } from "svelte/transition";
+	import { fly, slide } from "svelte/transition";
 	import { debounce } from "../utils/timout";
 	import {
 		db,
-		editing_id,
-		wants_preview,
-		is_phone,
+		local_settings$,
+		is_phone$,
 		notifications,
-		setStatus,
 	} from "../store";
 	import { mdToHtml, valueTransform } from "../utils/formatting";
 	import {
@@ -16,33 +14,36 @@
 		str_insert,
 		str_remove,
 	} from "../utils/utils";
-	import { fetchE } from "../utils/network";
+	import ChunkDetails from "../comps/ChunkDetails.svelte";
 
 	export let id = undefined;
 	let editor, fileInput;
 
-	$: _id = id || $editing_id;
+	$: _id = id || $local_settings$.editing_id;
 
 	// Clear editor when opening new view
 	$: if (_id && editor) editor.value = "";
 
-	$: chunk$ = _id ? db.subscribeTo(`chunks/${_id}`) : undefined;
+	$: value$ = _id ? db.subscribeTo(`chunks/${_id}/value`) : undefined;
+	let value$;
+	$: value = value$ ? $value$ : undefined;
+	
+	// $: value =  value$ ? $value$ : undefined;
 	$: diff$ = _id
-		? db.subscribeTo(`chunks/${_id}/diff`, { req_on: false })
+		? db.subscribeTo(`chunks/${_id}/value/diff`, { req_on: false })
 		: undefined;
-	$: diff = $diff$;
-	$: chunk = $chunk$;
+	$: diff = diff$ ? $diff$ : undefined;
+	// $: console.log(value);
 
 	// Set editor value when chunk arrives
-	$: {
-		if (chunk?.value && editor) {
-			// Fill editor if it's empty, or if chunk has a negative no_edit field
-			// (used to indicate that it's an update to other UI components and not this one)
-			if (!chunk?.no_edit || !editor.value) {
-				editor.value = chunk.value;
-			}
+	$: if (value && editor) {
+		// Fill editor if it's empty, or if chunk has a negative no_edit field
+		// (used to indicate that it's an update to other UI components and not this one)
+		if (!editor.value) {
+			editor.value = value;
 		}
 	}
+
 	// Update editor value when diff arrives, usually an update from another user typing
 	$: if (diff && editor?.value) {
 		let s = [editor.selectionStart, editor.selectionEnd];
@@ -54,41 +55,44 @@
 	}
 
 	// Update preview if enabled
-	$: showing_preview = $wants_preview || !$is_phone;
+	$: showing_preview = $local_settings$.wants_preview || !$is_phone$;
 
 	// Triggers on chunk.value and showing_preview
 	let preview;
 	$: {
-		if (chunk?.value && (id || showing_preview)) {
-			let value = chunk.value;
-			value = valueTransform(value);
+		if (value && (id || showing_preview)) {
+			let v = valueTransform(value);
 
-			value = value.replace(REGEX_CHUNK, (m, id) =>
-				id ? `(/page/${id})` : `(/preview/${id})`
-			);
-			preview = mdToHtml(value);
+			v = v.replace(REGEX_CHUNK, (m, id) => `(/edit/${id})`);
+			preview = mdToHtml(v);
 		}
 	}
 
 	function close() {
 		if (id) {
 			window.history.back();
-		} else if ($editing_id) {
-			$editing_id = undefined;
+		} else if ($local_settings$.editing_id) {
+			$local_settings$.editing_id = undefined;
 		}
 	}
-	function share() {
+	function share_live() {
+		navigator.clipboard.writeText(
+			`${location.protocol}//${location.host}/preview/${_id}`
+		);
+		notifications.add("Link copied.");
+	}
+	function share_static() {
 		navigator.clipboard.writeText(
 			`${location.protocol}//${location.host}/page/${_id}`
 		);
 		notifications.add("Link copied.");
 	}
 	function copy_id() {
-		navigator.clipboard.writeText(chunk.id);
+		navigator.clipboard.writeText(_id);
 		notifications.add("Id copied.");
 	}
 	function update_value(value) {
-		debounce(() => db.actions.chunks.put(chunk.id, value), 500, chunk.id);
+		debounce(() => db.actions.chunks.put(_id, value), 500, _id);
 	}
 	function get_editor(e) {
 		let _editor = e ? e.target : editor;
@@ -103,7 +107,7 @@
 		_editor.selectionStart = selection[0];
 		_editor.selectionEnd = selection[1];
 	}
-	function editor_type(value) {
+	function editor_typeout(value) {
 		if (typeof value !== "string") return;
 		let [v, selection] = get_editor();
 
@@ -132,9 +136,9 @@
 			let [v, selection] = get_editor();
 			// If only 1 file selected, and there is a textarea selection, then replace with path, instead of markdown images :)
 			if (items.length === 1 && selection[1] > selection[0]) {
-				editor_type(`/api/media/${items[0].id}`);
+				editor_typeout(`/api/media/${items[0].id}`);
 			} else {
-				editor_type(
+				editor_typeout(
 					items
 						.map((item) =>
 							item.type === "Image"
@@ -237,13 +241,17 @@
 		}
 	}
 	function paste(e) {
-		let clip = e.clipboardData || window.clipboardData;
-		console.log(clip);
+		let clip = e.clipboardData || window.clipboardData; // DataTransfer
+		if (clip?.files?.length) {
+			
+			e.preventDefault();
+		}
 	}
+	let showing_details = false;
 </script>
 
-{#if id}
-	{#if chunk}
+<!-- id}
+	{#if value}
 		<div class="page">
 			{@html preview}
 		</div>
@@ -252,77 +260,104 @@
 		Check that the owner has at least allowed read access by public `share: public
 		read`
 	{/if}
-{:else if chunk}
+{:else if -->
+{#if  value}
 	<div class="container" style:display={!_id ? "none" : "initial"}>
-		{#if chunk}
-			<div class="edit">
-				<textarea
-					class="textarea"
-					spellcheck="false"
-					autocapitalize="off"
-					autocorrect="off"
-					on:keydown={keydown}
-					on:keypress={keypress}
-					on:paste={paste}
-					bind:this={editor}
-					on:input={(e) => {
-						// console.log(e)
-						update_value(e.target.value);
-					}}
-				/>
-				<div class="props">
+		<div class="edit">
+			<textarea
+				class="textarea"
+				spellcheck="false"
+				autocapitalize="off"
+				autocorrect="off"
+				on:keydown={keydown}
+				on:keypress={keypress}
+				on:paste={paste}
+				bind:this={editor}
+				on:input={(e) => {
+					update_value(e.target.value);
+				}}
+			/>
+			{#if $local_settings$?.showing_details}
+				<div class="details" >
+					<ChunkDetails id={_id} />
+				</div>
+			{/if}
+			<div class="side-actions">
+				<button
+					class="action icon"
+					title="Toggle Details"
+					on:click={() =>
+						($local_settings$.showing_details =
+							!$local_settings$.showing_details)}
+				>
+					<svg fill="currentColor" viewBox="0 0 16 16">
+						<path
+							d="M6.646 5.646a.5.5 0 1 1 .708.708L5.707 8l1.647 1.646a.5.5 0 0 1-.708.708l-2-2a.5.5 0 0 1 0-.708l2-2zm2.708 0a.5.5 0 1 0-.708.708L10.293 8 8.646 9.646a.5.5 0 0 0 .708.708l2-2a.5.5 0 0 0 0-.708l-2-2z"
+						/>
+						<path
+							d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"
+						/>
+					</svg>
 					
-				</div>
-				<div class="side-actions">
-					<input
-						bind:this={fileInput}
-						on:change={add_media}
-						type="file"
-						style="display:none;"
-						multiple
-					/>
-					<button class="action icon" on:click={() => fileInput?.click()}>
-						<svg fill="currentColor" viewBox="0 0 16 16">
-							<path
-								d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"
-							/>
-							<path
-								d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"
-							/>
-						</svg>
-					</button>
-					<button class="action icon" on:click={copy_id}>
-						<svg fill="currentColor" viewBox="0 0 16 16">
-							<path
-								d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"
-							/>
-							<path
-								d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"
-							/>
-						</svg>
-					</button>
+				</button>
+
+				<input
+					bind:this={fileInput}
+					on:change={add_media}
+					type="file"
+					style="display:none;"
+					multiple
+				/>
+				<button class="action icon" title="Upload" on:click={() => fileInput?.click()}>
+					<svg fill="currentColor" viewBox="0 0 16 16">
+						<path
+							d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"
+						/>
+						<path
+							d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"
+						/>
+					</svg>
+				</button>
+				<button class="action icon" title="Copy Id" on:click={copy_id}>
+					<svg fill="currentColor" viewBox="0 0 16 16">
+						<path
+							d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"
+						/>
+						<path
+							d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"
+						/>
+					</svg>
+				</button>
+			</div>
+		</div>
+
+		<div class="preview-c" class:showing_preview>
+			<div class="preview">
+				<div class="page">
+					{@html preview}
 				</div>
 			</div>
+			<div class="side-actions">
+				<button class="action share icon" title="Copy Live Page Link" on:click={share_live}>
+					<svg fill="currentColor" viewBox="0 0 16 16">
+						<path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+  <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+					</svg>
+					
+				</button>
+				<button class="action share icon" title="Copy Static Page Link" on:click={share_static}>
+					<svg fill="currentColor" viewBox="0 0 16 16">
+						<path fill-rule="evenodd" d="M14 4.5V11h-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5Zm-9.736 7.35v3.999h-.791v-1.714H1.79v1.714H1V11.85h.791v1.626h1.682V11.85h.79Zm2.251.662v3.337h-.794v-3.337H4.588v-.662h3.064v.662H6.515Zm2.176 3.337v-2.66h.038l.952 2.159h.516l.946-2.16h.038v2.661h.715V11.85h-.8l-1.14 2.596H9.93L8.79 11.85h-.805v3.999h.706Zm4.71-.674h1.696v.674H12.61V11.85h.79v3.325Z"/>
+					</svg>
+					
+				</button>
+				
+				
 
-			<div class="preview-c" class:showing_preview>
-				<div class="preview">
-					<div class="page">
-						{@html preview}
-					</div>
-				</div>
-				<div class="side-actions">
-					<button class="action share icon" on:click={share}>
-						<svg fill="currentColor" viewBox="0 0 16 16">
-							<path
-								d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"
-							/>
-						</svg>
-					</button>
-				</div>
 			</div>
-		{/if}
+		</div>
 
-		<button class="close icon" on:click={close}>
+		<button class="close icon" title="Close" on:click={close}>
 			<svg fill="currentColor" viewBox="0 0 16 16">
 				<path
 					d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"
@@ -330,11 +365,12 @@
 			</svg>
 		</button>
 
-		{#if $is_phone}
+		{#if $is_phone$}
 			<button
 				class="preview-btn icon"
 				in:slide
-				on:click={() => ($wants_preview = !$wants_preview)}
+				on:click={() =>
+					($local_settings$.wants_preview = !$local_settings$.wants_preview)}
 			>
 				{#if showing_preview}
 					<svg fill="currentColor" viewBox="0 0 16 16">
@@ -363,15 +399,10 @@
 <!-- <div></div> -->
 <style>
 	.container {
-		/* background: var(--background-body); */
 		position: fixed;
-		/* position: absolute; */
 		top: -2px;
 		left: -2px;
 		height: calc(100% + 4px);
-		/* height: calc(100dvh + 4px); */
-		/* height: -webkit-fill-available; */
-		/* height: calc(100% + 4px); */
 		width: 100%;
 		z-index: 2;
 		overflow-y: visible;
@@ -453,7 +484,17 @@
 			}
 		}
 	}
-	.props {
-		
+	.details {
+		/* pointer-events: none; */
+		position: absolute;
+		top: 92px;
+		right: 0;
+		white-space: pre-wrap;
+		width: 12em;
+		border-radius: 12px 0 0 12px;
+		background: var(--background-transparent);
+		backdrop-filter: blur(2px);
+		border: 1px solid #888;
+		border-right: none;
 	}
 </style>

@@ -1,29 +1,43 @@
 <script>
-	import { getContext } from "svelte";
-    import { chunkValueToHtml } from "../utils/formatting";
+	import { getContext, onDestroy } from "svelte";
+	import { chunkValueToHtml } from "../utils/formatting";
 	import { seconds_to_short } from "../utils/utils";
 	export let chunk;
 	export let selected = false,
 		selectable = false;
-
 	const view_type = getContext("view_type");
-	$: modified_s = seconds_to_short(
+	$: modified =
 		(view_type === "well" ? chunk?.props_dynamic?.modified : undefined) ??
-			chunk?.modified
-	);
+		chunk?.modified;
+	
+	let mstring;
+	let clear;
+	function update(modified) {
+		clearTimeout(clear);
+		let m_d = seconds_to_short(modified);
+		if (m_d) {
+			const [v, delay_ms] = m_d;
+			mstring = v;
+			if (process.env.NODE_ENV === "development") {
+				console.log('Delaying ', delay_ms)
+			}
+			clear = setTimeout(() => update(modified), delay_ms);
+		}
+	}
+	$: update(modified);
+	onDestroy(()=>clearTimeout(clear))
 </script>
 
 <div
 	class={"chunk"}
-	style={`
-	border-radius: ${chunk?.children ? "2em" : ".7em"};`}
+	style={`border-radius: ${chunk?.children ? "2em" : ".7em"};`}
 	class:selected
 	class:selectable
 >
 	{#if chunk?.value}
 		{@html chunkValueToHtml(chunk.value)}
 	{/if}
-	
+
 	<slot />
 
 	<div class="top-tags">
@@ -56,7 +70,7 @@
 	<div class="bottom-tags">
 		<slot name="bottom-tags">
 			<div class="tag icon">
-				{modified_s}
+				{mstring}
 			</div>
 		</slot>
 	</div>
@@ -96,6 +110,7 @@
 		overflow: hidden;
 		background: #8884;
 	}
+
 	@supports (backdrop-filter: blur(12px)) {
 		.top-tags,
 		.bottom-tags {
@@ -112,12 +127,18 @@
 		right: 0;
 		bottom: 0;
 		border-top-left-radius: 0.7em;
-		opacity: 0;
+		opacity: 1;
 		transition: opacity 200ms;
 	}
-	.chunk:hover .bottom-tags {
-		opacity: 1;
+	@media (hover: hover) and (pointer: fine) {
+		.bottom-tags {
+			opacity: 0;
+		}
+		.chunk:hover .bottom-tags {
+			opacity: 1;
+		}
 	}
+
 	.tag {
 		display: flex;
 		justify-content: center;

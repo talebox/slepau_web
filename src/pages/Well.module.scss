@@ -10,14 +10,29 @@
 	height: 100%;
 }
 
+.left {
+	background: get-color-material(red);
+	opacity: 0;
+}
+
 .right {
+	background: get-color-material(blue);
+
 	left: 50%;
+	opacity: 0.05;
 }
 
-.left:hover {
-	background: color.change(get-color-material(red), $alpha: .1);
-}
 
-.right:hover {
-	background: color.change(get-color-material(blue), $alpha: .1);
+
+@media (hover: hover) and (pointer: fine) {
+
+	.left,
+	.right {
+		opacity: 0;
+	}
+
+	.left:hover,
+	.right:hover {
+		opacity: 0.1;
+	}
 }

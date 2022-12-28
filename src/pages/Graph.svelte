@@ -2,7 +2,7 @@
 	import { slide } from "svelte/transition";
 	import { flip } from "svelte/animate";
 	import { navigate } from "@deps/routing";
-	import { db, editing_id, zoom } from "../store";
+	import { db, local_settings$ } from "../store";
 	import SelectedButtons from "../comps/SelectedButtons.svelte";
 	import "./ChunkPage.scss";
 	import { setContext } from "svelte";
@@ -84,7 +84,7 @@
 	}
 	// turn
 	$: nodes_flat = [
-		flatten_nodes(nodes, $zoom),
+		flatten_nodes(nodes, $local_settings$.zoom),
 		parents.map((p, index) => ({ ...p, o: parent_offset(parents, index) })),
 	].flat();
 	// $: console.log(nodes_flat);
@@ -107,7 +107,7 @@
 				<div
 					class="edit"
 					on:click|stopPropagation={() => {
-						$editing_id = node.id;
+						$local_settings$.editing_id = node.id;
 					}}
 				>
 					<svg fill="currentColor" viewBox="0 0 16 16" class="icon">
@@ -117,7 +117,7 @@
 					</svg>
 				</div>
 			{/if}
-			<div class="content">{node.props?.title ??  "<" + seconds_to_short (node?.props_dynamic?.modified) + ">"}</div>
+			<div class="content">{node.props?.title ??  "<" + seconds_to_short (node?.props_dynamic?.modified)?.[0] + ">"}</div>
 		</div>
 	{/each}
 
@@ -125,7 +125,7 @@
 		<button
 			class="action icon"
 			on:click={() => {
-				$zoom += 0.1;
+				$local_settings$.zoom += 0.1;
 			}}
 		>
 			<svg fill="currentColor" viewBox="0 0 16 16">
@@ -137,7 +137,7 @@
 		<button
 			class="action"
 			on:click={() => {
-				$zoom -= 0.1;
+				$local_settings$.zoom -= 0.1;
 			}}
 		>
 			<svg fill="currentColor" viewBox="0 0 16 16">

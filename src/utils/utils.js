@@ -78,27 +78,31 @@ export function applyDiff(left, diff, s = []) {
 export const REGEX_TITLE = new RegExp(process.env.REGEX_TITLE);
 export const REGEX_ACCESS = new RegExp(process.env.REGEX_ACCESS, "im");
 export const REGEX_MEDIA = new RegExp(`\\(media\\/(${process.env.REGEX_PROQUINT})\\)`, 'g');
-export const REGEX_CHUNK = new RegExp(`\\(chunk\\/(${process.env.REGEX_PROQUINT})\\)`, 'g');
+export const REGEX_CHUNK = new RegExp(`\\(chunks?\\/(${process.env.REGEX_PROQUINT})\\)`, 'g');
 
 /**
  * Turns seconds since epoch to pretty time elapsed since then
  * Something like `1s`, `1m`, etc...
  * @param {*} v 
- * @returns 
+ * @returns [pretty time, millis until a change]
  */
 export function seconds_to_short(v) {
-
 	const secs = Number(v);
 	if (!secs) return;
-	const now = Date.now() / 1000;
-	let diff = now - secs;
-	if (diff < 0) return;
-	if (diff < 1) diff = 1;
-	let units = Object.entries({ s: 1, min: 60, h: 60 * 60, d: 60 * 60 * 24, m: 60 * 60 * 24 * 30.4, y: 60 * 60 * 24 * 7 * 52 }).reverse();
-	for (const [unit, value] of units) {
+	let diff = (Date.now() / 1000) - secs;
+	if (diff < 60) diff = 60; 
+	const units = { s: 1, m: 60, h: 60 * 60, d: 60 * 60 * 24, M: 60 * 60 * 24 * 30.4, Y: 60 * 60 * 24 * 7 * 52 };
+	for (const [unit, value] of Object.entries(units).reverse()) {
 		if (diff >= value) {
 			const v = diff / value;
-			return (["m", "y"].includes(unit) && v < 10 ? (v).toFixed(1) : Math.floor(v).toFixed(0)) + " " + unit
+			const exponent = ["M", "Y"].includes(unit) && 
+			v < 10 ? 1 : 0;
+			const accuracy = Math.pow(0.1, exponent)
+			let secs_until = (value * accuracy) - (diff % (value * accuracy));
+			if (secs_until > units.d) { // To prevent overflow of the delay/interval
+				secs_until = units.d;
+			}
+			return [(v).toFixed(exponent) + " " + unit, secs_until * 1000]
 		}
 	}
 }

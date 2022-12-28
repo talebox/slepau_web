@@ -2,12 +2,13 @@
 	import { slide, fade } from "svelte/transition";
 	import { flip } from "svelte/animate";
 	import { navigate } from "@deps/routing";
-	import { editing_id, db } from "../store";
+	import { db, local_settings$ } from "../store";
 	import SelectedButtons from "../comps/SelectedButtons.svelte";
 	import * as s from "./Well.module.scss";
 	import Chunks from "../comps/Chunks.svelte";
 	import { setContext } from "svelte";
 	import { seconds_to_short } from "../utils/utils";
+	import { Link } from "../../deps/routing";
 
 	// VVVVV This is Common to Views VVVVV
 	export let id = "";
@@ -43,9 +44,6 @@
 				selected.push(node.id);
 				selected = selected;
 			}
-		} else {
-			const id = node.id === "" ? "./" : node.id;
-			navigate(id, { state: id });
 		}
 	};
 
@@ -74,12 +72,11 @@
 			style:border-right={i === parents.length - 1
 				? "initial"
 				: "1px solid #8888"}
-			on:click={() => {
-				on_click(parent);
-			}}
 		>
-			{parent.props?.title ??
-				"<" + seconds_to_short(parent?.props_dynamic?.modified) + ">"}
+			<Link to={"well/" + parent.id}>
+				{parent.props?.title ??
+					"<" + seconds_to_short(parent?.props_dynamic?.modified) + ">"}
+			</Link>
 		</div>
 	{/each}
 </div>
@@ -91,10 +88,10 @@
 				<div
 					class={s.left}
 					on:click|stopPropagation={() => {
-						$editing_id = chunk.id;
+						$local_settings$.editing_id = chunk.id;
 					}}
 				/>
-				<div class={s.right} />
+				<Link class={s.right} to={"well/" + chunk.id} />
 			{/if}
 		</div>
 	</Chunks>
@@ -118,6 +115,7 @@
 		top: 0;
 		height: 100%;
 		border-radius: 0;
+		background: #8882;
 	}
 	.breadcrumb {
 		position: fixed;

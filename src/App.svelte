@@ -19,6 +19,7 @@
 		<Route path="app/*" component={Editor} />
 		<Route path="settings/*" component={Settings} />
 		<Route path="test/*" component={Test} />
+		<Route path="edit/:id" component={Edit} />
 		<!-- Public Previews -->
 		<Route path="preview/:id" component={Edit} />
 		<Route path="chunk/:id" component={Edit} />
