@@ -75,7 +75,7 @@
 		>
 			<Link to={"well/" + parent.id}>
 				{parent.props?.title ??
-					"<" + seconds_to_short(parent?.props_dynamic?.modified) + ">"}
+					"<" + seconds_to_short(parent?.props_dynamic?.modified)?.[0] + ">"}
 			</Link>
 		</div>
 	{/each}

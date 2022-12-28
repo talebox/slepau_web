@@ -9,7 +9,7 @@
 	$: modified =
 		(view_type === "well" ? chunk?.props_dynamic?.modified : undefined) ??
 		chunk?.modified;
-	
+
 	let mstring;
 	let clear;
 	function update(modified) {
@@ -19,13 +19,13 @@
 			const [v, delay_ms] = m_d;
 			mstring = v;
 			if (process.env.NODE_ENV === "development") {
-				console.log('Delaying ', delay_ms)
+				console.log("Delaying ", delay_ms);
 			}
 			clear = setTimeout(() => update(modified), delay_ms);
 		}
 	}
 	$: update(modified);
-	onDestroy(()=>clearTimeout(clear))
+	onDestroy(() => clearTimeout(clear));
 </script>
 
 <div
@@ -84,7 +84,7 @@
 		white-space: nowrap;
 
 		transition: box-shadow 0.1s;
-		outline: var(--border) solid 1px;
+		outline: var(--text-muted) solid 1px;
 
 		padding: 1em;
 
@@ -108,14 +108,15 @@
 		position: absolute;
 
 		overflow: hidden;
-		background: #8884;
+		background: var(--background);
 	}
-
-	@supports (backdrop-filter: blur(12px)) {
-		.top-tags,
-		.bottom-tags {
-			backdrop-filter: blur(12px);
-			background: #8882;
+	@media (hover: hover) and (pointer: fine) {
+		@supports (backdrop-filter: blur(12px)) {
+			.top-tags,
+			.bottom-tags {
+				backdrop-filter: blur(12px);
+				background: var(--background-transparent);
+			}
 		}
 	}
 	.top-tags {

@@ -9,6 +9,7 @@
 	import Graph from "./Graph.svelte";
 	import { user$ } from "../store";
 	import Search from "../comps/Search.svelte";
+	import { get } from "svelte/store";
 
 	let user = get(user$);
 	$: {

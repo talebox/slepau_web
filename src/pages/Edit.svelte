@@ -368,7 +368,6 @@
 		{#if $is_phone$}
 			<button
 				class="preview-btn icon"
-				in:slide
 				on:click={() =>
 					($local_settings$.wants_preview = !$local_settings$.wants_preview)}
 			>
