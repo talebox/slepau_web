@@ -1,6 +1,12 @@
 <script>
+    import { get } from "svelte/store";
 	import { fade, slide } from "svelte/transition";
-	import { user } from "../store";
+	import { user$ } from "../store";
+
+	let user = get(user$);
+	$: {
+		user = $user$;
+	}
 </script>
 
 <div class="container">
@@ -9,21 +15,15 @@
 		class="photo"
 		in:fade
 		alt="photo"
-		src={$user?.photo ? `/api/media/${$user?.photo}` : ""}
+		src={user?.photo ? `/api/media/${user?.photo}` : ""}
 	/>
 	<!-- <div > -->
 	<table class="content">
-		<tr><td>User: </td><td in:slide>{$user?.user ?? "<user>"}</td></tr>
+		<tr><td>User: </td><td in:slide>{user?.user ?? "<user>"}</td></tr>
+		<tr><td>Visible:</td><td in:slide>{user?.notes_visible ?? "<x>"}</td></tr>
+		<tr><td>Owned: </td><td in:slide>{user?.notes_owned ?? "<x>"}</td></tr>
 		<tr
-			><td>Visible:</td><td in:slide>{$user?.notes_visible ?? "<x>"}</td
-			></tr
-		>
-		<tr
-			><td>Owned: </td><td in:slide>{$user?.notes_owned ?? "<x>"}</td></tr
-		>
-		<tr
-			><td>Public: </td><td in:slide
-				>{$user?.notes_owned_public ?? "<x>"}</td
+			><td>Public: </td><td in:slide>{user?.notes_owned_public ?? "<x>"}</td
 			></tr
 		>
 	</table>

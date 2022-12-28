@@ -4,7 +4,7 @@
 import App from "./App.svelte"
 
 if (location.protocol === 'https:' && navigator.serviceWorker) navigator.serviceWorker.register(
-	new URL('utils/service_worker.js', import.meta.url)
+	new URL('utils/service_worker.js', import.meta.url), {scope:'/app'}
 );
 navigator.serviceWorker?.getRegistrations().then(reg => console.log("Registrations:", reg))
 

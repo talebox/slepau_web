@@ -5,8 +5,9 @@
 		prefers_light,
 	} from "~/src/styles/theme/theme.js";
 	import { navigate } from "@deps/routing";
-	import { db, user } from "../store";
+	import { db, user$ } from "../store";
 	import User from "./User.svelte";
+	import { get } from "svelte/store";
 
 	let is_light = theme_get();
 
@@ -24,9 +25,14 @@
 	};
 
 	let open = false;
+
+	let user = get(user$);
+	$: {
+		user = $user$;
+	}
 </script>
 
-<button class="toggle icon fixed" on:click={() => (open = !open)}>
+<button class="toggle icon fixed" title="Toggle Drawer" on:click={() => (open = !open)}>
 	<svg fill="currentColor" viewBox="0 0 16 16">
 		<path
 			fill-rule="evenodd"
@@ -42,7 +48,7 @@
 			<User />
 		</div>
 
-		{#if $user?.user !== "public"}
+		{#if user?.user !== "public"}
 			<button class="menu" on:click={() => navigate("/settings/")}>
 				<svg fill="currentColor" viewBox="0 0 16 16" class="icon">
 					<path
@@ -81,8 +87,7 @@
 		{/if}
 
 		<div style="flex-grow: 1;" />
-		<button class="menu" on:click={() => navigate("/app/notes/")}>
-			<!-- <span class="icon">📝</span>  -->
+		<!-- <button class="menu" on:click={() => navigate("/app/notes/")}>
 			<svg fill="currentColor" viewBox="0 0 16 16" class="icon">
 				<path
 					d="M5 10.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"
@@ -95,7 +100,7 @@
 				/>
 			</svg>
 			Notes</button
-		>
+		> -->
 		<button class="menu" on:click={() => navigate("/app/well/")}>
 			<!-- <span class="icon">🕳️</span>  -->
 			<svg fill="currentColor" viewBox="0 0 16 16" class="icon">
@@ -176,7 +181,7 @@
 		height: 100%;
 		/* padding-bottom: calc(100lvh -); */
 
-		background: var(--background-transparent);
+		background: var(--background);
 
 		justify-content: center;
 		/* align-items: center; */
@@ -193,6 +198,9 @@
 	/* To disable blurring on slow mobile devices */
 	@media (hover: hover) and (pointer: fine) {
 		@supports (backdrop-filter: blur(5px)) {
+			.container {
+				background: var(--background-transparent);
+			}
 			.back {
 				backdrop-filter: blur(8px);
 			}
@@ -204,7 +212,7 @@
 
 		bottom: 0;
 		left: 0;
-		border-radius: none;
+		border-radius: 0;
 		border-top-right-radius: 20px;
 	}
 </style>

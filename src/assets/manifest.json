@@ -15,7 +15,7 @@
       "purpose": "maskable"
     }
   ],
-  "start_url": "/app",
+  "start_url": "/app/well",
   "background_color": "#161f27",
   "display": "fullscreen",
   "scope": "/",
