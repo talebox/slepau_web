@@ -61,6 +61,15 @@ a.button {
 		--cols: 5;
 	}
 }
+.page{
+	max-width: 800px;
+	margin: auto;
+}
+// button{
+// 	display: flex;
+// 	flex-wrap: wrap;
+// 	align-items: center;
+// }
 
 .f,
 .fr,
@@ -85,9 +94,27 @@ a.button {
 .fcw {
 	flex-flow: column wrap;
 }
+.fac {
+	align-items: center;
+}
+.fjc {
+	justify-content: center;
+}
 
 .tac {
 	text-align: center;
+}
+
+.tip {
+	outline: 3px dashed #8888;
+	border-radius: 12px;
+	padding: 1em;
+	margin-block: 1em;
+	margin-inline: auto;
+	width: fit-content;
+	text-align: center;
+	align-items: center;
+	gap: 1em;
 }
 
 .app-info{

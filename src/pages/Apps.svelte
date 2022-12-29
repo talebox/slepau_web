@@ -7,10 +7,11 @@
 	import Status from "../comps/Status.svelte";
 	import { get_cookie } from "../utils/cookie";
 	import Graph from "./Graph.svelte";
-	import { user$ } from "../store";
+	import { db } from "../store";
 	import Search from "../comps/Search.svelte";
 	import { get } from "svelte/store";
 
+	let user$ = db.subscribeTo.user();
 	let user = get(user$);
 	$: {
 		user = $user$;

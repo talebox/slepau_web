@@ -23,9 +23,9 @@
 			mstring = v_d;
 			cstring = v_c;
 			const delay_ms = Math.min(delay_ms_d, delay_ms_c);
-			if (process.env.NODE_ENV === "development") {
-				console.log("Delaying ", delay_ms);
-			}
+			// if (process.env.NODE_ENV === "development") {
+			// 	console.log("Delaying ", delay_ms);
+			// }
 			clear = setTimeout(() => update(modified, created), delay_ms);
 		}
 	}

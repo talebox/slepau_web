@@ -18,9 +18,9 @@
 		if (m_d) {
 			const [v, delay_ms] = m_d;
 			mstring = v;
-			if (process.env.NODE_ENV === "development") {
-				console.log("Delaying ", delay_ms);
-			}
+			// if (process.env.NODE_ENV === "development") {
+			// 	console.log("Delaying ", delay_ms);
+			// }
 			clear = setTimeout(() => update(modified), delay_ms);
 		}
 	}
@@ -84,7 +84,7 @@
 		white-space: nowrap;
 
 		transition: box-shadow 0.1s;
-		outline: var(--text-muted) solid 1px;
+		outline: var(--border) solid 1px;
 
 		padding: 1em;
 
@@ -115,7 +115,7 @@
 			.top-tags,
 			.bottom-tags {
 				backdrop-filter: blur(12px);
-				background: var(--background-transparent);
+				background: var(--background-transparent-2);
 			}
 		}
 	}
@@ -131,14 +131,14 @@
 		opacity: 1;
 		transition: opacity 200ms;
 	}
-	@media (hover: hover) and (pointer: fine) {
+	/* @media (hover: hover) and (pointer: fine) {
 		.bottom-tags {
 			opacity: 0;
 		}
 		.chunk:hover .bottom-tags {
 			opacity: 1;
 		}
-	}
+	} */
 
 	.tag {
 		display: flex;

@@ -56,9 +56,9 @@
 
 	let selected = undefined;
 
-	const on_delete = () =>
+	const on_remove = () =>
 		db.actions.chunks.del(selected).then(() => (selected = undefined));
-	const on_new = () => {
+	const on_add = () => {
 		db.actions.chunks.new();
 	};
 	const on_click = (node) => {
@@ -88,7 +88,7 @@
 	</div>
 </Chunks>
 
-<SelectedButtons bind:selected {on_new} {on_delete} />
+<SelectedButtons bind:selected {on_add} {on_remove} />
 
 <slot />
 

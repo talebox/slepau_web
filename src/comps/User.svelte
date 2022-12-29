@@ -1,8 +1,9 @@
 <script>
     import { get } from "svelte/store";
 	import { fade, slide } from "svelte/transition";
-	import { user$ } from "../store";
+	import { db } from "../store";
 
+	let user$ = db.subscribeTo.user();
 	let user = get(user$);
 	$: {
 		user = $user$;

@@ -1,9 +1,8 @@
-import { subscribe } from "svelte/internal"
 import { navigate } from '../deps/routing'
-import { get, readable, Writable, writable } from "svelte/store"
+import { get, Writable, writable } from "svelte/store"
 import { delete_cookie } from "./utils/cookie"
 import { fetchE, fetchJson } from "./utils/network"
-import { debounceGenerator, debounce } from "./utils/timout"
+import { debounce } from "./utils/timout"
 import { applyDiff } from "./utils/utils"
 
 export const notifications = (() => {
@@ -193,8 +192,8 @@ function createDb() {
 			}
 		}
 		{
-			socket.onopen = tick
-			socket.onmessage = on_message
+			socket.addEventListener("open", tick)
+			socket.addEventListener('message', on_message)
 		}
 
 		// Request all subscriptions that have listeners, and aren't diffs
@@ -206,26 +205,35 @@ function createDb() {
 
 		return { send, socket, maybe_request_update, maybe_request_views }
 	}
-	let connection: ReturnType<typeof connection_new>, timeout
+	let connection: ReturnType<typeof connection_new>, timeout, timeout_ms = 10000
+
+	function attach_onopen() {
+		timeout = setTimeout(() => {
+			//@ts-ignore
+			if (process.env.NODE_ENV === "development") {
+				console.log(`Connection closed, retrying in '${(timeout_ms / 1000).toFixed(0)} sec'`)
+			}
+			attach()
+		}, timeout_ms)
+		timeout_ms = timeout_ms * 1.3
+	}
+	function attach_onclose() {
+		timeout_ms = 10000
+	}
 	function attach() {
+
 		// Clear last timeout and close connection
 		if (connection?.socket) {
 			clearTimeout(timeout)
-			connection.socket.onclose = null
+			connection.socket.removeEventListener("close", attach_onopen)
 			connection.socket.close()
 		}
 
 		// Make new connection
 		connection = connection_new()
-		connection.socket.onclose = () => {
-			timeout = setTimeout(() => {
-				//@ts-ignore
-				if (process.env.NODE_ENV === "development") {
-					console.log("Connection closed, retrying in 10secs")
-				}
-				attach()
-			}, 10000)
-		}
+		connection.socket.addEventListener('open', attach_onclose)
+		connection.socket.addEventListener('close', attach_onopen)
+
 	}
 	attach()
 
@@ -263,11 +271,32 @@ function createDb() {
 			subscribe: sub.subscribe,
 		}
 	}
+	subscribeTo.user = () => {
+		return subscribeTo("user", { req_on: "undef" })
+	}
 
 	function mediaPost(v) {
 		return fetchE("/api/media", { method: "POST", body: v }).then((v) =>
 			v.json()
 		)
+	}
+	const logout = () => {
+		delete_cookie("auth", { path: "/", domain: undefined, samesite: "Strict" })
+		navigate("/login")
+
+
+		Object.values(subs).forEach(({ reset }) => reset?.())
+		subs = {}
+		// Reattach socket, so socket with new auth cookie is created
+		// Reset subscriptions, so attach doesn't try to fetch things which this user can't see;
+		// attach()
+		// for (const prop of Object.getOwnPropertyNames(subs)) {
+		// 	delete subs[prop];
+		// }
+
+
+		// Notify user of action
+		setStatus(Promise.resolve(), { on_resolve: "Logged out!" })
 	}
 
 	return {
@@ -304,20 +333,12 @@ function createDb() {
 					// // Query user so
 					// fetchE("/api/user").then((v) => v.json()).then((v) => subs['user']?.set(v))
 				}),
-			logout: () => {
-				//@ts-ignore
-				delete_cookie("auth", { path: "/", samesite: "Strict" })
-				navigate("/login")
-
-				setTimeout(() => {
-					Object.values(subs).forEach(({ reset }) => reset())
-					// Reattach socket, so socket with new auth cookie is created
-					subs = {} // Reset subscriptions, so attach doesn't try to fetch things which this user can't see;
-					attach()
-
-					// Notify user of action
-					setStatus(Promise.resolve(), { on_resolve: "Logged out!" })
-				}, 30)
+			logout,
+			logout_all: () => {
+				fetchE("/api/logout_all").then(() => {
+					notifications.add("Logged out of all devices!")
+					logout()
+				})
 			},
 			media: {
 				post: (v) => setStatus(
@@ -342,29 +363,6 @@ function createDb() {
 }
 
 export const db = createDb()
-
-export const user$ = db.subscribeTo("user", { req_on: "undef" })
-/**
- * Variable used by UI to signal that the live editing component should show.
- */
-// export const editing_id$ = (() => {
-// 	const { set, ...o } = writable<string | undefined>(undefined)
-// 	return {
-// 		// Reset active view (if any) when closing live editing
-// 		set: (v) => { if (!v) db.get_connection().maybe_request_views(); set(v) },
-// 		...o
-// 	}
-// })()
-// export const zoom$ = (() => {
-// 	const { subscribe, set, update } = writable<number>(Number(localStorage.getItem("zoom") ?? 1) || 1)
-// 	return {
-// 		subscribe,
-// 		set: (v) => {
-// 			set(v)
-// 			localStorage.setItem("zoom", v)
-// 		},
-// 	}
-// })()
 
 export const store = {
 	local_settings$: (() => {

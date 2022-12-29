@@ -4,7 +4,7 @@
 	import { chunkValueToHtml } from "../utils/formatting";
 	import { fetchE } from "../utils/network";
 
-	let preview = fetchE("/api/chunks/gilib_digis")
+	let preview = fetchE("/api/chunks/")
 		.then((v) => v.json())
 		.then((v) => chunkValueToHtml(v.value));
 </script>

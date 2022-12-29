@@ -5,7 +5,7 @@
 		prefers_light,
 	} from "~/src/styles/theme/theme.js";
 	import { navigate } from "@deps/routing";
-	import { db, user$ } from "../store";
+	import { db} from "../store";
 	import User from "./User.svelte";
 	import { get } from "svelte/store";
 
@@ -25,7 +25,8 @@
 	};
 
 	let open = false;
-
+	
+	let user$ = db.subscribeTo.user();
 	let user = get(user$);
 	$: {
 		user = $user$;

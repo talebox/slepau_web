@@ -1,6 +1,6 @@
 {
 	"name": "app-parcel",
-	"version": "0.5.0",
+	"version": "0.6.0",
 	"source": "src/index.html",
 	"browserslist": "> 0.5%, last 2 versions, not dead",
 	"scripts": {
@@ -38,6 +38,10 @@
 		},
 		"page": {
 			"source": "src/page.html",
+			"distDir": "./dist/web"
+		},
+		"preview": {
+			"source": "src/preview.html",
 			"distDir": "./dist/web"
 		},
 		"format": {

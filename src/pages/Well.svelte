@@ -14,7 +14,7 @@
 	export let id = "";
 
 	const root = { id: "", props: { title: "Root" } };
-	let nodes = [],
+	let nodes = undefined,
 		parents = [root];
 	$: view$ = db.subscribeTo("views/well" + (id ? "/" + id : ""), {
 		init: null,
@@ -29,9 +29,9 @@
 	}
 	let selected = undefined;
 
-	const on_delete = () =>
+	const on_remove = () =>
 		db.actions.chunks.del(selected).then(() => (selected = undefined));
-	const on_new = () => {
+	const on_add = () => {
 		db.actions.chunks.new(`# New Chunk${id ? ` -> ${id}` : ""}\n\n`);
 	};
 	const on_click = (node) => {
@@ -82,26 +82,46 @@
 </div>
 
 <div class="container">
-	<Chunks chunks={nodes.map((v) => v[0])} {selected} let:chunk>
-		<div class="clickable" on:click={() => on_click(chunk)}>
-			{#if !selected}
-				<div
-					class={s.left}
-					on:click|stopPropagation={() => {
-						$local_settings$.editing_id = chunk.id;
-					}}
-				/>
-				<Link class={s.right} to={"well/" + chunk.id} />
-			{/if}
-		</div>
-	</Chunks>
+	{#if nodes}
+		{#if nodes.length}
+			<Chunks chunks={nodes.map((v) => v[0])} {selected} let:chunk>
+				<div class="clickable" on:click={() => on_click(chunk)}>
+					{#if !selected}
+						<div
+							class={s.left}
+							on:click|stopPropagation={() => {
+								$local_settings$.editing_id = chunk.id;
+							}}
+						/>
+						<Link class={s.right} to={"well/" + chunk.id} />
+					{/if}
+				</div>
+			</Chunks>
+		{:else}
+			<div class="tip fc">
+				<span>
+				No notes here <br/>😲
+			</span>
+				<button on:click={on_add} class="f fac"
+					>Add one
+					<svg fill="currentColor" viewBox="0 0 16 16" style="width: 1.5em;height:1.5em; margin-left: .4em">
+						<path
+							fill-rule="evenodd"
+							d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"
+						/>
+					</svg>
+				</button>
+			</div>
+		{/if}
+	{/if}
 </div>
 
-<SelectedButtons bind:selected {on_new} {on_delete} />
+<SelectedButtons bind:selected {on_add} {on_remove} />
 
 <slot />
 
 <style>
+	
 	.clickable {
 		position: absolute;
 		width: 100%;
@@ -115,7 +135,7 @@
 		top: 0;
 		height: 100%;
 		border-radius: 0;
-		background: #8882;
+		background: var(--background-transparent-2);
 	}
 	.breadcrumb {
 		position: fixed;
@@ -138,6 +158,7 @@
 		@supports (backdrop-filter: blur(5px)) {
 			.breadcrumb {
 				backdrop-filter: blur(8px);
+				background: var(--background-transparent-2);
 			}
 		}
 	}

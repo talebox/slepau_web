@@ -6,7 +6,8 @@ export const renderer_html = new HtmlRenderer();
 
 export function mdToHtml(md) {
 	if (!md) return null;
-	return renderer_html.render(parser.parse(md))
+	const parsed = parser.parse(md);
+	return renderer_html.render(parsed)
 }
 export function valueTransform(value) {
 	value = value.replace(REGEX_TITLE, (m, p1, p2) => `# ${p1} `);

@@ -1,12 +1,7 @@
 <script>
 	import { fly, slide } from "svelte/transition";
 	import { debounce } from "../utils/timout";
-	import {
-		db,
-		local_settings$,
-		is_phone$,
-		notifications,
-	} from "../store";
+	import { db, local_settings$, is_phone$, notifications } from "../store";
 	import { mdToHtml, valueTransform } from "../utils/formatting";
 	import {
 		applyDiff,
@@ -24,10 +19,12 @@
 	// Clear editor when opening new view
 	$: if (_id && editor) editor.value = "";
 
-	$: value$ = _id ? db.subscribeTo(`chunks/${_id}/value`) : undefined;
+	$: value$ = _id
+		? db.subscribeTo(`chunks/${_id}/value`)
+		: undefined;
 	let value$;
 	$: value = value$ ? $value$ : undefined;
-	
+
 	// $: value =  value$ ? $value$ : undefined;
 	$: diff$ = _id
 		? db.subscribeTo(`chunks/${_id}/value/diff`, { req_on: false })
@@ -73,6 +70,7 @@
 			window.history.back();
 		} else if ($local_settings$.editing_id) {
 			$local_settings$.editing_id = undefined;
+			db.get_connection().maybe_request_views();
 		}
 	}
 	function share_live() {
@@ -174,14 +172,11 @@
 		let [v, selection] = get_editor(e);
 
 		if (
-			["*", "[", "{", "(", "_"].includes(e.key) &&
+			["*", "[", "{", "(", "_", '"', "`", "'", "<"].includes(e.key) &&
 			selection[1] > selection[0]
 		) {
 			// Means there's a selection
-
 			v = str_insert(v, selection[0], e.key);
-
-			// console.log(v);
 
 			// Add 1 to selections
 			selection = selection.map((v) => v + 1);
@@ -189,9 +184,16 @@
 			v = str_insert(
 				v,
 				selection[1],
-				e.key === "[" ? "]" : e.key === "(" ? ")" : e.key === "{" ? "}" : e.key
+				e.key === "["
+					? "]"
+					: e.key === "("
+					? ")"
+					: e.key === "{"
+					? "}"
+					: e.key === "<"
+					? ">"
+					: e.key
 			);
-			// console.log(v);
 
 			set_editor(e, [v, selection]);
 			e.preventDefault();
@@ -243,25 +245,13 @@
 	function paste(e) {
 		let clip = e.clipboardData || window.clipboardData; // DataTransfer
 		if (clip?.files?.length) {
-			
 			e.preventDefault();
 		}
 	}
 	let showing_details = false;
 </script>
 
-<!-- id}
-	{#if value}
-		<div class="page">
-			{@html preview}
-		</div>
-	{:else}
-		<h1>Chunk not available</h1>
-		Check that the owner has at least allowed read access by public `share: public
-		read`
-	{/if}
-{:else if -->
-{#if  value}
+{#if value}
 	<div class="container" style:display={!_id ? "none" : "initial"}>
 		<div class="edit">
 			<textarea
@@ -278,7 +268,7 @@
 				}}
 			/>
 			{#if $local_settings$?.showing_details}
-				<div class="details" >
+				<div class="details">
 					<ChunkDetails id={_id} />
 				</div>
 			{/if}
@@ -298,7 +288,6 @@
 							d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"
 						/>
 					</svg>
-					
 				</button>
 
 				<input
@@ -308,7 +297,11 @@
 					style="display:none;"
 					multiple
 				/>
-				<button class="action icon" title="Upload" on:click={() => fileInput?.click()}>
+				<button
+					class="action icon"
+					title="Upload"
+					on:click={() => fileInput?.click()}
+				>
 					<svg fill="currentColor" viewBox="0 0 16 16">
 						<path
 							d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"
@@ -338,22 +331,32 @@
 				</div>
 			</div>
 			<div class="side-actions">
-				<button class="action share icon" title="Copy Live Page Link" on:click={share_live}>
+				<button
+					class="action share icon"
+					title="Copy Live Page Link"
+					on:click={share_live}
+				>
 					<svg fill="currentColor" viewBox="0 0 16 16">
-						<path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
-  <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+						<path
+							d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"
+						/>
+						<path
+							d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"
+						/>
 					</svg>
-					
 				</button>
-				<button class="action share icon" title="Copy Static Page Link" on:click={share_static}>
+				<button
+					class="action share icon"
+					title="Copy Static Page Link"
+					on:click={share_static}
+				>
 					<svg fill="currentColor" viewBox="0 0 16 16">
-						<path fill-rule="evenodd" d="M14 4.5V11h-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5Zm-9.736 7.35v3.999h-.791v-1.714H1.79v1.714H1V11.85h.791v1.626h1.682V11.85h.79Zm2.251.662v3.337h-.794v-3.337H4.588v-.662h3.064v.662H6.515Zm2.176 3.337v-2.66h.038l.952 2.159h.516l.946-2.16h.038v2.661h.715V11.85h-.8l-1.14 2.596H9.93L8.79 11.85h-.805v3.999h.706Zm4.71-.674h1.696v.674H12.61V11.85h.79v3.325Z"/>
+						<path
+							fill-rule="evenodd"
+							d="M14 4.5V11h-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5Zm-9.736 7.35v3.999h-.791v-1.714H1.79v1.714H1V11.85h.791v1.626h1.682V11.85h.79Zm2.251.662v3.337h-.794v-3.337H4.588v-.662h3.064v.662H6.515Zm2.176 3.337v-2.66h.038l.952 2.159h.516l.946-2.16h.038v2.661h.715V11.85h-.8l-1.14 2.596H9.93L8.79 11.85h-.805v3.999h.706Zm4.71-.674h1.696v.674H12.61V11.85h.79v3.325Z"
+						/>
 					</svg>
-					
 				</button>
-				
-				
-
 			</div>
 		</div>
 
@@ -473,16 +476,7 @@
 			left: 50%;
 		}
 	}
-	/* To disable blurring on slow mobile devices */
-	@media (hover: hover) and (pointer: fine) {
-		@supports (backdrop-filter: blur(5px)) {
-			.preview-c,
-			.edit {
-				background: var(--background-transparent);
-				backdrop-filter: blur(8px);
-			}
-		}
-	}
+
 	.details {
 		/* pointer-events: none; */
 		position: absolute;
@@ -491,9 +485,23 @@
 		white-space: pre-wrap;
 		width: 12em;
 		border-radius: 12px 0 0 12px;
-		background: var(--background-transparent);
-		backdrop-filter: blur(2px);
+		background: var(--background);
 		border: 1px solid #888;
 		border-right: none;
+	}
+
+	/* To disable blurring on slow mobile devices */
+	@media (hover: hover) and (pointer: fine) {
+		@supports (backdrop-filter: blur(5px)) {
+			.preview-c,
+			.edit,
+			.details {
+				background: var(--background-transparent);
+				backdrop-filter: blur(8px);
+			}
+			.details {
+				background: var(--background-transparent-2);
+			}
+		}
 	}
 </style>
