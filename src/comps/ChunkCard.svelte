@@ -110,7 +110,7 @@
 		overflow: hidden;
 		background: var(--background);
 	}
-	@media (hover: hover) and (pointer: fine) {
+	/* @media (hover: hover) and (pointer: fine) {
 		@supports (backdrop-filter: blur(12px)) {
 			.top-tags,
 			.bottom-tags {
@@ -118,7 +118,7 @@
 				background: var(--background-transparent-2);
 			}
 		}
-	}
+	} */
 	.top-tags {
 		right: 0;
 		top: 0;

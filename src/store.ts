@@ -144,7 +144,7 @@ function createDb() {
 
 			// Default to setting the value on the subscription
 			// `resource + value`
-			if (m.resource && value) {
+			if (m.resource && value && m.type != "Err") {
 				// Update the subscription with the new value
 				subs[m.resource]?.set(value)
 

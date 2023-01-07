@@ -48,7 +48,7 @@
 			</button>
 
 			<button on:click={db.actions.logout}>Logout</button>
-			<button on:click={db.actions.logout_all}>Logout from everything</button>
+			<button on:click={db.actions.logout_all}>Logout of all devices</button>
 		</section>
 		<section class="version">
 			<h2>Info</h2>
