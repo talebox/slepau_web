@@ -370,20 +370,30 @@ export const store = {
 			wants_preview: false,
 			editing_id: undefined,
 			zoom: 1,
+			alarms: [],
+			location: [25.7, -80.2]
 		}
-		function get() {
+		function get_settings() {
 			try {
 				const settings = localStorage.getItem("settings")
-				return settings && JSON.parse(settings) || _default
+				return { ..._default, ...(settings && JSON.parse(settings) || {}) }
 			} catch {
 				return _default
 			}
 		}
-		const { set, ...o } = writable(get())
+		function save(v) {
+			if (typeof v == 'object') localStorage.setItem("settings", JSON.stringify(v))
+		}
+		const { set, update, ...o } = writable(get_settings())
+
 		return {
 			set: (v) => {
-				if (typeof v == 'object') localStorage.setItem("settings", JSON.stringify(v))
 				set(v)
+				save(v)
+			},
+			update: (f) => {
+				update(f)
+				save(get(o))
 			},
 			...o
 		}

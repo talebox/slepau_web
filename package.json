@@ -23,7 +23,9 @@
 	},
 	"license": "MIT",
 	"dependencies": {
+		"chrono-node": "^2.5.0",
 		"commonmark": "^0.30.0",
+		"geo-coordinates-parser": "^1.5.8",
 		"svelte": "^3.50.1"
 	},
 	"alias": {

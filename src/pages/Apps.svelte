@@ -10,6 +10,9 @@
 	import { db } from "../store";
 	import Search from "../comps/Search.svelte";
 	import { get } from "svelte/store";
+	import Calendar from "./Calendar.svelte";
+	import Alarms from "./Alarms.svelte";
+	import Clock from "./Clock.svelte";
 
 	let user$ = db.subscribeTo.user();
 	let user = get(user$);
@@ -36,6 +39,10 @@
 <Search />
 
 <Router>
+	<Route path="calendar" component={Calendar} />
+	<Route path="alarms" component={Alarms} />
+	<Route path="clock" component={Clock} />
+
 	<Route path="well/:?id" component={Well} />
 	<Route path="graph/:?id" component={Graph} />
 </Router>

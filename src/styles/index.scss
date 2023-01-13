@@ -5,7 +5,11 @@
 }
 
 .border {
-	border: 1px solid var(--agnostic-gray-dark);
+	border: 1px solid var(--border);
+}
+
+img {
+	display: block;
 }
 
 :root {
@@ -103,6 +107,11 @@ a.button {
 
 .tac {
 	text-align: center;
+}
+
+// Full Width
+.fw {
+	width: 100%;
 }
 
 .tip {

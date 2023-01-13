@@ -5,7 +5,7 @@
 		prefers_light,
 	} from "~/src/styles/theme/theme.js";
 	import { navigate } from "@deps/routing";
-	import { db} from "../store";
+	import { db, local_settings$ } from "../store";
 	import User from "./User.svelte";
 	import { get } from "svelte/store";
 
@@ -25,7 +25,7 @@
 	};
 
 	let open = false;
-	
+
 	let user$ = db.subscribeTo.user();
 	let user = get(user$);
 	$: {
@@ -33,7 +33,11 @@
 	}
 </script>
 
-<button class="toggle icon fixed" title="Toggle Drawer" on:click={() => (open = !open)}>
+<button
+	class="toggle icon fixed"
+	title="Toggle Drawer"
+	on:click={() => (open = !open)}
+>
 	<svg fill="currentColor" viewBox="0 0 16 16">
 		<path
 			fill-rule="evenodd"
@@ -102,6 +106,18 @@
 			</svg>
 			Notes</button
 		> -->
+		{#if $local_settings$?.experimental_features}
+			<button class="menu experimental" on:click={() => navigate("/app/calendar/")}>
+				Calendar</button
+			>
+			<button class="menu experimental" on:click={() => navigate("/app/alarms/")}>
+				Alarms</button
+			>
+			<button class="menu experimental" on:click={() => navigate("/app/clock/")}>
+				Clock</button
+			>
+		{/if}
+
 		<button class="menu" on:click={() => navigate("/app/well/")}>
 			<!-- <span class="icon">🕳️</span>  -->
 			<svg fill="currentColor" viewBox="0 0 16 16" class="icon">
@@ -188,6 +204,9 @@
 		/* align-items: center; */
 
 		gap: 16px;
+	}
+	.experimental {
+		outline: 2px dashed #DB28;
 	}
 
 	.back {

@@ -80,6 +80,7 @@ export const REGEX_ACCESS = new RegExp(process.env.REGEX_ACCESS, "im");
 export const REGEX_MEDIA = new RegExp(`\\(media\\/(${process.env.REGEX_PROQUINT})\\)`, 'g');
 export const REGEX_CHUNK = new RegExp(`\\(chunks?\\/(${process.env.REGEX_PROQUINT})\\)`, 'g');
 
+export const SECONDS = { s: 1, m: 60, h: 60 * 60, d: 60 * 60 * 24, M: 60 * 60 * 24 * 30.4, Y: 60 * 60 * 24 * 7 * 52 };
 /**
  * Turns seconds since epoch to pretty time elapsed since then
  * Something like `1s`, `1m`, etc...
@@ -90,17 +91,17 @@ export function seconds_to_short(v) {
 	const secs = Number(v);
 	if (!secs) return;
 	let diff = (Date.now() / 1000) - secs;
-	if (diff < 60) diff = 60; 
-	const units = { s: 1, m: 60, h: 60 * 60, d: 60 * 60 * 24, M: 60 * 60 * 24 * 30.4, Y: 60 * 60 * 24 * 7 * 52 };
-	for (const [unit, value] of Object.entries(units).reverse()) {
+	if (diff < 60) diff = 60;
+
+	for (const [unit, value] of Object.entries(SECONDS).reverse()) {
 		if (diff >= value) {
 			const v = diff / value;
-			const exponent = ["M", "Y"].includes(unit) && 
-			v < 10 ? 1 : 0;
+			const exponent = ["M", "Y"].includes(unit) &&
+				v < 10 ? 1 : 0;
 			const accuracy = Math.pow(0.1, exponent)
 			let secs_until = (value * accuracy) - (diff % (value * accuracy));
-			if (secs_until > units.d) { // To prevent overflow of the delay/interval
-				secs_until = units.d;
+			if (secs_until > SECONDS.d) { // To prevent overflow of the delay/interval
+				secs_until = SECONDS.d;
 			}
 			return [(v).toFixed(exponent) + " " + unit, secs_until * 1000]
 		}

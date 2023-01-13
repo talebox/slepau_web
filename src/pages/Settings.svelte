@@ -1,7 +1,9 @@
 <script>
 	import Drawer from "../comps/Drawer.svelte";
 	import User from "../comps/User.svelte";
-	import { db } from "../store";
+	import { db, local_settings$ } from "../store";
+	import { parseDate } from "chrono-node";
+	import parse_coordinate from "geo-coordinates-parser";
 	let photoInput;
 
 	function photoUpload() {
@@ -12,6 +14,15 @@
 		const files = Array.from(this.files);
 
 		db.actions.media.post(files[0]);
+	}
+	function update_location(value) {
+		try {
+			const parsed = parse_coordinate(value);
+			local_settings$.update((v) => ({
+				...v,
+				location: [parsed.decimalLatitude, parsed.decimalLongitude],
+			}));
+		} catch {}
 	}
 </script>
 
@@ -56,11 +67,65 @@
 				<tr><td>App Version:</td><td>{process.env.APP_VERSION}</td></tr>
 			</table>
 		</section>
+		<section>
+			<h2>Preferences</h2>
+
+			<label>
+				Experimental Features
+				<input
+					type="checkbox"
+					bind:checked={$local_settings$.experimental_features}
+				/>
+			</label>
+			<label>
+				Lojban <input type="checkbox" bind:checked={$local_settings$.lojban} />
+			</label>
+			<details>
+				<summary>Your Birthdate <code>{$local_settings$.birthday || "Undefined"}</code></summary>
+				<p>
+					You can use natural language:<br />
+					<code>june 20th of 1995</code><br /> <code>6/20/1995</code>
+				</p>
+				<p>
+					and if you know the time, just include it like so <code> at 2pm</code>
+					or
+					<code> 2am</code>.
+				</p>
+
+				<p>This is currently only being used on the clock.</p>
+				<input
+					class="fw border"
+					placeholder="june 20th of 1995 at 2am"
+					bind:value={$local_settings$.birthday}
+				/>
+				<p style="opacity: .5;">
+					The parsed date is: {parseDate($local_settings$.birthday)}
+				</p>
+			</details>
+			<details>
+				<summary
+					>Your Location <code>{`${$local_settings$.location?.[0]}, ${$local_settings$.location?.[1]}`}</code></summary
+				>
+				<p>Any of these formats are accepted:</p>
+				<ul>
+					<li>Decimal degrees (DD): <code>41.40338, 2.17403</code></li>
+					<li>Degrees, minutes, and seconds (DMS): <code>41°24'12.2"N 2°10'26.5"E</code></li>
+					<li>Degrees and decimal minutes (DMM): <code>41 24.2028, 2 10.4418</code></li>
+				</ul>
+
+				<p>This is currently only being used on the clock.</p>
+				<input
+				class="fw border"
+					value={`${$local_settings$.location?.[0]}, ${$local_settings$.location?.[1]}`}
+					on:blur={(e) => update_location(e.target.value)}
+				/>
+			</details>
+		</section>
 	</div>
 </div>
 
 <style>
-	.version td:first-child{
+	.version td:first-child {
 		text-align: right;
 	}
 	.sections > * {
@@ -69,7 +134,12 @@
 		gap: 8px;
 		justify-items: center;
 	}
-	
+	.sections code {
+		display: contents;
+	}
+	.sections details {
+		margin: 0;
+	}
 
 	.sections h2 {
 		text-align: center;
