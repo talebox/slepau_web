@@ -1,6 +1,6 @@
 <script>
 	import { local_settings$ } from "../store";
-	import { SECONDS, seconds_to_short } from "../utils/utils";
+	import { SECONDS, passed_since_pretty } from "../utils/utils";
 	import { parse } from "chrono-node";
 
 	// $local_settings$.alarms
@@ -10,7 +10,7 @@
 
 {#each $local_settings$.alarms as alarm}
 	<div>
-		{#if alarm.every} Every {seconds_to_short(alarm.every)}{/if}
+		{#if alarm.every} Every {passed_since_pretty(alarm.every)}{/if}
 	</div>
 {/each}
 

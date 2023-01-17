@@ -7,7 +7,7 @@
 	import * as s from "./Well.module.scss";
 	import Chunks from "../comps/Chunks.svelte";
 	import { setContext } from "svelte";
-	import { seconds_to_short } from "../utils/utils";
+	import { passed_since_pretty } from "../utils/utils";
 	import { Link } from "../../deps/routing";
 
 	// VVVVV This is Common to Views VVVVV
@@ -75,7 +75,7 @@
 		>
 			<Link to={"well/" + parent.id}>
 				{parent.props?.title ??
-					"<" + seconds_to_short(parent?.props_dynamic?.modified)?.[0] + ">"}
+					"<" + passed_since_pretty(parent?.props_dynamic?.modified)?.[0] + ">"}
 			</Link>
 		</div>
 	{/each}

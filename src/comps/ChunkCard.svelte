@@ -1,7 +1,7 @@
 <script>
 	import { getContext, onDestroy } from "svelte";
 	import { chunkValueToHtml } from "../utils/formatting";
-	import { seconds_to_short } from "../utils/utils";
+	import { passed_since_pretty } from "../utils/utils";
 	export let chunk;
 	export let selected = false,
 		selectable = false;
@@ -14,7 +14,7 @@
 	let clear;
 	function update(modified) {
 		clearTimeout(clear);
-		let m_d = seconds_to_short(modified);
+		let m_d = passed_since_pretty(modified);
 		if (m_d) {
 			const [v, delay_ms] = m_d;
 			mstring = v;

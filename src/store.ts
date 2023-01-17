@@ -371,7 +371,7 @@ export const store = {
 			editing_id: undefined,
 			zoom: 1,
 			alarms: [],
-			location: [25.7, -80.2]
+			location: [25.70627, -80.1999]
 		}
 		function get_settings() {
 			try {

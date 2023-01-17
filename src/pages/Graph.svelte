@@ -6,7 +6,7 @@
 	import SelectedButtons from "../comps/SelectedButtons.svelte";
 	import "./ChunkPage.scss";
 	import { setContext } from "svelte";
-    import { seconds_to_short } from "../utils/utils";
+    import { passed_since_pretty } from "../utils/utils";
 
 	// VVVVV This is Common to Views VVVVV
 	export let id = "";
@@ -117,7 +117,7 @@
 					</svg>
 				</div>
 			{/if}
-			<div class="content">{node.props?.title ??  "<" + seconds_to_short (node?.props_dynamic?.modified)?.[0] + ">"}</div>
+			<div class="content">{node.props?.title ??  "<" + passed_since_pretty (node?.props_dynamic?.modified)?.[0] + ">"}</div>
 		</div>
 	{/each}
 

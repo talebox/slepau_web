@@ -1,7 +1,7 @@
 <script>
 	import { onDestroy } from "svelte";
 	import { db } from "../store";
-	import { seconds_to_short } from "../utils/utils";
+	import { passed_since_pretty } from "../utils/utils";
 
 	export let id;
 	$: chunk$ = id ? db.subscribeTo(`chunks/${id}`) : undefined;
@@ -15,8 +15,8 @@
 	let clear;
 	function update(modified, created) {
 		clearTimeout(clear);
-		const m_d = seconds_to_short(modified),
-			m_c = seconds_to_short(created);
+		const m_d = passed_since_pretty(modified),
+			m_c = passed_since_pretty(created);
 		if (m_d && m_c) {
 			const [v_d, delay_ms_d] = m_d;
 			const [v_c, delay_ms_c] = m_c;
