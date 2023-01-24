@@ -2,7 +2,7 @@
 	import { slide } from "svelte/transition";
 	import { flip } from "svelte/animate";
 	import { navigate } from "@deps/routing";
-	import { db, local_settings$ } from "../store";
+	import { db, local_settings$, editing_id$ } from "../store";
 	import SelectedButtons from "../comps/SelectedButtons.svelte";
 	import "./ChunkPage.scss";
 	import { setContext } from "svelte";
@@ -20,8 +20,9 @@
 
 	$: {
 		if ($view$) {
-			let [id, children] = $view$;
-			parents = id ? [id, root] : [root];
+			let father = $view$?.[0];
+			let children = $view$?.[1] ?? [];
+			parents = father ? [father, root] : [root];
 			nodes = children;
 		}
 	}
@@ -107,7 +108,7 @@
 				<div
 					class="edit"
 					on:click|stopPropagation={() => {
-						$local_settings$.editing_id = node.id;
+						$editing_id$ = node.id;
 					}}
 				>
 					<svg fill="currentColor" viewBox="0 0 16 16" class="icon">

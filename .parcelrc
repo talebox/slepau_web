@@ -1,9 +1,20 @@
 {
-  "extends": [
-    "@parcel/config-default"
-  ],
-	"transformers":{
-		"*.svelte":["@plasmohq/parcel-transformer-svelte3"], 
-		"raw:*":["@parcel/transformer-raw"]
+	"extends": [
+		"@parcel/config-default"
+	],
+	"transformers": {
+		"*.svelte": [
+			"@plasmohq/parcel-transformer-svelte3"
+		],
+		"raw:*": [
+			"@parcel/transformer-raw"
+		]
+	},
+	"compressors": {
+		"*.{html,css,js,svg}": [
+			"...",
+			"@parcel/compressor-gzip",
+			"@parcel/compressor-brotli"
+		]
 	}
 }

@@ -31,7 +31,7 @@ export const notifications = (() => {
 export const status = writable<Promise<any> | undefined>(undefined)
 
 export const setStatus = (v: Promise<any>, options?: { timeout?: number, on_resolve?: string, on_reject?: string }) => {
-	options = { ...{ timeout: 3000 }, ...options }
+	options = { timeout: 3000, ...options }
 	let s = v
 	if (options.on_resolve) s = s.then(() => options?.on_resolve)
 	if (options.on_reject) s = s.catch(() => options?.on_reject)
@@ -309,7 +309,7 @@ function createDb() {
 				put: (id: string, value: string) =>
 					connection.send(
 						{ resource: `chunks/${id}/value`, value },
-						(v, sub) => sub?.update(v => value),
+						(v, sub) => { sub?.update(v => value); setStatus(Promise.resolve("Saved")) },
 						(v, sub) => sub?.update(v => v)
 					),
 				new: (value?) =>
@@ -363,6 +363,7 @@ function createDb() {
 }
 
 export const db = createDb()
+export const editing_id$ = writable()
 
 export const store = {
 	local_settings$: (() => {

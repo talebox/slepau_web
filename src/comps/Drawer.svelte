@@ -31,6 +31,14 @@
 	$: {
 		user = $user$;
 	}
+
+	function toggle_fullscreen() {
+		if (!document.fullscreenElement) {
+			document.body.requestFullscreen();
+		} else {
+			document.exitFullscreen();
+		}
+	}
 </script>
 
 <button
@@ -107,13 +115,22 @@
 			Notes</button
 		> -->
 		{#if $local_settings$?.experimental_features}
-			<button class="menu experimental" on:click={() => navigate("/app/calendar/")}>
-				Calendar</button
+			<!-- <button
+				class="menu experimental"
+				on:click={() => navigate("/app/calendar/")}
 			>
-			<button class="menu experimental" on:click={() => navigate("/app/alarms/")}>
+				Calendar</button
+			> -->
+			<button
+				class="menu experimental"
+				on:click={() => navigate("/app/alarms/")}
+			>
 				Alarms</button
 			>
-			<button class="menu experimental" on:click={() => navigate("/app/clock/")}>
+			<button
+				class="menu experimental"
+				on:click={() => navigate("/app/clock/")}
+			>
 				Clock</button
 			>
 		{/if}
@@ -141,6 +158,7 @@
 		>
 
 		<div style="flex-grow: 1;" />
+		
 		<div class="fr">
 			<button style="flex-grow:1" on:click={() => (open = false)}>Close</button>
 			<button on:click={theme_toggle}
@@ -164,6 +182,14 @@
 					{/if}
 				</span></button
 			>
+			<button class="fullscreen" on:click={toggle_fullscreen}>
+				<svg fill="currentColor" viewBox="0 0 16 16" class="icon">
+					<path
+						fill-rule="evenodd"
+						d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707zm4.344 0a.5.5 0 0 1 .707 0l4.096 4.096V11.5a.5.5 0 1 1 1 0v3.975a.5.5 0 0 1-.5.5H11.5a.5.5 0 0 1 0-1h2.768l-4.096-4.096a.5.5 0 0 1 0-.707zm0-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707zm-4.344 0a.5.5 0 0 1-.707 0L1.025 1.732V4.5a.5.5 0 0 1-1 0V.525a.5.5 0 0 1 .5-.5H4.5a.5.5 0 0 1 0 1H1.732l4.096 4.096a.5.5 0 0 1 0 .707z"
+					/>
+				</svg>
+			</button>
 		</div>
 	</div>
 {/if}
@@ -206,7 +232,7 @@
 		gap: 16px;
 	}
 	.experimental {
-		outline: 2px dashed #DB28;
+		outline: 2px dashed #db28;
 	}
 
 	.back {

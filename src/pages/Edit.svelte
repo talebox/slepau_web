@@ -1,7 +1,13 @@
 <script>
 	import { fly, slide } from "svelte/transition";
 	import { debounce } from "../utils/timout";
-	import { db, local_settings$, is_phone$, notifications } from "../store";
+	import {
+		db,
+		local_settings$,
+		editing_id$,
+		is_phone$,
+		notifications,
+	} from "../store";
 	import { mdToHtml, valueTransform } from "../utils/formatting";
 	import {
 		applyDiff,
@@ -14,14 +20,12 @@
 	export let id = undefined;
 	let editor, fileInput;
 
-	$: _id = id || $local_settings$.editing_id;
+	$: _id = id || $editing_id$;
 
 	// Clear editor when opening new view
 	$: if (_id && editor) editor.value = "";
 
-	$: value$ = _id
-		? db.subscribeTo(`chunks/${_id}/value`)
-		: undefined;
+	$: value$ = _id ? db.subscribeTo(`chunks/${_id}/value`) : undefined;
 	let value$;
 	$: value = value$ ? $value$ : undefined;
 
@@ -68,8 +72,8 @@
 	function close() {
 		if (id) {
 			window.history.back();
-		} else if ($local_settings$.editing_id) {
-			$local_settings$.editing_id = undefined;
+		} else if ($editing_id$) {
+			$editing_id$ = undefined;
 			db.get_connection().maybe_request_views();
 		}
 	}
@@ -360,13 +364,15 @@
 			</div>
 		</div>
 
-		<button class="close icon" title="Close" on:click={close}>
-			<svg fill="currentColor" viewBox="0 0 16 16">
-				<path
-					d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"
-				/>
-			</svg>
-		</button>
+		{#if !id}
+			<button class="close icon" title="Close" on:click={close}>
+				<svg fill="currentColor" viewBox="0 0 16 16">
+					<path
+						d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"
+					/>
+				</svg>
+			</button>
+		{/if}
 
 		{#if $is_phone$}
 			<button

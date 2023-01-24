@@ -2,7 +2,7 @@
 	import { slide, fade } from "svelte/transition";
 	import { flip } from "svelte/animate";
 	import { navigate } from "@deps/routing";
-	import { db, local_settings$ } from "../store";
+	import { db, editing_id$ } from "../store";
 	import SelectedButtons from "../comps/SelectedButtons.svelte";
 	import * as s from "./Well.module.scss";
 	import Chunks from "../comps/Chunks.svelte";
@@ -22,8 +22,9 @@
 
 	$: {
 		if ($view$) {
-			let [id, children] = $view$;
-			parents = id ? [id, root] : [root];
+			let father = $view$?.[0];
+			let children = $view$?.[1] ?? [];
+			parents = father ? [father, root] : [root];
 			nodes = children;
 		}
 	}
@@ -90,7 +91,7 @@
 						<div
 							class={s.left}
 							on:click|stopPropagation={() => {
-								$local_settings$.editing_id = chunk.id;
+								$editing_id$ = chunk.id;
 							}}
 						/>
 						<Link class={s.right} to={"well/" + chunk.id} />

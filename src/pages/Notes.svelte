@@ -1,5 +1,5 @@
 <script>
-	import { db, local_settings$ } from "../store";
+	import { db, editing_id$ } from "../store";
 	import Chunks from "../comps/Chunks.svelte";
 	import SelectedButtons from "../comps/SelectedButtons.svelte";
 	import { debounce } from "../utils/timout";
@@ -71,7 +71,7 @@
 				selected = selected;
 			}
 		} else {
-			$local_settings$.editing_id = node.id;
+			$editing_id$ = node.id;
 		}
 	};
 </script>

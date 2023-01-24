@@ -61,12 +61,6 @@
 			<button on:click={db.actions.logout}>Logout</button>
 			<button on:click={db.actions.logout_all}>Logout of all devices</button>
 		</section>
-		<section class="version">
-			<h2>Info</h2>
-			<table>
-				<tr><td>App Version:</td><td>{process.env.APP_VERSION}</td></tr>
-			</table>
-		</section>
 		<section>
 			<h2>Preferences</h2>
 
@@ -81,7 +75,10 @@
 				Lojban <input type="checkbox" bind:checked={$local_settings$.lojban} />
 			</label>
 			<details>
-				<summary>Your Birthdate <code>{$local_settings$.birthday || "Undefined"}</code></summary>
+				<summary
+					>Your Birthdate <code>{$local_settings$.birthday || "Undefined"}</code
+					></summary
+				>
 				<p>
 					You can use natural language:<br />
 					<code>june 20th of 1995</code><br /> <code>6/20/1995</code>
@@ -104,22 +101,37 @@
 			</details>
 			<details>
 				<summary
-					>Your Location <code>{`${$local_settings$.location?.[0]}, ${$local_settings$.location?.[1]}`}</code></summary
+					>Your Location <code
+						>{`${$local_settings$.location?.[0]}, ${$local_settings$.location?.[1]}`}</code
+					></summary
 				>
 				<p>Any of these formats are accepted:</p>
 				<ul>
 					<li>Decimal degrees (DD): <code>41.40338, 2.17403</code></li>
-					<li>Degrees, minutes, and seconds (DMS): <code>41°24'12.2"N 2°10'26.5"E</code></li>
-					<li>Degrees and decimal minutes (DMM): <code>41 24.2028, 2 10.4418</code></li>
+					<li>
+						Degrees, minutes, and seconds (DMS): <code
+							>41°24'12.2"N 2°10'26.5"E</code
+						>
+					</li>
+					<li>
+						Degrees and decimal minutes (DMM): <code>41 24.2028, 2 10.4418</code
+						>
+					</li>
 				</ul>
 
 				<p>This is currently only being used on the clock.</p>
 				<input
-				class="fw border"
+					class="fw border"
 					value={`${$local_settings$.location?.[0]}, ${$local_settings$.location?.[1]}`}
 					on:blur={(e) => update_location(e.target.value)}
 				/>
 			</details>
+		</section>
+		<section class="version">
+			<h2>Info</h2>
+			<table>
+				<tr><td>App Version:</td><td>{process.env.APP_VERSION}</td></tr>
+			</table>
 		</section>
 	</div>
 </div>
