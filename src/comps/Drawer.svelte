@@ -3,7 +3,7 @@
 		theme_set,
 		theme_get,
 		prefers_light,
-	} from "~/src/styles/theme/theme.js";
+	} from "@styles/theme/theme.js";
 	import { navigate } from "@deps/routing";
 	import { db, local_settings$ } from "../store";
 	import User from "./User.svelte";

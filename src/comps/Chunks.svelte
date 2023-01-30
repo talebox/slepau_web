@@ -1,5 +1,6 @@
 <script>
 	import { flip } from "svelte/animate";
+	import { fade } from "svelte/transition";
 	export let selected = undefined;
 	export let chunks = [];
 	import ChunkCard from "./ChunkCard.svelte";
@@ -13,8 +14,11 @@
 					class="chunk"
 					animate:flip={{ duration: 500 }}
 				>
-					<ChunkCard {chunk} selected={selected?.includes(chunk?.id)}
-					selectable={!!selected}>
+					<ChunkCard
+						{chunk}
+						selected={selected?.includes(chunk?.id)}
+						selectable={!!selected}
+					>
 						<slot {chunk} />
 					</ChunkCard>
 				</div>
