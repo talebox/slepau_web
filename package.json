@@ -29,9 +29,9 @@
 		"svelte": "^3.50.1"
 	},
 	"alias": {
-		"@icons/*": "~/src/assets/icons/$1",
-		"@styles/*": "~/src/styles/$1",
-		"@deps/*": "~/deps/$1"
+		"@icons/*": "/src/assets/icons/$1",
+		"@styles/*": "/src/styles/$1",
+		"@deps/*": "/deps/$1"
 	},
 	"targets": {
 		"default": {
@@ -47,7 +47,7 @@
 			"distDir": "./dist/web"
 		},
 		"auth": {
-			"source": "apps/auth/index.html",
+			"source": ["apps/auth/index.html", "apps/auth/home.html", "apps/auth/login.html"],
 			"distDir": "./dist/auth"
 		},
 		"format": {

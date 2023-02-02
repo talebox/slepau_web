@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>Auth</title>
+	<link rel="icon" type="image/x-icon" href="./assets/favicon.ico">
+	<meta charset="UTF-8">
+	<meta name="viewport"
+		content="width=device-width, height=device-height,  initial-scale=1.0, user-scalable=no;user-scalable=0;" />
+
+	<!-- Style -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+	<link rel="stylesheet" href="npm:@styles/index.scss">
+	<link rel="stylesheet" href="index.scss">
+
+	<style>
+		body {
+			
+			display: flex;
+			flex-flow: column;
+			gap: 2em;
+			line-height: 2em;
+			padding: 0;
+			/* margin: 0; */
+			padding-block: 30vh;
+			
+		}
+
+		hr {
+			border-top: 0;
+			border-left: 1px solid #8885;
+			height: 50vh;
+		}
+
+		body>div {
+			/* height: 100vh; */
+			/* display: flex; */
+			text-align: center;
+
+			/* flex-flow: column; */
+			/* justify-content: center; */
+			/* align-items: center; */
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app"></div>
+	<hr>
+	<div>
+		<h2>
+			Encapsulation 💊
+		</h2>
+		<p>Only server can access auth state.</p>
+
+		<p style="line-height: 1.5em;margin-block:2em">
+			<svg fill="currentColor" viewBox="0 0 16 16" style="height: 1.5em;position: relative;top: 7px;">
+				<path fill-rule="evenodd"
+					d="M8 4a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5A.5.5 0 0 1 8 4z" />
+			</svg>
+			<span style="color:inherit;font-weight: bold;">Attack Surface</span>
+			<svg fill="currentColor" viewBox="0 0 16 16" style="height: 1.5em;position: relative;top: 7px; margin-left:10px">
+				<path fill-rule="evenodd"
+					d="M8 12a.5.5 0 0 0 .5-.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 .5.5z" />
+			</svg>
+			<span 
+			style="color:inherit;font-weight: bold;"
+			>Modularity</span>
+		</p>
+		<p>JS is completely oblivious.</p>
+	</div>
+	<hr>
+	<div>
+		<h2>
+			Paseto Tokens
+		</h2>
+		<p><a href="https://jose.readthedocs.io/en/latest">JOSE</a> (JWT, JWE, JWS) <br>
+			without it's <a
+				href="https://paragonie.com/blog/2017/03/jwt-json-web-tokens-is-bad-standard-that-everyone-should-avoid">drawbacks</a>.
+		</p>
+	</div>
+
+	<script>
+		var user = "_USER_", host = "_HOST_", logged_in = user !== 'public';
+	</script>
+	<script type="module" src="home.js"></script>
+
+</body>
+
+</html>
