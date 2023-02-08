@@ -2,9 +2,9 @@
 	import { Router, Route, Link, navigate } from "@deps/routing";
 	import * as s from "./Login.module.scss";
 	import { slide } from "svelte/transition";
-	import { fetchE, fetchJson } from "../../src/utils/network";
-	import cnfc from "../../src/utils/classname";
-	import { debounce } from "../../src/utils/timout";
+	import { fetchE, fetchJson } from "@utils/network";
+	import cnfc from "@utils/classname";
+	import { debounce } from "@utils/timout";
 	const c = cnfc(s);
 
 	function getValues() {
@@ -23,7 +23,7 @@
 		return fetchJson(...v).then(
 			(...v) => good(...v),
 			(e) => {
-				message={value: e, error:true};
+				message = { value: e, error: true };
 				debounce(() => (message = undefined), 10000, "error");
 			}
 		);
@@ -41,7 +41,7 @@
 		fetchWrapper(
 			() => {
 				navigate("/login");
-				message={value: "Reset!"};
+				message = { value: "Reset!" };
 				debounce(() => (message = undefined), 10000, "error");
 			},
 			"/reset",
@@ -52,7 +52,7 @@
 		fetchWrapper(
 			() => {
 				navigate("/login");
-				message={value: "Registered!"};
+				message = { value: "Registered!" };
 				debounce(() => (message = undefined), 10000, "error");
 			},
 			"/register",
@@ -114,7 +114,9 @@
 			>
 		</Route>
 		{#if message}
-			<div class:error={message.error} class="message" transition:slide>{message.value}</div>
+			<div class:error={message.error} class="message" transition:slide>
+				{message.value}
+			</div>
 		{/if}
 	</form>
 </Router>
@@ -133,8 +135,8 @@
 	.container > * {
 		margin: 0;
 	}
-	.message{
-		color:green;
+	.message {
+		color: green;
 		margin-block: 0.5em;
 		padding: 0.5em;
 	}

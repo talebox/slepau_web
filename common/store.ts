@@ -1,6 +1,6 @@
-import { navigate } from '../deps/routing'
+// import { navigate } from '@deps/routing'
 import { get, Writable, writable } from "svelte/store"
-import { delete_cookie } from "./utils/cookie"
+// import { delete_cookie } from "./utils/cookie"
 import { fetchE, fetchJson } from "./utils/network"
 import { debounce } from "./utils/timout"
 import { applyDiff } from "./utils/utils"
@@ -280,24 +280,24 @@ function createDb() {
 			v.json()
 		)
 	}
-	const logout = () => {
-		delete_cookie("auth", { path: "/", domain: undefined, samesite: "Strict" })
-		navigate("/login")
+	// const logout = () => {
+	// 	delete_cookie("auth", { path: "/", domain: undefined, samesite: "Strict" })
+	// 	navigate("/login")
 
 
-		Object.values(subs).forEach(({ reset }) => reset?.())
-		subs = {}
-		// Reattach socket, so socket with new auth cookie is created
-		// Reset subscriptions, so attach doesn't try to fetch things which this user can't see;
-		// attach()
-		// for (const prop of Object.getOwnPropertyNames(subs)) {
-		// 	delete subs[prop];
-		// }
+	// 	Object.values(subs).forEach(({ reset }) => reset?.())
+	// 	subs = {}
+	// 	// Reattach socket, so socket with new auth cookie is created
+	// 	// Reset subscriptions, so attach doesn't try to fetch things which this user can't see;
+	// 	// attach()
+	// 	// for (const prop of Object.getOwnPropertyNames(subs)) {
+	// 	// 	delete subs[prop];
+	// 	// }
 
 
-		// Notify user of action
-		setStatus(Promise.resolve(), { on_resolve: "Logged out!" })
-	}
+	// 	// Notify user of action
+	// 	setStatus(Promise.resolve(), { on_resolve: "Logged out!" })
+	// }
 
 	return {
 		_subs: subs,
@@ -321,25 +321,25 @@ function createDb() {
 						)
 					),
 			},
-			login: (v) =>
-				setStatus(fetchJson("/api/login", v), { on_resolve: "Logged in!" }).then(() => {
-					// Reset subscriptions, so local view cache is cleared, hopefully views make new subs and let go of the old ones
-					// subs = {}
-					// On second thought, let's not do this, simply reset the values
-					Object.values(subs).forEach(({ reset }) => reset())
+			// login: (v) =>
+			// 	setStatus(fetchJson("/api/login", v), { on_resolve: "Logged in!" }).then(() => {
+			// 		// Reset subscriptions, so local view cache is cleared, hopefully views make new subs and let go of the old ones
+			// 		// subs = {}
+			// 		// On second thought, let's not do this, simply reset the values
+			// 		Object.values(subs).forEach(({ reset }) => reset())
 
-					// Reattach socket, so socket with new auth cookie is created
-					attach()
-					// // Query user so
-					// fetchE("/api/user").then((v) => v.json()).then((v) => subs['user']?.set(v))
-				}),
-			logout,
-			logout_all: () => {
-				fetchE("/api/logout_all").then(() => {
-					notifications.add("Logged out of all devices!")
-					logout()
-				})
-			},
+			// 		// Reattach socket, so socket with new auth cookie is created
+			// 		attach()
+			// 		// // Query user so
+			// 		// fetchE("/api/user").then((v) => v.json()).then((v) => subs['user']?.set(v))
+			// 	}),
+			// logout,
+			// logout_all: () => {
+			// 	fetchE("/api/logout_all").then(() => {
+			// 		notifications.add("Logged out of all devices!")
+			// 		logout()
+			// 	})
+			// },
 			media: {
 				post: (v) => setStatus(
 					mediaPost(v),

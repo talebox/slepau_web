@@ -1,9 +1,9 @@
 /**
  * Mounts the svelte app
  */
-import PreviewApp from "./PreviewApp.svelte"
+import Preview from "./Preview.svelte"
 
-new PreviewApp({
+new Preview({
 	target: document.getElementById("app"),
 	props: {}
 })

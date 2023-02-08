@@ -13,7 +13,6 @@
 	"compressors": {
 		"*.{html,css,js,svg}": [
 			"...",
-			"@parcel/compressor-gzip",
 			"@parcel/compressor-brotli"
 		]
 	}
