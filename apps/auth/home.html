@@ -15,38 +15,30 @@
 
 	<style>
 		body {
-			
 			display: flex;
 			flex-flow: column;
 			gap: 2em;
 			line-height: 2em;
 			padding: 0;
-			/* margin: 0; */
 			padding-block: 30vh;
-			
+
 		}
 
-		hr {
+		hr.section {
 			border-top: 0;
 			border-left: 1px solid #8885;
 			height: 50vh;
 		}
 
 		body>div {
-			/* height: 100vh; */
-			/* display: flex; */
 			text-align: center;
-
-			/* flex-flow: column; */
-			/* justify-content: center; */
-			/* align-items: center; */
 		}
 	</style>
 </head>
 
 <body>
 	<div id="app"></div>
-	<hr>
+	<hr class=".section">
 	<div>
 		<h2>
 			Encapsulation 💊
@@ -63,13 +55,26 @@
 				<path fill-rule="evenodd"
 					d="M8 12a.5.5 0 0 0 .5-.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 .5.5z" />
 			</svg>
-			<span 
-			style="color:inherit;font-weight: bold;"
-			>Modularity</span>
+			<span style="color:inherit;font-weight: bold;">Modularity</span>
 		</p>
 		<p>JS is completely oblivious.</p>
 	</div>
-	<hr>
+	<hr class=".section">
+	<div>
+		<h2>
+			Paseto Tokens
+		</h2>
+		<p><a href="https://jose.readthedocs.io/en/latest">JOSE</a> (JWT, JWE, JWS) <br>
+			without it's <a
+				href="https://paragonie.com/blog/2017/03/jwt-json-web-tokens-is-bad-standard-that-everyone-should-avoid">drawbacks</a>.
+		</p>
+	</div>
+	
+	<!-- Separator semicircle -->
+	<!-- <svg style="fill: ">
+	</svg> -->
+	
+	
 	<div>
 		<h2>
 			Paseto Tokens
@@ -81,7 +86,7 @@
 	</div>
 
 	<script>
-		var user = "_USER_", host = "_HOST_", logged_in = user !== 'public';
+		var user = _USER_, host = "_HOST_", logged_in = user && user?.user !== 'public';
 	</script>
 	<script type="module" src="home.js"></script>
 

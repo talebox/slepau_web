@@ -19,7 +19,7 @@ const timers = {}
  * @param {*} delay_ms 
  * @param {*} id 
  */
-export const debounce = (handler, delay_ms, id = "default") => {
+export const debounce = (handler, delay_ms=200, id = "default") => {
 	if (!timers[id]) timers[id] = debounceGenerator();
 	timers[id](handler, delay_ms)
 };

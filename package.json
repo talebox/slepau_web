@@ -38,6 +38,7 @@
 	"targets": {
 		"auth": {
 			"source": [
+				"apps/auth/index.html",
 				"apps/auth/home.html",
 				"apps/auth/login.html"
 			],

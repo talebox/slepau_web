@@ -118,6 +118,24 @@ export function second_to_pretty(seconds, precision = 0) {
 		}
 	}
 }
+/**
+ * Turns `\d{1,2}[mhdwMy]` into seconds. Ex `1m` -> `60`
+ * If `default` is supplied, this will be returned when the string can't be parsed
+ */
+export function parse_seconds(v, _default = undefined) {
+	if (_default === undefined) _default = v;
+	if (typeof v !== 'string') return v;
+	let match = /(\d{1,2})([mhdwMy])/.exec(v)
+	if (match) {
+		let [a, d, m] = match;
+		const m_s = SECONDS[m];
+		const _d = Number(d);
+		if (m_s && !Number.isNaN(_d)) {
+			return _d * m_s
+		}
+	}
+	return _default;
+}
 
 export function str_insert(source, index, string) {
 	if (index > 0) {

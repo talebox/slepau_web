@@ -2,7 +2,7 @@
 	import { db, editing_id$ } from "../store";
 	import Chunks from "../comps/Chunks.svelte";
 	import SelectedButtons from "../comps/SelectedButtons.svelte";
-	import { debounce } from "../utils/timout";
+	import { debounce } from "../utils/timeout";
 
 	let chunks = db.subscribeTo("views/notes", { init: [] });
 	// $: console.log($chunks);

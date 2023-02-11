@@ -1,6 +1,6 @@
 <script>
 	import { fly, slide } from "svelte/transition";
-	import { debounce } from "../utils/timout";
+	import { debounce } from "../utils/timeout";
 	import {
 		db,
 		local_settings$,

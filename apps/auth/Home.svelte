@@ -11,6 +11,7 @@
 			location.href = "/login";
 		}
 	}
+
 	let svg, font;
 	function resize() {
 		if (svg) {
@@ -18,6 +19,12 @@
 			font = `${(min / 1000) * 100}px`;
 		}
 	}
+	const color = global.user.super
+		? "#B3664C"
+		: global.user.admin
+		? "#4C99B3"
+		: "";
+	const color_alpha = (a) => (color && a ? color + a : color);
 	setTimeout(resize, 50);
 </script>
 
@@ -31,20 +38,36 @@
 			bind:this={svg}
 			id="auth_svg"
 			fill="#8888"
+			stroke="currentColor"
+			stroke-width=".05"
 			viewBox="0 0 16 16"
 			style="position:absolute;top:0;left:0;width:100%;height:100%"
 		>
-			<style>
-				text {
-					font-size: 2px;
-					fill: var(--text-main);
-				}
-			</style>
 			<path
-				d="M3.5 11.5a3.5 3.5 0 1 1 3.163-5H14L15.5 8 14 9.5l-1-1-1 1-1-1-1 1-1-1-1 1H6.663a3.5 3.5 0 0 1-3.163 2zM2.5 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"
+				d="
+        M3.5 11.5 
+        a3.5 3.5 0 1 1 3.163 -5 
+        H14 
+        L15.5 8 14 9.5 
+        l-1-1-1 1-1-1-1 1-1-1-1 1
+        H6.663
+        a3.5 3.5 0 0 1 -3.163 2
+        z
+        M2.5 9
+        a1 1 0 1 0 0-2 1 1 0 0 0 0 2
+        z"
 			/>
-			<text x="6.9" y="8.1" textLength="7.1px" lengthAdjust="spacingAndGlyphs">
-				{global.user}
+			<circle cx="3.5" cy="11.5" r=".2" stroke="currentColor" />
+			<circle cx="6.663" cy="6.5" r=".2" stroke="currentColor" />
+			<text
+				x="6.9"
+				y="8.1"
+				style="fill:var(--text-main);font-size:2px"
+				textLength="7.1px"
+				lengthAdjust="spacingAndGlyphs"
+				stroke="none"
+			>
+				{global.user.user}
 			</text>
 		</svg>
 		<!-- <h1 style="position:absolute;top:calc(50%);left:calc(44%);transform:translate(-0%,0%)" style:font-size={font}>
@@ -57,6 +80,7 @@
 	<button
 		id="auth_button"
 		style="padding: 0.2em;margin-inline: .3em;"
+		style:outline={global.logged_in ? "1px solid #F008" : "2px solid #0F0A"}
 		on:click={auth_click}
 		title={global.logged_in ? "Break Key" : "Create Key"}
 	>
@@ -109,7 +133,18 @@
 <p>
 	{#if global.logged_in}
 		This key <strong>identifies</strong><br />
-		<b><code>{global.user}</code></b><br />
+		<b>
+			<span
+				style={`padding:2.5px 5px;background:${color_alpha(
+					"60"
+				)};border-radius:6px`}
+				>{global.user.super
+					? "super admin"
+					: global.user.admin
+					? "admin"
+					: "user"}</span
+			> <code>{global.user.user}</code></b
+		><br />
 	{:else}
 		Provides a key that <strong>identifies</strong><br />
 		<span id="user">an <b>entity</b> that <strong>interacts</strong> 📡</span>
@@ -117,3 +152,22 @@
 	{/if}
 	with <code id="host">{global.host}</code>.
 </p>
+
+{#if global.user.admin}
+	<a href="/app">
+		<button style:background={color_alpha("80")}>
+			Go to panel <svg
+				fill="currentColor"
+				viewBox="0 0 16 16"
+				style="position:relative;top:.14em"
+			>
+				<path
+					d="M11.5 2a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5Zm2 0a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5Zm-10 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1h-6Zm0 2a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1h-6ZM5 3a1 1 0 0 0-1 1h-.5a.5.5 0 0 0 0 1H4v1h-.5a.5.5 0 0 0 0 1H4a1 1 0 0 0 1 1v.5a.5.5 0 0 0 1 0V8h1v.5a.5.5 0 0 0 1 0V8a1 1 0 0 0 1-1h.5a.5.5 0 0 0 0-1H9V5h.5a.5.5 0 0 0 0-1H9a1 1 0 0 0-1-1v-.5a.5.5 0 0 0-1 0V3H6v-.5a.5.5 0 0 0-1 0V3Zm0 1h3v3H5V4Zm6.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-2Z"
+				/>
+				<path
+					d="M1 2a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-2H.5a.5.5 0 0 1-.5-.5v-1A.5.5 0 0 1 .5 9H1V8H.5a.5.5 0 0 1-.5-.5v-1A.5.5 0 0 1 .5 6H1V5H.5a.5.5 0 0 1-.5-.5v-2A.5.5 0 0 1 .5 2H1Zm1 11a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v11Z"
+				/>
+			</svg></button
+		>
+	</a>
+{/if}

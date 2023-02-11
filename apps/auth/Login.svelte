@@ -4,7 +4,7 @@
 	import { slide } from "svelte/transition";
 	import { fetchE, fetchJson } from "@utils/network";
 	import cnfc from "@utils/classname";
-	import { debounce } from "@utils/timout";
+	import { debounce } from "@utils/timeout";
 	const c = cnfc(s);
 
 	function getValues() {
@@ -34,7 +34,7 @@
 				location.href = "/";
 			},
 			"/login",
-			getValues()
+			{ body: getValues() }
 		);
 	}
 	function onReset(e) {
@@ -45,7 +45,7 @@
 				debounce(() => (message = undefined), 10000, "error");
 			},
 			"/reset",
-			getValues()
+			{ body: getValues() }
 		);
 	}
 	function onRegister(e) {
@@ -56,7 +56,7 @@
 				debounce(() => (message = undefined), 10000, "error");
 			},
 			"/register",
-			getValues()
+			{ body: getValues() }
 		);
 	}
 

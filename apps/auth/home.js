@@ -1,6 +1,3 @@
-
-
-
 /**
  * Mounts the svelte app
  */

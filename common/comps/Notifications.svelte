@@ -1,5 +1,5 @@
 <script>
-  import { notifications } from "../store"
+  import { notifications } from "../stores/notifications"
   import { slide } from "svelte/transition"
 </script>
 

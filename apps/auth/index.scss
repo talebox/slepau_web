@@ -1,1 +1,61 @@
+.slices {
+	display: flex;
+	flex-flow: column;
+	gap: 1em;
+	align-items: center;
+	width: 100%;
+	justify-content: stretch;
+}
 
+.slice {
+	margin: 0;
+	width: 100%;
+	padding: 0.5em 1em;
+	border-radius: 6px;
+	outline: 1px solid grey;
+}
+
+.slice>summary {
+	width: 100%;
+	display: flex;
+	flex-flow: row;
+	gap: 0.5em;
+	align-items: center;
+	padding: 0;
+	margin: 0;
+	background: initial;
+}
+
+details {
+	margin: 0;
+}
+
+details[open].slice>summary {
+	margin-bottom: 1em;
+}
+
+details.slice>summary::before {
+	content: "🔺";
+	transform: rotate(90deg);
+}
+
+details[open].slice>summary::before {
+	transform: rotate(180deg);
+}
+
+.new {
+	/* outline: 1px dashed grey; */
+	background: initial;
+}
+
+.search {
+	/* width: 100%; */
+}
+
+.cancel {
+	outline: 1px solid #F008
+}
+
+.save {
+	outline: 1px solid #0F08
+}

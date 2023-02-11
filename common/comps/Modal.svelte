@@ -1,21 +1,19 @@
 <script>
-	import { createEventDispatcher, onDestroy } from 'svelte';
-
-	const dispatch = createEventDispatcher();
-	const close = () => dispatch('close');
+	import { onDestroy } from "svelte";
 
 	let modal;
+	export let on_close;
 
-	const handle_keydown = e => {
-		if (e.key === 'Escape') {
-			close();
+	const handle_keydown = (e) => {
+		if (e.key === "Escape") {
+			on_close?.();
 			return;
 		}
 
-		if (e.key === 'Tab') {
+		if (e.key === "Tab") {
 			// trap focus
-			const nodes = modal.querySelectorAll('*');
-			const tabbable = Array.from(nodes).filter(n => n.tabIndex >= 0);
+			const nodes = modal.querySelectorAll("*");
+			const tabbable = Array.from(nodes).filter((n) => n.tabIndex >= 0);
 
 			let index = tabbable.indexOf(document.activeElement);
 			if (index === -1 && e.shiftKey) index = 0;
@@ -28,7 +26,8 @@
 		}
 	};
 
-	const previously_focused = typeof document !== 'undefined' && document.activeElement;
+	const previously_focused =
+		typeof document !== "undefined" && document.activeElement;
 
 	if (previously_focused) {
 		onDestroy(() => {
@@ -37,12 +36,12 @@
 	}
 </script>
 
-<svelte:window on:keydown={handle_keydown}/>
+<svelte:window on:keydown={handle_keydown} />
 
-<div class="modal-background" on:click={close}></div>
+<div class="modal-background" on:click={() => on_close?.()} />
 
 <div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
-	<slot></slot>
+	<slot />
 </div>
 
 <style>
@@ -52,7 +51,7 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
-		background: rgba(0,0,0,0.3);
+		background: rgba(0, 0, 0, 0.3);
 	}
 
 	.modal {
@@ -63,9 +62,10 @@
 		max-width: 32em;
 		max-height: calc(100vh - 4em);
 		overflow: auto;
-		transform: translate(-50%,-50%);
+		transform: translate(-50%, -50%);
 		padding: 2em;
-		border-radius: 0.2em;
-		background: var(--agnostic-light);
+		border-radius: 2em;
+		outline: 2px solid var(--border);
+		background: var(--background-alt);
 	}
 </style>

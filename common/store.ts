@@ -2,47 +2,13 @@
 import { get, Writable, writable } from "svelte/store"
 // import { delete_cookie } from "./utils/cookie"
 import { fetchE, fetchJson } from "./utils/network"
-import { debounce } from "./utils/timout"
+
 import { applyDiff } from "./utils/utils"
 
-export const notifications = (() => {
-	let { subscribe, set, update } = writable<any>({})
-	function remove(id) {
-		update((v) =>
-			Object.fromEntries(Object.entries(v).filter(([k, v]) => k != id))
-		)
-	}
-	function add(n) {
-		if (n) {
-			if (typeof n === "string") n = { value: n }
-			if (typeof n === "object") {
-				if (!n.id) n.id = Date.now()
-				update((v) => { v[n.id] = n; return v })
-				setTimeout(() => remove(n.id), n.millis ?? 3000)
-			}
-		}
-	}
-	return {
-		subscribe,
-		add,
-		remove,
-	}
-})()
-export const status = writable<Promise<any> | undefined>(undefined)
+import { notifications } from "./stores/notifications"
+import { status, setStatus } from "./stores/status"
 
-export const setStatus = (v: Promise<any>, options?: { timeout?: number, on_resolve?: string, on_reject?: string }) => {
-	options = { timeout: 3000, ...options }
-	let s = v
-	if (options.on_resolve) s = s.then(() => options?.on_resolve)
-	if (options.on_reject) s = s.catch(() => options?.on_reject)
-
-	status.set(s)
-
-	// Reset status to green
-	debounce(() => status.set(Promise.resolve()), options.timeout, 'status')
-
-	return v
-}
+export { notifications, status, setStatus }
 
 interface SocketMessage {
 	id?: number
@@ -280,24 +246,6 @@ function createDb() {
 			v.json()
 		)
 	}
-	// const logout = () => {
-	// 	delete_cookie("auth", { path: "/", domain: undefined, samesite: "Strict" })
-	// 	navigate("/login")
-
-
-	// 	Object.values(subs).forEach(({ reset }) => reset?.())
-	// 	subs = {}
-	// 	// Reattach socket, so socket with new auth cookie is created
-	// 	// Reset subscriptions, so attach doesn't try to fetch things which this user can't see;
-	// 	// attach()
-	// 	// for (const prop of Object.getOwnPropertyNames(subs)) {
-	// 	// 	delete subs[prop];
-	// 	// }
-
-
-	// 	// Notify user of action
-	// 	setStatus(Promise.resolve(), { on_resolve: "Logged out!" })
-	// }
 
 	return {
 		_subs: subs,
@@ -305,7 +253,7 @@ function createDb() {
 		subscribeTo,
 		actions: {
 			chunks: {
-				del: (v) => setStatus(fetchJson("/api/chunks", v, "DELETE")),
+				del: (v) => setStatus(fetchJson("/api/chunks", { body: v, method: "DELETE" })),
 				put: (id: string, value: string) =>
 					connection.send(
 						{ resource: `chunks/${id}/value`, value },
@@ -316,30 +264,13 @@ function createDb() {
 					setStatus(
 						fetchJson(
 							"/api/chunks",
-							{ value: value ?? "# New Chunk\n\n" },
-							"PUT"
+							{
+								body: { value: value ?? "# New Chunk\n\n" }, method:
+									"PUT"
+							}
 						)
 					),
 			},
-			// login: (v) =>
-			// 	setStatus(fetchJson("/api/login", v), { on_resolve: "Logged in!" }).then(() => {
-			// 		// Reset subscriptions, so local view cache is cleared, hopefully views make new subs and let go of the old ones
-			// 		// subs = {}
-			// 		// On second thought, let's not do this, simply reset the values
-			// 		Object.values(subs).forEach(({ reset }) => reset())
-
-			// 		// Reattach socket, so socket with new auth cookie is created
-			// 		attach()
-			// 		// // Query user so
-			// 		// fetchE("/api/user").then((v) => v.json()).then((v) => subs['user']?.set(v))
-			// 	}),
-			// logout,
-			// logout_all: () => {
-			// 	fetchE("/api/logout_all").then(() => {
-			// 		notifications.add("Logged out of all devices!")
-			// 		logout()
-			// 	})
-			// },
 			media: {
 				post: (v) => setStatus(
 					mediaPost(v),
@@ -356,8 +287,8 @@ function createDb() {
 					}
 				)
 			},
-			reset: (v) => setStatus(fetchJson("/api/reset", v), { on_resolve: "Password reset!" }),
-			register: (v) => setStatus(fetchJson("/api/register", v), { on_resolve: "User registered!" }),
+			reset: (v) => setStatus(fetchJson("/api/reset", { body: v }), { on_resolve: "Password reset!" }),
+			register: (v) => setStatus(fetchJson("/api/register", { body: v }), { on_resolve: "User registered!" }),
 		},
 	} as const
 }
