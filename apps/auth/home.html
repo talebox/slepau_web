@@ -15,14 +15,58 @@
 
 	<style>
 		body {
+			line-height: 2em;
+			padding: 0;
+			margin: 0 auto 0 auto;
+			max-width: initial;
+			overflow-x: hidden;
+		}
+
+		.sections {
 			display: flex;
 			flex-flow: column;
 			gap: 2em;
-			line-height: 2em;
-			padding: 0;
 			padding-block: 30vh;
-
+			max-width: 800px;
+			margin: auto;
 		}
+
+		.when-visible.fade {
+			transition: all 3s;
+			transition-timing-function: cubic-bezier(0, .8, .8, 1);
+			opacity: 0;
+		}
+
+		.when-visible.fade.visible {
+			opacity: 1;
+		}
+
+		@keyframes move {
+			100% {
+				offset-distance: 100%;
+			}
+		}
+
+		.hovering {
+			transition: all 3s;
+			/* animation: move 5s infinite linear; */
+			/* offset: path("M0 0a2 2 0 0 0 4 -4a2 2 0 0 0 -4 4a2 2 0 0 1 -4 4a2 2 0 0 1 4 -4z") 0deg / 0 0; */
+		}
+
+		.up,
+		.down {
+			transform: none;
+		}
+
+		.visible .up {
+			transform: translateY(-20px);
+		}
+
+		.visible .down {
+			transform: translateY(20px);
+		}
+
+
 
 		hr.section {
 			border-top: 0;
@@ -37,54 +81,91 @@
 </head>
 
 <body>
-	<div id="app"></div>
-	<hr class=".section">
-	<div>
-		<h2>
-			Encapsulation 💊
-		</h2>
-		<p>Only server can access auth state.</p>
+	<div class="sections">
 
-		<p style="line-height: 1.5em;margin-block:2em">
-			<svg fill="currentColor" viewBox="0 0 16 16" style="height: 1.5em;position: relative;top: 7px;">
-				<path fill-rule="evenodd"
-					d="M8 4a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5A.5.5 0 0 1 8 4z" />
-			</svg>
-			<span style="color:inherit;font-weight: bold;">Attack Surface</span>
-			<svg fill="currentColor" viewBox="0 0 16 16" style="height: 1.5em;position: relative;top: 7px; margin-left:10px">
-				<path fill-rule="evenodd"
-					d="M8 12a.5.5 0 0 0 .5-.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 .5.5z" />
-			</svg>
-			<span style="color:inherit;font-weight: bold;">Modularity</span>
-		</p>
-		<p>JS is completely oblivious.</p>
+
+		<div id="app"></div>
+		<hr class="section">
+		<div class="when-visible fade">
+			<h2>
+				Encapsulation 💊
+			</h2>
+			<p>Only server can access auth state.</p>
+
+			<div style="display: flex;justify-content: center;margin-block:2em;gap: 2em">
+				<div class="hovering down" style="color: #f00">
+					<svg fill="currentColor" viewBox="0 0 16 16" style="height: 1.5em;position: relative;top: 7px;">
+						<path fill-rule="evenodd"
+							d="M8 4a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5A.5.5 0 0 1 8 4z" />
+					</svg>
+					<span style="font-weight: bold;">Attack Surface</span>
+				</div>
+				<div class="hovering up" style="color: #0f0">
+					<svg fill="currentColor" viewBox="0 0 16 16"
+						style="height: 1.5em;position: relative;top: 7px; margin-left:10px">
+						<path fill-rule="evenodd"
+							d="M8 12a.5.5 0 0 0 .5-.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 .5.5z" />
+					</svg>
+					<span style="font-weight: bold;">Modularity</span>
+				</div>
+			</div>
+			<p>JS is completely oblivious.</p>
+		</div>
+		<hr class="section">
+		<div class="when-visible fade">
+			<h2>
+				Paseto Tokens
+			</h2>
+			<p><a href="https://jose.readthedocs.io/en/latest">JOSE</a> (JWT, JWE, JWS) <br>
+				without it's <a
+					href="https://paragonie.com/blog/2017/03/jwt-json-web-tokens-is-bad-standard-that-everyone-should-avoid">drawbacks</a>.
+			</p>
+		</div>
 	</div>
-	<hr class=".section">
-	<div>
-		<h2>
-			Paseto Tokens
-		</h2>
-		<p><a href="https://jose.readthedocs.io/en/latest">JOSE</a> (JWT, JWE, JWS) <br>
-			without it's <a
-				href="https://paragonie.com/blog/2017/03/jwt-json-web-tokens-is-bad-standard-that-everyone-should-avoid">drawbacks</a>.
-		</p>
-	</div>
-	
+
 	<!-- Separator semicircle -->
-	<!-- <svg style="fill: ">
-	</svg> -->
-	
-	
-	<div>
-		<h2>
-			Paseto Tokens
+	<svg preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"
+		style="display:block;fill: var(--background-alt); width: 120vw;position:relative;left:-10vw; height:20vh"
+		viewBox="0 0 100 10">
+		<path d="
+		M 0 0
+		Q 50 10 100 0
+		v10 h-100 v10
+		z
+		">
+	</svg>
+
+
+	<div style="background: var(--background-alt);padding-block:20vh">
+
+		<h2 class="when-visible fade" style="margin:0;">
+			<a href="https://github.com/talebox">Talebox</a>
 		</h2>
-		<p><a href="https://jose.readthedocs.io/en/latest">JOSE</a> (JWT, JWE, JWS) <br>
-			without it's <a
-				href="https://paragonie.com/blog/2017/03/jwt-json-web-tokens-is-bad-standard-that-everyone-should-avoid">drawbacks</a>.
+		<p class="when-visible fade">Your story.
 		</p>
+
 	</div>
 
+
+	<!-- On scroll animation -->
+	<script>
+		// Create the observer
+		const observer = new IntersectionObserver(entries => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					entry.target.classList.add('visible');
+				} else {
+					// entry.target.classList.remove('visible');
+				}
+			});
+		});
+
+		// Tell the observer which elements to track
+		document.querySelectorAll('.when-visible').forEach(e => {
+			observer.observe(e)
+		})
+	</script>
+	<!-- Server interaction -->
 	<script>
 		var user = _USER_, host = "_HOST_", logged_in = user && user?.user !== 'public';
 	</script>
