@@ -22,14 +22,14 @@
 			.then((v) => v.json())
 			.then((v) => {
 				sites_slice = v;
-			});
+			}, notifications.addError);
 	}
 	function on_delete_confirm(v) {
 		if (v && selected?.id) {
 			actions
 				.del_site(selected.id)
 				.then(refresh)
-				.then(() => notifications.add(`Site deleted.`));
+				.then(() => notifications.add(`Site deleted.`), notifications.addError);
 		}
 		show_delete_confirm = false;
 		selected = undefined;
@@ -39,7 +39,10 @@
 			actions
 				.mod_site(selected.id, selected)
 				.then(refresh)
-				.then(() => notifications.add(`Change saved.`));
+				.then(
+					() => notifications.add(`Change saved.`),
+					notifications.addError
+				);
 		} else {
 			refresh().then(() => notifications.add("Changes reset."));
 		}

@@ -17,7 +17,7 @@
 			.then((v) => v.json())
 			.then((v) => {
 				slice = v;
-			});
+			}, notifications.addError);
 	}
 	function reset() {
 		refresh().then(() => notifications.add("Changes reset."));
@@ -32,7 +32,7 @@
 					notifications.add(`${username} created.`);
 					show_new = false;
 					selected = undefined;
-				});
+				}, notifications.addError);
 		} else {
 			show_new = false;
 			selected = undefined;
@@ -44,7 +44,10 @@
 			actions
 				.del_admin(selected.user)
 				.then(refresh)
-				.then(() => notifications.add(`${username} removed.`));
+				.then(
+					() => notifications.add(`${username} removed.`),
+					notifications.addError
+				);
 		}
 		show_delete = false;
 		selected = undefined;
@@ -53,7 +56,10 @@
 		actions
 			.mod_admin(user.user, user)
 			.then(refresh)
-			.then(() => notifications.add(`${user.user} saved.`));
+			.then(
+				() => notifications.add(`${username} saved.`),
+				notifications.addError
+			);
 	}
 
 	$: {
@@ -124,7 +130,7 @@
 						</p>
 						<p>
 							For increased security, admins have a <code>1hr</code> token
-							<b>max age</b>. ()
+							<b>max age</b>.
 						</p>
 						<button
 							style:color={admin.active ? "#f00" : "#0f0"}

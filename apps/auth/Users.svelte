@@ -19,7 +19,7 @@
 			.then((v) => v.json())
 			.then((v) => {
 				slice = v;
-			});
+			},notifications.addError);
 	}
 	function reset() {
 		refresh().then(() => notifications.add("Changes reset."));
@@ -34,7 +34,7 @@
 					notifications.add(`${username} created.`);
 					show_new = false;
 					selected = undefined;
-				});
+				}, notifications.addError);
 		} else {
 			show_new = false;
 			selected = undefined;
@@ -46,7 +46,7 @@
 			actions
 				.del_user(site_id, selected.user)
 				.then(refresh)
-				.then(() => notifications.add(`${username} removed.`));
+				.then(() => notifications.add(`${username} removed.`, notifications.addError));
 		}
 		show_delete = false;
 		selected = undefined;
@@ -55,7 +55,7 @@
 		actions
 			.mod_user(site_id, user.user, user)
 			.then(refresh)
-			.then(() => notifications.add(`${user.user} saved.`));
+			.then(() => notifications.add(`${user.user} saved.`), notifications.addError);
 	}
 
 	$: {

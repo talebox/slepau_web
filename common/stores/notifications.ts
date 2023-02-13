@@ -17,9 +17,17 @@ export const notifications = (() => {
 			}
 		}
 	}
+	function addError(n) {
+		if (typeof n === "string") n = { value: n }
+		if (typeof n === "object") {
+			n.type = n.type ?? "error"
+		}
+		add(n)
+	}
 	return {
 		subscribe,
 		add,
+		addError,
 		remove,
 	}
 })()
