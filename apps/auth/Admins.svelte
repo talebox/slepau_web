@@ -1,12 +1,10 @@
 <script>
-	import { navigate } from "@deps/routing";
 	import Confirm from "@comps/Confirm.svelte";
 	import { debounce } from "@utils/timeout";
+	import CodeList from "../../common/comps/CodeList.svelte";
 	import { actions } from "./store";
-	import { second_to_pretty, parse_seconds } from "@utils/utils";
 	import { notifications } from "/common/stores/notifications";
 
-	export let site_id;
 	let filter;
 	let slice;
 	let selected;
@@ -15,7 +13,7 @@
 
 	function refresh() {
 		return actions
-			.get_users(site_id, { any: filter })
+			.get_admins({ any: filter })
 			.then((v) => v.json())
 			.then((v) => {
 				slice = v;
@@ -28,7 +26,7 @@
 		let username = selected[0];
 		if (yes && selected) {
 			actions
-				.new_user(site_id, selected)
+				.new_admin(selected)
 				.then(refresh)
 				.then(() => {
 					notifications.add(`${username} created.`);
@@ -44,7 +42,7 @@
 		let username = selected.user;
 		if (yes && selected) {
 			actions
-				.del_user(site_id, selected.user)
+				.del_admin(selected.user)
 				.then(refresh)
 				.then(() => notifications.add(`${username} removed.`));
 		}
@@ -53,7 +51,7 @@
 	}
 	function on_save(user) {
 		actions
-			.mod_user(site_id, user.user, user)
+			.mod_admin(user.user, user)
 			.then(refresh)
 			.then(() => notifications.add(`${user.user} saved.`));
 	}
@@ -61,19 +59,19 @@
 	$: {
 		debounce(() => refresh(filter));
 	}
-	function new_user() {
+	function on_want_new() {
 		selected = ["", ""];
 		show_new = true;
 	}
 </script>
 
-<h1>Users of <code>{site_id}</code></h1>
+<h1>Admins</h1>
 <div class="container">
 	<div style="display:flex;align-items:center;" class="fw">
 		<input
 			class="search"
 			style="background:var(--background);border-radius:6px;padding:8px;padding-inline:12px;margin:0;flex-grow:3"
-			placeholder="🔍 Search user names..."
+			placeholder="🔍 Search admin names..."
 			bind:value={filter}
 		/>
 		<div style="flex-grow:1;text-align:right">
@@ -83,20 +81,20 @@
 
 	<div class="slices">
 		{#if slice}
-			{#each slice.items as user (user.user)}
+			{#each slice.items as admin (admin.user)}
 				<details class="slice">
 					<summary>
-						<code>{user.user}</code>
+						<code>{admin.user}</code>
 						<div style="flex-grow:1" />
 
-						<code>{Object.entries(user.claims).length} claims</code>
-						<svg fill={user.active ? "#0f08" : "#f008"} viewBox="0 0 100 100">
+						<code>{admin.sites.length} sites</code>
+						<svg fill={admin.active ? "#0f08" : "#f008"} viewBox="0 0 100 100">
 							<circle cx="50%" cy="50%" r="50" />
 						</svg>
 						<button
 							class="icon delete"
 							on:click={() => {
-								selected = user;
+								selected = admin;
 								show_delete = true;
 							}}
 						>
@@ -110,7 +108,7 @@
 					<details>
 						<summary
 							>Active:
-							{#if user.active}
+							{#if admin.active}
 								<b style="color:#0f0">true</b>
 							{:else}
 								<b style="color:#f00">false</b>
@@ -118,27 +116,29 @@
 						</summary>
 
 						<p>
-							This user <b>{user.active ? "can" : "can't"}</b> perform new logins.
+							This admin <b>{admin.active ? "can" : "can't"}</b> perform new logins.
 						</p>
 
-						<p>Note that an <b>active token can't be revoked</b>.</p>
 						<p>
-							Consider lowering <code>max_age</code> on site settings if you're worried
-							about this.
+							Note that an <b>active token can't be revoked</b>.
+						</p>
+						<p>
+							For increased security, admins have a <code>1hr</code> token
+							<b>max age</b>. ()
 						</p>
 						<button
-							style:color={user.active ? "#f00" : "#0f0"}
-							on:click={() => (user.active = !user.active)}
-							>{user.active ? "Disable" : "Enable"}</button
+							style:color={admin.active ? "#f00" : "#0f0"}
+							on:click={() => (admin.active = !admin.active)}
+							>{admin.active ? "Disable" : "Enable"}</button
 						>
 					</details>
 
 					<details>
 						<summary
-							>Claims: <code>{Object.entries(user.claims).length}</code
+							>Claims: <code>{Object.entries(admin.claims).length}</code
 							></summary
 						>
-						<p>What claims will the user have?</p>
+						<p>What claims will the admin have?</p>
 						<p>
 							Claims will be parsed to JSON, so you can use it's data
 							structures.
@@ -151,7 +151,7 @@
 							Example: A flower expert and founder in the flower shop might have
 							claim: <code>groups: ["expert", "founder"]</code>.
 						</p>
-						{#each Object.entries(user.claims) as [k, v], i}
+						{#each Object.entries(admin.claims) as [k, v], i}
 							<div style="display:flex;gap:1em;align-items:center">
 								<span
 									><code style="width: 10em;display:inline-block">{k}</code
@@ -159,14 +159,14 @@
 								>
 								<input
 									class="border"
-									bind:value={user.claims[k]}
+									bind:value={admin.claims[k]}
 									placeholder="value"
 								/>
 								<button
 									class="icon delete"
 									on:click={() => {
-										delete user.claims[k];
-										user.claims = user.claims;
+										delete admin.claims[k];
+										admin.claims = admin.claims;
 									}}
 								>
 									<svg fill="currentColor" viewBox="0 0 16 16">
@@ -181,18 +181,72 @@
 							style="border: 1px dashed grey;margin-top:.5em"
 							on:blur={(e) => {
 								if (!e.target.value) return;
-								if (typeof user.claims[e.target.value] !== "undefined") return;
-								user.claims[e.target.value] = "";
-								user.claims = user.claims;
+								if (typeof admin.claims[e.target.value] !== "undefined") return;
+								admin.claims[e.target.value] = "";
+								admin.claims = admin.claims;
 								e.target.value = "";
 							}}
 							placeholder="key"
 						/>
 					</details>
 
+					<details>
+						<summary
+							>Super:
+							{#if admin.super}
+								<b style="color:#0f0">true</b>
+							{:else}
+								<b style="color:#f00">false</b>
+							{/if}
+						</summary>
+						<p>
+							This <b>{admin.super ? "is" : "isn't"}</b> a super admin.
+						</p>
+						<p>
+							Note that supers have <b>complete control over all data</b> managed
+							by this instance, including removing other's super admin status.
+						</p>
+						<p>
+							Also note that supers <b>cannot remove their own super status</b>.
+							Ensuring that there's always at least 1 super admin per instance.
+						</p>
+						<button
+							style:color={admin.super ? "#f00" : "#0f0"}
+							on:click={() => (admin.super = !admin.super)}
+							>{admin.super ? "Remove Super" : "Make Super"}</button
+						>
+					</details>
+					<details>
+						<summary
+							>Sites:
+							<CodeList list={admin.sites} />
+						</summary>
+						<p>What sites does this admin have access to?</p>
+						<p>
+							Example: Admin <code>john</code> might manage site
+							<code>balab_losab</code>.
+						</p>
+						{#each admin.sites as site, i}
+							<input
+								class="border"
+								bind:value={admin.sites[i]}
+								on:blur={() => (admin.sites = admin.sites.filter((v) => !!v))}
+							/>
+						{/each}
+						<input
+							style="border: 1px dashed grey"
+							on:blur={(e) => {
+								if (!e.target.value) return;
+								admin.sites = [...admin.sites, e.target.value];
+								e.target.value = "";
+							}}
+							placeholder="balab_losab"
+						/>
+					</details>
+
 					<div style="margin:auto;width:max-content">
 						<button class="bad" on:click={reset}>Reset</button>
-						<button class="good" on:click={() => on_save(user)}>Save</button>
+						<button class="good" on:click={() => on_save(admin)}>Save</button>
 					</div>
 				</details>
 			{/each}
@@ -206,7 +260,7 @@
 		style:outline={slice?.items.length === 0
 			? "2px dashed #888F"
 			: "2px dashed #888A"}
-		on:click={new_user}
+		on:click={on_want_new}
 		><svg fill="currentColor" viewBox="0 0 16 16">
 			<path
 				fill-rule="evenodd"

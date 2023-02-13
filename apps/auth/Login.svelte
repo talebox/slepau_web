@@ -7,6 +7,8 @@
 	import { debounce } from "@utils/timeout";
 	const c = cnfc(s);
 
+	let as_admin = false;
+
 	function getValues() {
 		let form = document.forms[0];
 		if (!form) return;
@@ -33,7 +35,7 @@
 			() => {
 				location.href = "/";
 			},
-			"/login",
+			`/login?admin=${as_admin}`,
 			{ body: getValues() }
 		);
 	}
@@ -81,6 +83,10 @@
 				Password
 				<input type="password" name="pass" />
 			</label>
+			<label style="display: flex;align-items:center;gap:1em;justify-content:center">
+				<input style="width:auto" type="checkbox" bind:checked={as_admin} />
+				as admin?
+			</label>
 			<button type="submit" on:click|preventDefault={onLogin}>Login</button>
 		</Route>
 		<Route path="reset">
@@ -122,6 +128,7 @@
 </Router>
 
 <style>
+	
 	input {
 		width: 100%;
 		margin: 0;
@@ -134,6 +141,9 @@
 	}
 	.container > * {
 		margin: 0;
+	}
+	.container > button {
+		margin-top: 1em;
 	}
 	.message {
 		color: green;

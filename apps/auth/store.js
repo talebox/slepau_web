@@ -10,4 +10,9 @@ export const actions = {
 	new_user: (site_id, user) => fetchJson(`/sites/${site_id}/users`, { method: "POST", body: user }),
 	mod_user: (site_id, user_id, user) => fetchJson(`/sites/${site_id}/users/${user_id}`, { method: "PUT", body: user }),
 	del_user: (site_id, user_id) => fetchE(`/sites/${site_id}/users/${user_id}`, { method: "DELETE" }),
+
+	get_admins: (filter) => fetchE(`/admins`, { query: filter }),
+	new_admin: (admin) => fetchJson(`/admins`, { method: "POST", body: admin }),
+	mod_admin: (user_id, admin) => fetchJson(`/admins/${user_id}`, { method: "PUT", body: admin }),
+	del_admin: (user_id) => fetchE(`/admins/${user_id}`, { method: "DELETE" }),
 }

@@ -5,6 +5,7 @@
 	import { actions } from "./store";
 	import { second_to_pretty, parse_seconds } from "@utils/utils";
 	import { notifications } from "/common/stores/notifications";
+	import CodeList from "../../common/comps/CodeList.svelte";
 
 	let name;
 	let sites_slice;
@@ -54,7 +55,31 @@
 	}
 </script>
 
-<h1>Sites</h1>
+<h1>
+	Sites
+
+	{#if global.user.super}
+		<button
+			class="icon admin-edit"
+			on:click={() => {
+				navigate(`/app/admins`);
+			}}
+		>
+			<svg
+				fill="currentColor"
+				viewBox="0 0 16 16"
+				style="display:inline;width:unset"
+			>
+				<path
+					d="M5.338 1.59a61.44 61.44 0 0 0-2.837.856.481.481 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.725 10.725 0 0 0 2.287 2.233c.346.244.652.42.893.533.12.057.218.095.293.118a.55.55 0 0 0 .101.025.615.615 0 0 0 .1-.025c.076-.023.174-.061.294-.118.24-.113.547-.29.893-.533a10.726 10.726 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.531 1.067 8 1.067c-.53 0-1.552.223-2.662.524zM5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.775 11.775 0 0 1-2.517 2.453 7.159 7.159 0 0 1-1.048.625c-.28.132-.581.24-.829.24s-.548-.108-.829-.24a7.158 7.158 0 0 1-1.048-.625 11.777 11.777 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 62.456 62.456 0 0 1 5.072.56z"
+				/>
+				<path
+					d="M9.5 6.5a1.5 1.5 0 0 1-1 1.415l.385 1.99a.5.5 0 0 1-.491.595h-.788a.5.5 0 0 1-.49-.595l.384-1.99a1.5 1.5 0 1 1 2-1.415z"
+				/>
+			</svg>
+		</button>
+	{/if}
+</h1>
 <div class="container">
 	<div style="display:flex;align-items:center;" class="fw">
 		<input
@@ -163,7 +188,10 @@
 						/>
 					</details>
 					<details>
-						<summary>Hosts: <code>{site.hosts?.join(", ")}</code></summary>
+						<summary
+							>Hosts:
+							<CodeList list={site.hosts} />
+						</summary>
 						<p>What hosts does this site answer to?</p>
 						<p>
 							Example: Flower shop might answer to <code>flowers.com</code>.
@@ -188,14 +216,14 @@
 
 					<div style="margin:auto;width:max-content">
 						<button
-							class="cancel"
+							class="bad"
 							on:click={() => {
 								selected = site;
 								on_save_confirm(false);
-							}}>Cancel</button
+							}}>Reset</button
 						>
 						<button
-							class="save"
+							class="good"
 							on:click={() => {
 								selected = site;
 								on_save_confirm(true);
@@ -225,7 +253,7 @@
 </div>
 
 {#if show_delete_confirm}
-	<Confirm action={on_delete_confirm}>
+	<Confirm action={on_delete_confirm} inverted>
 		<h2 style="text-align: center;">
 			Delete site "{selected.name || selected.id}"?
 		</h2>
@@ -233,7 +261,18 @@
 {/if}
 
 <style>
-	
+	button.icon.admin-edit {
+		float: right;
+		width: 1.3em;
+		height: 1.3em;
+		padding: 0;
+		/* display: inline-block; */
+		padding: 0.15em;
+	}
+	button.icon.admin-edit:hover {
+		background: #b3664c80;
+	}
+
 	button.icon {
 		width: 2.4em;
 		height: 2.4em;
