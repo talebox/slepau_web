@@ -2,6 +2,8 @@
 	import { Router, Route, Link, navigate } from "@deps/routing";
 	import * as s from "./Login.module.scss";
 	import { slide } from "svelte/transition";
+	import Notifications from "@comps/Notifications.svelte";
+	import { notifications } from "/common/stores/notifications";
 	import { fetchE, fetchJson } from "@utils/network";
 	import cnfc from "@utils/classname";
 	import { debounce } from "@utils/timeout";
@@ -20,46 +22,26 @@
 		}
 		return Object.values(values);
 	}
-	let message;
-	function fetchWrapper(good, ...v) {
-		return fetchJson(...v).then(
-			(...v) => good(...v),
-			(e) => {
-				message = { value: e, error: true };
-				debounce(() => (message = undefined), 10000, "error");
-			}
-		);
-	}
+	
 	function onLogin(e) {
-		fetchWrapper(
+		fetchJson(`/login`, { body: getValues(), query: { admin: as_admin } }).then(
 			() => {
 				location.href = "/";
 			},
-			`/login?admin=${as_admin}`,
-			{ body: getValues() }
+			notifications.addError
 		);
 	}
 	function onReset(e) {
-		fetchWrapper(
-			() => {
-				navigate("/login");
-				message = { value: "Reset!" };
-				debounce(() => (message = undefined), 10000, "error");
-			},
-			"/reset",
-			{ body: getValues() }
-		);
+		fetchJson(`/reset`, { body: getValues() }).then(() => {
+			navigate("/login");
+			notifications.add("Reset!");
+		}, notifications.addError);
 	}
 	function onRegister(e) {
-		fetchWrapper(
-			() => {
-				navigate("/login");
-				message = { value: "Registered!" };
-				debounce(() => (message = undefined), 10000, "error");
-			},
-			"/register",
-			{ body: getValues() }
-		);
+		fetchJson(`/register`, { body: getValues() }).then(() => {
+			navigate("/login");
+			notifications.add("Registered!");
+		}, notifications.addError);
 	}
 
 	const linkProps = ({ isCurrent }) => ({
@@ -67,6 +49,7 @@
 	});
 </script>
 
+<Notifications />
 <Router basepath="/login">
 	<form class="container fc">
 		<nav class="frw grow-c" style="margin-block: 20px;">
@@ -83,7 +66,9 @@
 				Password
 				<input type="password" name="pass" />
 			</label>
-			<label style="display: flex;align-items:center;gap:1em;justify-content:center">
+			<label
+				style="display: flex;align-items:center;gap:1em;justify-content:center"
+			>
 				<input style="width:auto" type="checkbox" bind:checked={as_admin} />
 				as admin?
 			</label>
@@ -119,16 +104,10 @@
 				>Register</button
 			>
 		</Route>
-		{#if message}
-			<div class:error={message.error} class="message" transition:slide>
-				{message.value}
-			</div>
-		{/if}
 	</form>
 </Router>
 
 <style>
-	
 	input {
 		width: 100%;
 		margin: 0;

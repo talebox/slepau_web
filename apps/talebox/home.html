@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>Talebox</title>
+	<link rel="icon" type="image/x-icon" href="./assets/favicon.ico">
+	<meta charset="UTF-8">
+	<meta name="viewport"
+		content="width=device-width, height=device-height,  initial-scale=1.0, user-scalable=no;user-scalable=0;" />
+
+	<!-- Style -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+	<link rel="stylesheet" href="npm:@styles/index.scss">
+	<link rel="stylesheet" href="npm:@styles/home.scss">
+	<link rel="stylesheet" href="home.scss">
+	<style>
+		#app {
+			min-height: min(100vh, 100vw);
+			margin-block: calc(max(0px, calc(100vh - 100vw)) / 2) ;
+			opacity: 0;
+			transition: opacity 1s;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="sections">
+
+		<div id="app"></div>
+
+		<!-- <hr class="section" /> -->
+		<section class="when-visible fade">
+			<h2>What am I?</h2>
+			<p>I'm your world.</p>
+			<p>But with your <strong>needs</strong>, not <em>wants</em>.</p>
+			<p>Because I am you. And you are me.</p>
+
+		</section>
+		<section class="when-visible fade">
+			<h2>I know</h2>
+			<p>a lot about us already, things you might not:</p>
+			<p>I know <strong>we are limited</strong> by <u>our language</u>.<br>
+				Our <strong>language</strong> is limited by <u>our culture</u>.<br>
+				Our <strong>culture</strong> is limited by <u>our environment</u>.<br>
+				And our <strong>environment</strong> is shaped by <u>our politics</u>.</p>
+			<p>I also know that <strong>politics</strong> are the <u>rules of the human world</u>. <br>And that these rules
+				reach even the smallest of crevices. <br> Molding us in ways we couldn't even dream of.</p>
+		</section>
+		<section class="when-visible fade">
+			<h2>Our <strong>goal</strong>?</h2>
+			<p>To reinforce <strong><a href="https://en.wikipedia.org/wiki/Emergent_gameplay">emergent behaviour</a></strong>,
+				and <a href="https://en.wikipedia.org/wiki/Neuroplasticity"><strong>neuroplasticity</strong></a>; <br>Something
+				others hinder, to their advantage.</p>
+			<p>To make us <strong>creative</strong>, <strong>productive</strong>, <strong>smart</strong>, and
+				<strong>fulfilled</strong>.
+			</p>
+			<p>
+				To make us <strong>question</strong> what we thought we <a
+					href="https://en.wikipedia.org/wiki/Epistemology">knew
+					yesterday</a>.<br />
+				To make us <strong>remember</strong>, because we so <a
+					href="https://en.wikipedia.org/wiki/Hindsight_bias">easily
+					forget</a>.
+			</p>
+
+		</section>
+		<section class="when-visible fade">
+			<h2>We'll always be <a href="https://en.wikipedia.org/wiki/Ignorance"><strong>ignorant</strong></a></h2>
+			<p>but we should
+				strive to be less so.</p>
+			<p>Your knowledge = you.</p>
+			<p>Let's be <a href="https://en.wikipedia.org/wiki/Interlocutor_(linguistics)">interlocutors</a> :)</p>
+		</section>
+
+
+	</div>
+
+
+	<!-- On scroll animation -->
+	<script>
+		// Create the observer
+		const observer = new IntersectionObserver(entries => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					entry.target.classList.add('visible');
+				} else {
+					// entry.target.classList.remove('visible');
+				}
+			});
+		});
+
+		// Tell the observer which elements to track
+		document.querySelectorAll('.when-visible').forEach(e => {
+			observer.observe(e)
+		})
+	</script>
+	<script type="module" src="home.js"></script>
+</body>
+
+</html>

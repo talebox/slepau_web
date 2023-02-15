@@ -27,12 +27,13 @@
 		if (yes && selected) {
 			actions
 				.new_admin(selected)
-				.then(refresh)
 				.then(() => {
 					notifications.add(`${username} created.`);
 					show_new = false;
 					selected = undefined;
-				}, notifications.addError);
+				})
+				.then(refresh)
+				.catch(notifications.addError);
 		} else {
 			show_new = false;
 			selected = undefined;
@@ -43,11 +44,12 @@
 		if (yes && selected) {
 			actions
 				.del_admin(selected.user)
-				.then(refresh)
 				.then(
-					() => notifications.add(`${username} removed.`),
-					notifications.addError
-				);
+					() => notifications.add(`${username} removed.`)
+					
+				)
+				.then(refresh)
+				.catch(notifications.addError);
 		}
 		show_delete = false;
 		selected = undefined;
@@ -55,11 +57,11 @@
 	function on_save(user) {
 		actions
 			.mod_admin(user.user, user)
-			.then(refresh)
 			.then(
-				() => notifications.add(`${username} saved.`),
-				notifications.addError
-			);
+				() => notifications.add(`${user.user} saved.`)
+			)
+			.then(refresh)
+			.catch(notifications.addError);
 	}
 
 	$: {

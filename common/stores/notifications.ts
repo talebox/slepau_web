@@ -21,6 +21,7 @@ export const notifications = (() => {
 		if (typeof n === "string") n = { value: n }
 		if (typeof n === "object") {
 			n.type = n.type ?? "error"
+			n.millis = n.millis ?? 10000
 		}
 		add(n)
 	}

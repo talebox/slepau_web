@@ -51,6 +51,12 @@
 				"apps/chunk/preview.html"
 			],
 			"distDir": "./dist/chunk"
+		},
+		"talebox":{
+			"source": [
+				"apps/talebox/home.html"
+			],
+			"distDir": "./dist/talebox"
 		}
 	}
 }

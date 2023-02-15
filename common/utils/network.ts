@@ -1,6 +1,9 @@
 
 
-/** Rejects throws if answer is not an ok code */
+/** 
+ * Rejects with an "error string" if answer is not ok.
+ * Otherwiser returns the response.
+ */
 export const fetchE = (input, _init) => {
 	const { query, ...init } = _init
 	const _query = typeof query === 'object' ?
@@ -13,7 +16,7 @@ export const fetchE = (input, _init) => {
 
 	return fetch(input + (_query ? "?" + _query : ""), init)
 		.then(v => Promise.all([Promise.resolve(v), v.ok ? Promise.resolve("") : v.text()]))
-		.then(([v, body]) => v.ok ? v : Promise.reject(`${v.status} ${body ? body : v.statusText}`))
+		.then(([v, body]) => v.ok ? Promise.resolve(v) : Promise.reject(`${v.status} ${body ? body : v.statusText}`))
 }
 
 export const fetchJson = (input, init) =>
