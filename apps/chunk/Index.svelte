@@ -12,20 +12,14 @@
 
 <Notifications />
 <div class="main">
-	<Router>
-		
-		<Route>
-			<Preview id={"gilib_digis"} />
-		</Route>
-		<Route path="app/*" component={Apps} />
+	<Router basepath="/app">
+		<Route component={Apps} />
 		<Route path="settings/*" component={Settings} />
 		
 		<!-- Edit URL -->
 		<Route path="edit/:id" component={Edit} />
 		<!-- Public Previews -->
 		<Route path="preview/:id" component={Preview} />
-
-		<Route path="login/*" component={Login} />
 	</Router>
 </div>
 

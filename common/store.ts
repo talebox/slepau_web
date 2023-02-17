@@ -1,6 +1,4 @@
-// import { navigate } from '@deps/routing'
 import { get, Writable, writable } from "svelte/store"
-// import { delete_cookie } from "./utils/cookie"
 import { fetchE, fetchJson } from "./utils/network"
 
 import { applyDiff } from "./utils/utils"

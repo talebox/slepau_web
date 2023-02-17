@@ -1,28 +1,9 @@
 <script>
-	import {
-		theme_set,
-		theme_get,
-		prefers_light,
-	} from "@styles/theme/theme.js";
 	import { navigate } from "@deps/routing";
 	import { db, local_settings$ } from "../store";
 	import User from "./User.svelte";
 	import { get } from "svelte/store";
-
-	let is_light = theme_get();
-
-	const theme_toggle = () => {
-		// console.log("Was ", is_light);
-		// Small state machine
-		is_light =
-			is_light === undefined
-				? !prefers_light
-				: is_light === !prefers_light
-				? prefers_light
-				: undefined;
-		// console.log("Setting ", is_light);
-		theme_set(is_light);
-	};
+	import { logout } from "@utils/utils";
 
 	let open = false;
 
@@ -62,7 +43,7 @@
 		</div>
 
 		{#if user?.user !== "public"}
-			<button class="menu" on:click={() => navigate("/settings/")}>
+			<button class="menu" on:click={() => navigate("/app/settings/")}>
 				<svg fill="currentColor" viewBox="0 0 16 16" class="icon">
 					<path
 						d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"
@@ -70,7 +51,7 @@
 				</svg>
 				Settings</button
 			>
-			<button class="menu" on:click={db.actions.logout}>
+			<button class="menu" on:click={logout}>
 				<svg fill="currentColor" viewBox="0 0 16 16" class="icon">
 					<path
 						fill-rule="evenodd"
@@ -84,7 +65,7 @@
 				Logout
 			</button>
 		{:else}
-			<button class="menu" on:click={() => navigate("/login")}>
+			<button class="menu" on:click={() => navigate("/app/login")}>
 				<svg fill="currentColor" viewBox="0 0 16 16" class="icon">
 					<path
 						fill-rule="evenodd"
@@ -158,10 +139,10 @@
 		>
 
 		<div style="flex-grow: 1;" />
-		
+
 		<div class="fr">
 			<button style="flex-grow:1" on:click={() => (open = false)}>Close</button>
-			<button on:click={theme_toggle}
+			<!-- <button on:click={theme_toggle}
 				><span style="flex-grow:1">
 					{#if is_light === true}
 						<svg fill="currentColor" viewBox="0 0 16 16">
@@ -181,7 +162,7 @@
 						</svg>
 					{/if}
 				</span></button
-			>
+			> -->
 			<button class="fullscreen" on:click={toggle_fullscreen}>
 				<svg fill="currentColor" viewBox="0 0 16 16" class="icon">
 					<path

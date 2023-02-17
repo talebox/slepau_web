@@ -9,79 +9,108 @@
 		content="width=device-width, height=device-height,  initial-scale=1.0, user-scalable=no;user-scalable=0;" />
 
 	<!-- Style -->
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+	<link rel="stylesheet" href="/common/water.css">
 	<link rel="stylesheet" href="npm:@styles/index.scss">
-	<link rel="stylesheet" href="index.scss">
+	<link rel="stylesheet" href="npm:@styles/home.scss">
+	<link rel="stylesheet" href="home.scss">
 
 	<style>
-		body {
-			
-			display: flex;
-			flex-flow: column;
-			gap: 2em;
-			line-height: 2em;
-			padding: 0;
-			/* margin: 0; */
-			padding-block: 30vh;
-			
-		}
 
-		hr {
-			border-top: 0;
-			border-left: 1px solid #8885;
-			height: 50vh;
-		}
-
-		body>div {
-			/* height: 100vh; */
-			/* display: flex; */
-			text-align: center;
-
-			/* flex-flow: column; */
-			/* justify-content: center; */
-			/* align-items: center; */
-		}
 	</style>
 </head>
 
 <body>
-	<div id="app"></div>
-	<hr>
-	<div>
-		<h2>
-			Encapsulation 💊
-		</h2>
-		<p>Only server can access auth state.</p>
+	<div class="sections">
 
-		<p style="line-height: 1.5em;margin-block:2em">
-			<svg fill="currentColor" viewBox="0 0 16 16" style="height: 1.5em;position: relative;top: 7px;">
-				<path fill-rule="evenodd"
-					d="M8 4a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5A.5.5 0 0 1 8 4z" />
-			</svg>
-			<span style="color:inherit;font-weight: bold;">Attack Surface</span>
-			<svg fill="currentColor" viewBox="0 0 16 16" style="height: 1.5em;position: relative;top: 7px; margin-left:10px">
-				<path fill-rule="evenodd"
-					d="M8 12a.5.5 0 0 0 .5-.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 .5.5z" />
-			</svg>
-			<span 
-			style="color:inherit;font-weight: bold;"
-			>Modularity</span>
-		</p>
-		<p>JS is completely oblivious.</p>
-	</div>
-	<hr>
-	<div>
-		<h2>
-			Paseto Tokens
-		</h2>
-		<p><a href="https://jose.readthedocs.io/en/latest">JOSE</a> (JWT, JWE, JWS) <br>
-			without it's <a
-				href="https://paragonie.com/blog/2017/03/jwt-json-web-tokens-is-bad-standard-that-everyone-should-avoid">drawbacks</a>.
-		</p>
+		<section id="app" style="min-height: 50px;position:relative"></section>
+
+		<hr class="section" />
+		<section class="when-visible fade">
+			<h2>Anything</h2>
+			Thoughts... ideas... projects...
+		</section>
+
+		<hr class="section" />
+		<section class="when-visible fade">
+			<h2>Collaborate</h2>
+			with friends, by writing:<br />
+			<code>share: john write, nina read, ...</code>
+			<ul style="width: max-content;text-align: left;margin-inline:auto;">
+				<li><code>read</code> allows <b>viewing</b>.</li>
+				<li><code>write</code> allows <b>editing of the contents</b>.</li>
+				<li><code>admin</code> gives <b>complete control</b>.</li>
+			</ul>
+		</section>
+
+		<hr class="section" />
+
+		<section class="when-visible fade">
+			<h2>Use Anywhere</h2>
+			<!-- Phone. PC. Laptop.<br /> -->
+			with a browser<br />
+			<span style="font-size:.8em;opacity:.8">or</span><br />
+			install<br />
+			<span style="font-size:.8em;opacity:.8;position:relative;top:-1em">(as a webapp)</span>
+		</section>
+		<hr class="section" />
+		<section class="when-visible fade">
+			<h2>Publish Everywhere</h2>
+			<ol>
+				<li><code style="display: inline;">share: public read</code></li>
+
+				<li>Copy <svg fill="currentColor" viewBox="0 0 16 16" class="border"
+						style="padding:.5em;height:3em;width:3em;border-radius:.3em;position:relative;top:1em;margin-inline:1em">
+						<path fill-rule="evenodd"
+							d="M14 4.5V11h-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5L14 4.5Zm-9.736 7.35v3.999h-.791v-1.714H1.79v1.714H1V11.85h.791v1.626h1.682V11.85h.79Zm2.251.662v3.337h-.794v-3.337H4.588v-.662h3.064v.662H6.515Zm2.176 3.337v-2.66h.038l.952 2.159h.516l.946-2.16h.038v2.661h.715V11.85h-.8l-1.14 2.596H9.93L8.79 11.85h-.805v3.999h.706Zm4.71-.674h1.696v.674H12.61V11.85h.79v3.325Z" />
+					</svg> and share link.</li>
+			</ol>
+
+		</section>
 	</div>
 
+	<!-- Separator semicircle -->
+	<svg preserveAspectRatio="none" class="talebox-meta" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 10">
+		<path d="
+		M 0 0
+		Q 50 10 100 0
+		v10 h-100 v10
+		z
+		">
+	</svg>
+
+
+	<div style="background: var(--background-alt);padding-block:20vh">
+
+		<h2 class="when-visible fade" style="margin:0;">
+			<a href="https://talebox.anty.dev">Talebox</a>
+		</h2>
+		<p class="when-visible fade">Your story.
+		</p>
+
+	</div>
+
+
+	<!-- On scroll animation -->
 	<script>
-		var user = "_USER_", host = "_HOST_", logged_in = user !== 'public';
+		// Create the observer
+		const observer = new IntersectionObserver(entries => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					entry.target.classList.add('visible');
+				} else {
+					// entry.target.classList.remove('visible');
+				}
+			});
+		});
+
+		// Tell the observer which elements to track
+		document.querySelectorAll('.when-visible').forEach(e => {
+			observer.observe(e)
+		})
+	</script>
+	<!-- Server interaction -->
+	<script>
+		var user = _USER_, logged_in = user && user?.user !== 'public';
 	</script>
 	<script type="module" src="home.js"></script>
 

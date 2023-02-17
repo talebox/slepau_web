@@ -4,6 +4,7 @@
 	import { db, local_settings$ } from "../store";
 	import { parseDate } from "chrono-node";
 	import parse_coordinate from "geo-coordinates-parser";
+  import { logout } from "@utils/utils";
 	let photoInput;
 
 	function photoUpload() {
@@ -58,8 +59,8 @@
 				Set Profile Photo
 			</button>
 
-			<button on:click={db.actions.logout}>Logout</button>
-			<button on:click={db.actions.logout_all}>Logout of all devices</button>
+			<button on:click={logout}>Logout</button>
+			<!-- <button on:click={db.actions.logout_all}>Logout of all devices</button> -->
 		</section>
 		<section>
 			<h2>Preferences</h2>

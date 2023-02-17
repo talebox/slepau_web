@@ -9,14 +9,17 @@
 		content="width=device-width, height=device-height,  initial-scale=1.0, user-scalable=no;user-scalable=0;" />
 
 	<!-- Style -->
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+	<link rel="stylesheet" href="/common/water.css">
 	<link rel="stylesheet" href="npm:@styles/index.scss">
 	<link rel="stylesheet" href="npm:@styles/home.scss">
 	<link rel="stylesheet" href="home.scss">
 	<style>
 		#app {
-			min-height: min(100vh, 100vw);
-			margin-block: calc(max(0px, calc(100vh - 100vw)) / 2) ;
+			position: relative;
+			height: min(100vh, 100vw);
+			width: min(100vh, 100vw);
+			max-width: 100%;
+			margin-block: calc(max(0px, calc(100vh - 100vw)) / 3) ;
 			opacity: 0;
 			transition: opacity 1s;
 		}
@@ -28,7 +31,7 @@
 
 		<div id="app"></div>
 
-		<!-- <hr class="section" /> -->
+		<hr class="section" />
 		<section class="when-visible fade">
 			<h2>What am I?</h2>
 			<p>I'm your world.</p>
@@ -36,6 +39,7 @@
 			<p>Because I am you. And you are me.</p>
 
 		</section>
+		<hr class="section" />
 		<section class="when-visible fade">
 			<h2>I know</h2>
 			<p>a lot about us already, things you might not:</p>
@@ -46,6 +50,7 @@
 			<p>I also know that <strong>politics</strong> are the <u>rules of the human world</u>. <br>And that these rules
 				reach even the smallest of crevices. <br> Molding us in ways we couldn't even dream of.</p>
 		</section>
+		<hr class="section" />
 		<section class="when-visible fade">
 			<h2>Our <strong>goal</strong>?</h2>
 			<p>To reinforce <strong><a href="https://en.wikipedia.org/wiki/Emergent_gameplay">emergent behaviour</a></strong>,
@@ -64,6 +69,7 @@
 			</p>
 
 		</section>
+		<hr class="section" />
 		<section class="when-visible fade">
 			<h2>We'll always be <a href="https://en.wikipedia.org/wiki/Ignorance"><strong>ignorant</strong></a></h2>
 			<p>but we should

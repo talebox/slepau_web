@@ -146,7 +146,8 @@
 			> <code>{global.user.user}</code></b
 		><br />
 	{:else}
-		Provides a key that <strong>identifies</strong><br />
+		The key<br />
+		<strong>identifies</strong><br />
 		<span id="user">an <b>entity</b> that <strong>interacts</strong> 📡</span>
 		<br />
 	{/if}

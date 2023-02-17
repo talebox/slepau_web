@@ -1,4 +1,3 @@
-
 html {
 	font-size: min(calc(15px + 0.4vw), 24px);
 }
@@ -13,6 +12,10 @@ html {
 	opacity: 1;
 }
 
-section {
-	margin-block: 30vh;
+hr.section {
+	height: 30vh
+}
+
+.sections {
+	padding-top: 0;
 }

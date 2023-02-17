@@ -74,7 +74,7 @@
 				? "initial"
 				: "1px solid #8888"}
 		>
-			<Link to={"well/" + parent.id}>
+			<Link to={parent.id}>
 				{parent.props?.title ??
 					"<" + passed_since_pretty(parent?.props_dynamic?.modified)?.[0] + ">"}
 			</Link>
@@ -94,7 +94,7 @@
 								$editing_id$ = chunk.id;
 							}}
 						/>
-						<Link class={s.right} to={"well/" + chunk.id} />
+						<Link class={s.right} to={chunk.id} />
 					{/if}
 				</div>
 			</Chunks>

@@ -26,6 +26,7 @@
 	}
 	$: update(modified);
 	onDestroy(() => clearTimeout(clear));
+	console.log(chunk.value)
 </script>
 
 <div

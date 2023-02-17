@@ -1,3 +1,5 @@
+import { fetchE } from "./network";
+
 /**
  * This function applies a diff to a textarea string, moving the selection accordingly
  * @param {*} left current text
@@ -146,4 +148,8 @@ export function str_insert(source, index, string) {
 };
 export function str_remove(source, from, to) {
 	return source.substring(0, from) + source.substring(to);
+}
+
+export function logout() {
+	location.href = `${global.auth_url}/logout`;
 }

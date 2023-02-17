@@ -5,7 +5,6 @@
 	import Well from "./Well.svelte";
 	import Drawer from "../comps/Drawer.svelte";
 	import Status from "../comps/Status.svelte";
-	import { get_cookie } from "../utils/cookie";
 	import Graph from "./Graph.svelte";
 	import { db } from "../store";
 	import Search from "../comps/Search.svelte";
@@ -21,13 +20,13 @@
 	}
 
 	// Will boot user to login if cookie is false or server said this client is "public"
-	$: if (!get_cookie("auth") || user?.user === "public") {
-		navigate("/login", { replace: true });
-	}
+	// $: if (user?.user === "public") {
+	// 	navigate("/login", { replace: true });
+	// }
 	export let location;
 	$: {
 		if (["/app", "/app/"].includes(location?.pathname)) {
-			setTimeout(() => navigate("/app/well/", { replace: true }), 50);
+			setTimeout(() => navigate("/app/well", { replace: true }), 50);
 		}
 	}
 </script>

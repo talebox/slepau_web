@@ -22,11 +22,15 @@
 		}
 		return Object.values(values);
 	}
-	
+
 	function onLogin(e) {
 		fetchJson(`/login`, { body: getValues(), query: { admin: as_admin } }).then(
 			() => {
-				location.href = "/";
+				if (global.referer) {
+					location.href = referer;
+				} else {
+					location.href = "/";
+				}
 			},
 			notifications.addError
 		);

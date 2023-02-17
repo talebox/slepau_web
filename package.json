@@ -47,6 +47,7 @@
 		"chunk": {
 			"source": [
 				"apps/chunk/index.html",
+				"apps/chunk/home.html",
 				"apps/chunk/page.html",
 				"apps/chunk/preview.html"
 			],
@@ -56,7 +57,14 @@
 			"source": [
 				"apps/talebox/home.html"
 			],
-			"distDir": "./dist/talebox"
+			"distDir": "./dist/talebox",
+			"publicUrl": "/"
+		},
+		"media":{
+			"source": [
+				"apps/media/home.html"
+			],
+			"distDir": "./dist/media"
 		}
 	}
 }
