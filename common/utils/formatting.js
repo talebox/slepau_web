@@ -22,7 +22,6 @@ export function valueTransform(value) {
 
 export function chunkValueToHtml(value) {
 	value = valueTransform(value)
-	console.log(value)
 	value = value.replace(REGEX_CHUNK, (m, id) => `(/page/${id})`);
 	return mdToHtml(value);
 }

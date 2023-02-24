@@ -492,7 +492,7 @@
 		width: 12em;
 		border-radius: 12px 0 0 12px;
 		background: var(--background);
-		border: 1px solid #888;
+		border: 1px solid var(--background-transparent);
 		border-right: none;
 	}
 

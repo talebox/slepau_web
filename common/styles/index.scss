@@ -1,5 +1,17 @@
 @import './cindex';
 
+:root {
+	--background-transparent: #efefefCC;
+	--background-transparent-2: #efefef22;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--background-transparent: #161f27CC;
+		--background-transparent-2: #161f2722;
+	}
+}
+
 .round {
 	border-radius: 10px;
 }
@@ -65,15 +77,11 @@ a.button {
 		--cols: 5;
 	}
 }
-.page{
+
+.page {
 	max-width: 800px;
 	margin: auto;
 }
-// button{
-// 	display: flex;
-// 	flex-wrap: wrap;
-// 	align-items: center;
-// }
 
 .f,
 .fr,
@@ -98,9 +106,11 @@ a.button {
 .fcw {
 	flex-flow: column wrap;
 }
+
 .fac {
 	align-items: center;
 }
+
 .fjc {
 	justify-content: center;
 }
@@ -126,10 +136,10 @@ a.button {
 	gap: 1em;
 }
 
-.app-info{
+.app-info {
 	position: absolute;
-	top:0;
-	left:0;
+	top: 0;
+	left: 0;
 }
 
 .flex-center {
@@ -166,7 +176,7 @@ button.icon.fixed {
 	height: 100%;
 }
 
-svg{
+svg {
 	height: 1em;
 }
 
@@ -187,15 +197,18 @@ svg{
 	right: 0;
 	bottom: calc(var(--button-icon-size) + 30px);
 }
+
 .action {
 	margin: 0;
 	border-radius: 0;
 	width: var(--button-icon-size);
 	height: var(--button-icon-size);
 }
+
 .action:first-of-type {
 	border-top-left-radius: 24px;
 }
+
 .action:last-of-type {
 	border-bottom-left-radius: 24px;
 }

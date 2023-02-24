@@ -34,7 +34,7 @@ self.addEventListener('fetch', (event) => {
 					return preloadResp;
 				}
 
-				const networkResp = await fetch(event.request);
+				const networkResp = await fetch(event.request, {credentials: 'include'});
 				return networkResp;
 			} catch (error) {
 

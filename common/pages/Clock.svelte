@@ -167,7 +167,7 @@
   <div
     class="sunlight"
     style:transform={`rotate(${sun_angle}rad)`}
-    style:background={`linear-gradient(to right, white, transparent ${
+    style:background={`linear-gradient(to right, currentColor, transparent ${
       50 + Math.cos(sun.azimuth) * 20
       // Math.sin(miday_altitude) * 50
     }%, transparent)`}

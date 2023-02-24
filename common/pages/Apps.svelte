@@ -26,7 +26,7 @@
 	export let location;
 	$: {
 		if (["/app", "/app/"].includes(location?.pathname)) {
-			setTimeout(() => navigate("/app/well", { replace: true }), 50);
+			setTimeout(() => navigate("/app/well/", { replace: true }), 50);
 		}
 	}
 </script>

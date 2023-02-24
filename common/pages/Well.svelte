@@ -94,18 +94,27 @@
 								$editing_id$ = chunk.id;
 							}}
 						/>
-						<Link class={s.right} to={chunk.id} />
+						<div
+							class={s.right}
+							on:click|stopPropagation={() => {
+								navigate(chunk.id);
+							}}
+						/>
 					{/if}
 				</div>
 			</Chunks>
 		{:else}
 			<div class="tip fc">
 				<span>
-				No notes here <br/>😲
-			</span>
+					No notes here <br />😲
+				</span>
 				<button on:click={on_add} class="f fac"
 					>Add one
-					<svg fill="currentColor" viewBox="0 0 16 16" style="width: 1.5em;height:1.5em; margin-left: .4em">
+					<svg
+						fill="currentColor"
+						viewBox="0 0 16 16"
+						style="width: 1.5em;height:1.5em; margin-left: .4em"
+					>
 						<path
 							fill-rule="evenodd"
 							d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"
@@ -122,7 +131,6 @@
 <slot />
 
 <style>
-	
 	.clickable {
 		position: absolute;
 		width: 100%;

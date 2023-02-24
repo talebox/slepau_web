@@ -136,7 +136,7 @@
 			</svg>
 		</button>
 		<button
-			class="action"
+			class="action icon"
 			on:click={() => {
 				$local_settings$.zoom -= 0.1;
 			}}

@@ -65,6 +65,13 @@
 				"apps/media/home.html"
 			],
 			"distDir": "./dist/media"
+		},
+		"gibos":{
+			"source": [
+				"apps/gibos/home.html"
+			],
+			"distDir": "./dist/gibos",
+			"publicUrl": "/"
 		}
 	}
 }

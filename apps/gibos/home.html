@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>Gibos</title>
+	<link rel="icon" type="image/x-icon" href="./assets/favicon.ico">
+	<meta charset="UTF-8">
+	<meta name="viewport"
+		content="width=device-width, height=device-height,  initial-scale=1.0, user-scalable=no;user-scalable=0;" />
+
+	<!-- Style -->
+	<link rel="stylesheet" href="/common/water.css">
+	<link rel="stylesheet" href="npm:@styles/index.scss">
+	<link rel="stylesheet" href="npm:@styles/home.scss">
+	<link rel="stylesheet" href="./home.scss">
+</head>
+
+<body>
+	<div class="sections">
+		<h1>Gibos <br />
+			<svg fill="currentColor" viewBox="0 0 16 16" style="position:relative;top:.5em">
+				<path
+					d="m14.12 10.163 1.715.858c.22.11.22.424 0 .534L8.267 15.34a.598.598 0 0 1-.534 0L.165 11.555a.299.299 0 0 1 0-.534l1.716-.858 5.317 2.659c.505.252 1.1.252 1.604 0l5.317-2.66zM7.733.063a.598.598 0 0 1 .534 0l7.568 3.784a.3.3 0 0 1 0 .535L8.267 8.165a.598.598 0 0 1-.534 0L.165 4.382a.299.299 0 0 1 0-.535L7.733.063z" />
+				<path
+					d="m14.12 6.576 1.715.858c.22.11.22.424 0 .534l-7.568 3.784a.598.598 0 0 1-.534 0L.165 7.968a.299.299 0 0 1 0-.534l1.716-.858 5.317 2.659c.505.252 1.1.252 1.604 0l5.317-2.659z" />
+			</svg>
+		</h1>
+
+		<p class="open-right" style="margin-top:0">A new type of <span id="type-of">business</span>.
+		<p>
+
+
+			<hr class="section" />
+		<section class="when-visible fade">
+			<h2>One which is <u>Simple</u></h2>
+			<p>
+				We won't confuse you, trick you, or make you think only <b><u>we</u> can do our job</b>.
+			</p>
+			<p>
+				We're upfront about where our value lies.
+			</p>
+			<p>Which means you can actually <b>understand</b>, <b>use</b>, and <b>trust</b> our technology.</p>
+		</section>
+
+		<hr class="section" />
+		<section class="when-visible fade">
+			<h2>Knowledgeable</h2>
+			<p>We know <b>valuable</b> things.</p>
+			<p>And are aware of our strengths and weakenesses.</p>
+		</section>
+
+		<hr class="section" />
+		<section class="when-visible fade">
+			<h2>Pragmatic</h2>
+			<p>Our employees easily move between abstraction layers.</p>
+			<p>Because we know each inside out.</p>
+			<p>Giving you/us a solid product.</p>
+		</section>
+
+		<hr class="section" />
+		<section class="when-visible fade">
+			<h2>Has Substance</h2>
+			<p>
+				We build <b>actual products</b>, not just sale pitches.
+			</p>
+			<p>We're a team of engineers that got rid of their boss.</p>
+			<p>This means we can troubleshoot your technical issues (if any) almost immediately.
+			</p>
+		</section>
+
+		<hr class="section" />
+		<section class="when-visible fade">
+			<h2>And provides what you need</h2>
+			<p>
+				not what you think you want.
+			</p>
+			<p>We won't give you 20 half-put together features from our 10 aquisitions.</p>
+			<p>But we'll give you a self-sufficient, rock-solid solution to your most common problems.</p>
+		</section>
+
+		<hr class="section" />
+		<section class="when-visible fade">
+			<h2>What do you offer?</h2>
+			<p>Send us an <a href="mailto:gibos@anty.dev">email</a> to talk about your needs.</p>
+			<!-- <div style="opacity: 0.8;">
+			<h2 style="margin-top:2em">They're just idealists...</h2>
+			<p>We're sorry you don't grasp our vision. Perhaps you lack <a
+					href="https://en.wikipedia.org/wiki/Virtue">virtue</a>.</p>
+				</div> -->
+		</section>
+	</div>
+
+	<!-- On scroll animation -->
+	<script>
+		// Create the observer
+		const observer = new IntersectionObserver(entries => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					entry.target.classList.add('visible');
+				} else {
+					// entry.target.classList.remove('visible');
+				}
+			});
+		});
+
+		// Tell the observer which elements to track
+		document.querySelectorAll('.when-visible').forEach(e => {
+			observer.observe(e)
+		})
+	</script>
+	<script>
+
+	</script>
+</body>
+
+</html>

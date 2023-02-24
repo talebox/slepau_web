@@ -42,13 +42,15 @@ hr.section {
 }
 
 .when-visible.fade {
-	transition: all 3s;
-	transition-timing-function: cubic-bezier(0, .8, .8, 1);
+	transition: all 2s;
+	transition-timing-function: cubic-bezier(0, .9, .9, 1);
 	opacity: 0;
+	transform: translateY(20px) scale(94%);
 }
 
 .when-visible.fade.visible {
 	opacity: 1;
+	transform: translateY(0px) scale(100%);
 }
 
 @keyframes move {
