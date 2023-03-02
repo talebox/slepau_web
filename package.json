@@ -55,7 +55,8 @@
 		},
 		"talebox":{
 			"source": [
-				"apps/talebox/home.html"
+				"apps/talebox/home.html",
+				"apps/talebox/what.html"
 			],
 			"distDir": "./dist/talebox",
 			"publicUrl": "/"

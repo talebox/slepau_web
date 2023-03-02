@@ -4,14 +4,7 @@
 
 	const toothRatio = 22 / 8;
 	let gears = {
-		talebox: {
-			teeth: 100,
-			toothWidth: 2,
-			toothHeight: 1.5,
-			center: [50, 50],
-			radius: 38,
-			time: 120,
-		},
+		
 		auth: {
 			link: "https://auth.anty.dev",
 			toothWidth: 1.7,
@@ -57,6 +50,14 @@
 			pos_engaged: polarToCartesian(1.75 * Math.PI, 29),
 			// center: polarToCartesian(0.2 * Math.PI, 29).map((x) => x + 50),
 			// center_inactive: polarToCartesian(0.2 * Math.PI, 29).map((x) => x + 50),
+		},
+		talebox: {
+			teeth: 100,
+			toothWidth: 2,
+			toothHeight: 1.5,
+			center: [50, 50],
+			radius: 38,
+			time: 120,
 		},
 	};
 	{
@@ -110,6 +111,8 @@
 		);
 		console.log(gears);
 	}
+	
+	const t_r = 4;
 </script>
 
 <svg
@@ -136,27 +139,48 @@
 				>
 					<path d={gear.path} />
 
-					<text
-						x={gear.center[0]}
-						y={name === "talebox" ? 7.9 : gear.center[1] - 0.4}
-						fill="var(--text-main)"
-						text-anchor="middle"
-						font-weight="normal"
-						stroke="none"
-						font-size={name === "talebox" ? 6 : 3}
-						>{name[0].toUpperCase() + name.substring(1)}
-					</text>
-					{#if gear.link}<text
+					{#if name === "talebox"}
+						<path id="t_path" d="
+						M {polarToCartesian(Math.PI * .6,gear.radius+t_r, [50,50]).join(' ')}
+						A {gear.radius+t_r} {gear.radius+t_r} 0 0 1 {polarToCartesian(Math.PI * 0,gear.radius+t_r, [50,50]).join(' ')}
+						Z
+						" style="stroke:none;fill:none;"/>
+						<path id="t_path2" d="
+						M {polarToCartesian(Math.PI * 1.6,gear.radius+t_r, [50,50]).join(' ')}
+						A {gear.radius+t_r} {gear.radius+t_r} 0 0 1 {polarToCartesian(Math.PI * 1,gear.radius+t_r, [50,50]).join(' ')}
+						Z
+						" style="stroke:none;fill:none;"/>
+						<text font-size="6"
+						font-weight="bold" fill="var(--text-main)" stroke="none">
+							<textPath href="#t_path">Talebox</textPath>
+						</text>
+						<text font-size="5"
+						font-weight="normal" fill="var(--text-muted)" stroke="none">
+							<textPath href="#t_path2">your story</textPath>
+						</text>
+					{:else}
+						<text
 							x={gear.center[0]}
 							y={name === "talebox" ? 7.9 : gear.center[1] - 0.4}
 							fill="var(--text-main)"
 							text-anchor="middle"
 							font-weight="normal"
 							stroke="none"
-							dx="0"
-							dy="4"
-							font-size={name === "talebox" ? 6 : 3}>🔗</text
-						>{/if}
+							font-size={name === "talebox" ? 6 : 3}
+							>{name[0].toUpperCase() + name.substring(1)}
+						</text>
+						{#if gear.link}<text
+								x={gear.center[0]}
+								y={name === "talebox" ? 7.9 : gear.center[1] - 0.4}
+								fill="var(--text-main)"
+								text-anchor="middle"
+								font-weight="normal"
+								stroke="none"
+								dx="0"
+								dy="4"
+								font-size={name === "talebox" ? 6 : 3}>🔗</text
+							>{/if}
+					{/if}
 				</g>
 			</a>
 		</g>
