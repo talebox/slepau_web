@@ -1,0 +1,33 @@
+{
+  "short_name": "Media",
+  "name": "Media",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "256x256 128x128 64x64 48x48 16x16",
+      "type": "image/x-icon",
+			"purpose": "any"
+    }
+  ],
+  "start_url": "/app/",
+  "background_color": "#161f27",
+  "display": "fullscreen",
+  "scope": "/app",
+  "theme_color": "#202b38",
+  "shortcuts": [
+    {
+      "name": "Dash",
+      "url": "/app/",
+      "description": ""
+    }
+  ],
+  "description": "A media management app.",
+  "screenshots": [],
+  "dir": "auto",
+  "lang": "en",
+  "orientation": "any",
+  "categories": [
+    "productivity",
+    "utilities"
+  ]
+}

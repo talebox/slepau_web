@@ -1,9 +1,5 @@
 <script>
 	export let date;
-	
-	// $: modified = chunk?.modified;
-	// $: created = chunk?.created;
-
 	let until;
 	// let cstring;
 	let clear;

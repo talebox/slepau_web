@@ -1,20 +1,21 @@
 <script>
 	import { fly, slide } from "svelte/transition";
-	import { debounce } from "../utils/timeout";
+	import { debounce } from "@utils/timeout";
 	import {
 		db,
 		local_settings$,
 		editing_id$,
 		is_phone$,
 		notifications,
+        actions,
 	} from "../store";
-	import { mdToHtml, valueTransform } from "../utils/formatting";
+	import { mdToHtml, valueTransform } from "@utils/formatting";
 	import {
 		applyDiff,
 		REGEX_CHUNK,
 		str_insert,
 		str_remove,
-	} from "../utils/utils";
+	} from "@utils/utils";
 	import ChunkDetails from "../comps/ChunkDetails.svelte";
 
 	export let id = undefined;
@@ -31,7 +32,7 @@
 
 	// $: value =  value$ ? $value$ : undefined;
 	$: diff$ = _id
-		? db.subscribeTo(`chunks/${_id}/value/diff`, { req_on: false })
+		? db.subscribeTo(`chunks/${_id}/value/diff`, { request_on: false })
 		: undefined;
 	$: diff = diff$ ? $diff$ : undefined;
 	// $: console.log(value);
@@ -74,7 +75,7 @@
 			window.history.back();
 		} else if ($editing_id$) {
 			$editing_id$ = undefined;
-			db.get_connection().maybe_request_views();
+			db.maybe_request_views();
 		}
 	}
 	function share_live() {
@@ -94,7 +95,7 @@
 		notifications.add("Id copied.");
 	}
 	function update_value(value) {
-		debounce(() => db.actions.chunks.put(_id, value), 500, _id);
+		debounce(() => actions.chunks.put(_id, value), 500, _id);
 	}
 	function get_editor(e) {
 		let _editor = e ? e.target : editor;
@@ -134,7 +135,7 @@
 		}
 		const files = Array.from(this.files);
 
-		db.actions.media.post_many(files).then((items) => {
+		actions.media.post_many(files).then((items) => {
 			let [v, selection] = get_editor();
 			// If only 1 file selected, and there is a textarea selection, then replace with path, instead of markdown images :)
 			if (items.length === 1 && selection[1] > selection[0]) {

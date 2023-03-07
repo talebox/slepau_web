@@ -1,10 +1,10 @@
 <script>
-  import { db } from "../store"
-  import { fetchJson } from "../utils/network"
-	import Status from "../comps/Status.svelte";
+  import { actions, db } from "../store"
+  import { fetchJson } from "@utils/network"
+	import Status from "@comps/Status.svelte";
   import { Router, Route, Link, navigate } from "@deps/routing"
   import * as s from "./Login.module.scss"
-  import cnfc from "../utils/classname"
+  import cnfc from "@utils/classname"
   const c = cnfc(s)
 
   function getValues() {
@@ -19,13 +19,13 @@
     return Object.values(values)
   }
   function onLogin(e) {
-    db.actions.login(getValues()).then(() => navigate("/app"))
+    actions.login(getValues()).then(() => navigate("/app"))
   }
   function onReset(e) {
-    db.actions.reset(getValues()).then(() => navigate("/login"))
+    actions.reset(getValues()).then(() => navigate("/login"))
   }
   function onRegister(e) {
-    db.actions.register(getValues()).then(() => navigate("/login"))
+    actions.register(getValues()).then(() => navigate("/login"))
   }
 
   const linkProps = ({ isCurrent }) => ({

@@ -1,8 +1,8 @@
 <script>
 	import { navigate } from "@deps/routing";
 	import Loading from "../comps/Loading.svelte";
-	import { chunkValueToHtml } from "../utils/formatting";
-	import { fetchE } from "../utils/network";
+	import { chunkValueToHtml } from "@utils/formatting";
+	import { fetchE } from "@utils/network";
 
 	let preview = fetchE("/api/chunks/")
 		.then((v) => v.json())

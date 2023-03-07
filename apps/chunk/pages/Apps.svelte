@@ -4,16 +4,16 @@
 	import Edit from "./Edit.svelte";
 	import Well from "./Well.svelte";
 	import Drawer from "../comps/Drawer.svelte";
-	import Status from "../comps/Status.svelte";
+	import Status from "@comps/Status.svelte";
 	import Graph from "./Graph.svelte";
 	import { db } from "../store";
-	import Search from "../comps/Search.svelte";
+	import Search from "@comps/Search.svelte";
 	import { get } from "svelte/store";
 	import Calendar from "./Calendar.svelte";
 	import Alarms from "./Alarms.svelte";
 	import Clock from "./Clock.svelte";
 
-	let user$ = db.subscribeTo.user();
+	let user$ = db.subscribeToUser();
 	let user = get(user$);
 	$: {
 		user = $user$;

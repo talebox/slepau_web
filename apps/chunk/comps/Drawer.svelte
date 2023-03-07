@@ -7,7 +7,7 @@
 
 	let open = false;
 
-	let user$ = db.subscribeTo.user();
+	let user$ = db.subscribeToUser();
 	let user = get(user$);
 	$: {
 		user = $user$;

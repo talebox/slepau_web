@@ -1,6 +1,6 @@
 <script>
   import { is_phone$, local_settings$ } from "../store";
-  import { SECONDS, second_to_pretty } from "../utils/utils";
+  import { SECONDS, second_to_pretty } from "@utils/utils";
   import { parse } from "chrono-node";
   import { fade, slide } from "svelte/transition";
   import { sineOut } from "svelte/easing";

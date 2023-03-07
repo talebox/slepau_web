@@ -1,7 +1,7 @@
 <script>
 	import Drawer from "../comps/Drawer.svelte";
 	import User from "../comps/User.svelte";
-	import { db, local_settings$ } from "../store";
+	import { actions, db, local_settings$ } from "../store";
 	import { parseDate } from "chrono-node";
 	import parse_coordinate from "geo-coordinates-parser";
   import { logout } from "@utils/utils";
@@ -14,7 +14,7 @@
 		}
 		const files = Array.from(this.files);
 
-		db.actions.media.post(files[0]);
+		actions.media.post(files[0]);
 	}
 	function update_location(value) {
 		try {
@@ -60,7 +60,6 @@
 			</button>
 
 			<button on:click={logout}>Logout</button>
-			<!-- <button on:click={db.actions.logout_all}>Logout of all devices</button> -->
 		</section>
 		<section>
 			<h2>Preferences</h2>

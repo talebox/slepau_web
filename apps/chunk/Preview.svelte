@@ -1,7 +1,7 @@
 <script>
 	import { Router, Route } from "@deps/routing";
 	
-	import Preview from "@pages/Preview.svelte";
+	import Preview from "./pages/Preview.svelte";
 </script>
 
 <Router>

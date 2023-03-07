@@ -1,6 +1,6 @@
 <script>
 	import { local_settings$ } from "../store";
-	import { SECONDS, second_to_pretty } from "../utils/utils";
+	import { SECONDS, second_to_pretty } from "@utils/utils";
 	import { parseDate } from "chrono-node";
 
 	let input_new;

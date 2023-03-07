@@ -2,11 +2,11 @@
 	import { slide } from "svelte/transition";
 	import { flip } from "svelte/animate";
 	import { navigate } from "@deps/routing";
-	import { db, local_settings$, editing_id$ } from "../store";
-	import SelectedButtons from "../comps/SelectedButtons.svelte";
+	import { db, local_settings$, editing_id$, actions } from "../store";
+	import SelectedButtons from "@comps/SelectedButtons.svelte";
 	import "./ChunkPage.scss";
 	import { setContext } from "svelte";
-    import { passed_since_pretty } from "../utils/utils";
+    import { passed_since_pretty } from "@utils/utils";
 
 	// VVVVV This is Common to Views VVVVV
 	export let id = "";
@@ -29,9 +29,9 @@
 	let selected = undefined;
 
 	const on_remove = () =>
-		db.actions.chunks.del(selected).then(() => (selected = undefined));
+		actions.chunks.del(selected).then(() => (selected = undefined));
 	const on_add = () => {
-		db.actions.chunks.new(`# New Chunk${id ? ` -> ${id}` : ""}\n\n`);
+		actions.chunks.new(`# New Chunk${id ? ` -> ${id}` : ""}\n\n`);
 	};
 	const on_click = (node) => {
 		if (!node) return;

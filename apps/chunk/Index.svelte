@@ -1,11 +1,11 @@
 <script>
 	import { Router, Route } from "@deps/routing";
 
-	import Apps from "@pages/Apps.svelte";
-	import Login from "@pages/Login.svelte";
-	import Edit from "@pages/Edit.svelte";
-	import Settings from "@pages/Settings.svelte";
-	import Preview from "@pages/Preview.svelte";
+	import Apps from "./pages/Apps.svelte";
+	import Login from "./pages/Login.svelte";
+	import Edit from "./pages/Edit.svelte";
+	import Settings from "./pages/Settings.svelte";
+	import Preview from "./pages/Preview.svelte";
 
 	import Notifications from "@comps/Notifications.svelte";
 </script>

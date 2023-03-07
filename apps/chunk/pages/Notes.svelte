@@ -1,8 +1,8 @@
 <script>
-	import { db, editing_id$ } from "../store";
+	import { actions, db, editing_id$ } from "../store";
 	import Chunks from "../comps/Chunks.svelte";
-	import SelectedButtons from "../comps/SelectedButtons.svelte";
-	import { debounce } from "../utils/timeout";
+	import SelectedButtons from "@comps/SelectedButtons.svelte";
+	import { debounce } from "@utils/timeout";
 
 	let chunks = db.subscribeTo("views/notes", { init: [] });
 	// $: console.log($chunks);
@@ -57,9 +57,9 @@
 	let selected = undefined;
 
 	const on_remove = () =>
-		db.actions.chunks.del(selected).then(() => (selected = undefined));
+		actions.chunks.del(selected).then(() => (selected = undefined));
 	const on_add = () => {
-		db.actions.chunks.new();
+		actions.chunks.new();
 	};
 	const on_click = (node) => {
 		if (!node) return;

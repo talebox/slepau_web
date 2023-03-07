@@ -1,7 +1,7 @@
 <script>
 	import { getContext, onDestroy } from "svelte";
-	import { chunkValueToHtml } from "../utils/formatting";
-	import { passed_since_pretty } from "../utils/utils";
+	import { chunkValueToHtml } from "@utils/formatting";
+	import { passed_since_pretty } from "@utils/utils";
 	export let chunk;
 	export let selected = false,
 		selectable = false;

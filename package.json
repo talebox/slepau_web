@@ -63,7 +63,8 @@
 		},
 		"media":{
 			"source": [
-				"apps/media/home.html"
+				"apps/media/home.html",
+				"apps/media/index.html"
 			],
 			"distDir": "./dist/media"
 		},

@@ -1,7 +1,7 @@
 <script>
 	import { onDestroy } from "svelte";
 	import { db } from "../store";
-	import { passed_since_pretty } from "../utils/utils";
+	import { passed_since_pretty } from "@utils/utils";
 
 	export let id;
 	$: chunk$ = id ? db.subscribeTo(`chunks/${id}`) : undefined;
