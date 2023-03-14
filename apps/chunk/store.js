@@ -2,9 +2,8 @@
  * App specific store
  */
 import { writable, get } from "svelte/store"
-import { notifications } from "/common/stores/notifications"
 import { fetchJson } from "@utils/network"
-import { status, setStatus } from "/common/stores/status"
+import { setStatus } from "/common/stores/status"
 import { SocketDB } from "../../common/stores/socket"
 
 class ChunkDB extends SocketDB {

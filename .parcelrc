@@ -2,12 +2,16 @@
 	"extends": [
 		"@parcel/config-default"
 	],
+	"resolvers": ["parcel-resolver-ignore", "..."],
 	"transformers": {
 		"*.svelte": [
 			"@plasmohq/parcel-transformer-svelte3"
 		],
 		"raw:*": [
 			"@parcel/transformer-raw"
+		],
+		"*.md": [
+			"parcel-transformer-markdown"
 		]
 	},
 	"compressors": {

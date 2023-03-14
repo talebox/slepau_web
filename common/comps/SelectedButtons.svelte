@@ -1,13 +1,13 @@
 <script>
 	import { slide } from "svelte/transition";
-	export let selected = undefined;
+	export let selected;
 	export let on_remove;
 	export let on_add;
 
 	const selected_toggle = () => (selected = selected ? undefined : []);
 </script>
 
-{#if selected === undefined}
+{#if !selected}
 	<button class="chunk-new icon fixed" title="Add" in:slide on:click={on_add}>
 		<svg fill="currentColor" viewBox="0 0 16 16">
 			<path

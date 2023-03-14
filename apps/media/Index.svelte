@@ -1,9 +1,12 @@
 <script>
-  import { Router, Route } from "@deps/routing"
+  import { Router, Route, Link } from "@deps/routing"
 
   import Notifications from "@comps/Notifications.svelte"
   import All from "./All.svelte"
   import { actions } from "./store"
+  import Details from "./Details.svelte"
+  
+  
 
   function dragover(ev) {
     console.log("In drop zone")
@@ -32,13 +35,19 @@
   }
 </script>
 
+
 <svelte:body on:drop={drop} on:dragover={dragover} />
+
+
+
 
 <Notifications />
 
 <Router basepath="/app">
   <Route component={All} />
 </Router>
+
+<Details />
 
 <style>
 </style>
