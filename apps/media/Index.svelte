@@ -1,50 +1,59 @@
 <script>
-  import { Router, Route, Link } from "@deps/routing"
+	import { Router, Route, Link } from "@deps/routing";
 
-  import Notifications from "@comps/Notifications.svelte"
-  import All from "./All.svelte"
-  import { actions } from "./store"
-  import Details from "./Details.svelte"
-  
-  
+	import Notifications from "@comps/Notifications.svelte";
+	import All from "./All.svelte";
+	import { actions, db } from "./store";
+	import Details from "./Details.svelte";
+	import notifications from "../../common/stores/notifications";
 
-  function dragover(ev) {
-    console.log("In drop zone")
+	const tasks$ = db.subscribeTo("tasks", { init_with: 0 });
+	$: tasks = $tasks$;
+	let not_id;
+	$: {
+		console.log(tasks);
 
-    // Prevent default behavior (Prevent file from being opened)
-    ev.preventDefault()
-  }
-  function drop(ev) {
-    console.log("Dropped")
+		const value = tasks ? `Tasks queued ${tasks}.` : `Tasks done!`;
+		if (tasks) {
+			not_id = notifications.add({ value, id: not_id, timeout: 0 });
+		} else {
+			notifications.update({ value, timeout: 5000, id: not_id });
+		}
+	}
 
-    // Prevent default behavior (Prevent file from being opened)
-    ev.preventDefault()
+	function dragover(ev) {
+		console.log("In drop zone");
 
-    let files = []
+		// Prevent default behavior (Prevent file from being opened)
+		ev.preventDefault();
+	}
+	function drop(ev) {
+		console.log("Dropped");
 
-    if (ev.dataTransfer.items) {
-      // Use DataTransferItemList interface to access the file(s)
-      files = [...ev.dataTransfer.items]
-        .filter((v) => v.kind === "file")
-        .map((v) => v.getAsFile())
-    } else {
-      // Use DataTransfer interface to access the file(s)
-      files = [...ev.dataTransfer.files]
-    }
-    actions.media.post_many(files)
-  }
+		// Prevent default behavior (Prevent file from being opened)
+		ev.preventDefault();
+
+		let files = [];
+
+		if (ev.dataTransfer.items) {
+			// Use DataTransferItemList interface to access the file(s)
+			files = [...ev.dataTransfer.items]
+				.filter((v) => v.kind === "file")
+				.map((v) => v.getAsFile());
+		} else {
+			// Use DataTransfer interface to access the file(s)
+			files = [...ev.dataTransfer.files];
+		}
+		actions.media.post_many(files);
+	}
 </script>
 
-
 <svelte:body on:drop={drop} on:dragover={dragover} />
-
-
-
 
 <Notifications />
 
 <Router basepath="/app">
-  <Route component={All} />
+	<Route component={All} />
 </Router>
 
 <Details />

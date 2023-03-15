@@ -37,6 +37,8 @@ export const notifications = (() => {
   function _update(n) {
     update((v) => {
       if (!v[n.id]) return v
+			
+			
 
       // If timeout === 0 don't remove the notification
       let { timeout, ...n_without_timeout } = n
