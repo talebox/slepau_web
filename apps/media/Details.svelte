@@ -1,7 +1,7 @@
 <!-- Preview/Editor of query parameters and Image metadata -->
 <script>
   import { debounce } from "@utils/timeout"
-  import Image from "./Image.svelte"
+  import Media from "./Media.svelte"
   import { editing_id$, db, make_query, actions } from "./store"
   import { bytes_to_pretty } from "@utils/utils"
   import notifications from "../../common/stores/notifications"
@@ -67,7 +67,7 @@
 
       <div class="original">
         <div style="position: relative">
-          <Image
+          <Media
             style="object-fit:contain;"
             src="/media/{media.id}{make_query()}"
           />
@@ -127,7 +127,7 @@
       <h2>Query Editor</h2>
       <div class="original">
         <div style="position: relative;height:inherit">
-          <Image
+          <Media
             style="object-fit:contain;"
             src="/media/{media.id}{make_query(query)}"
           />

@@ -2,7 +2,7 @@
   import SelectedButtons from "@comps/SelectedButtons.svelte"
   import { actions, db, editing_id$, make_query } from "./store"
   import { flip } from "svelte/animate"
-  import Image from "./Image.svelte"
+  import Media from "./Media.svelte"
   let id
   $: view_all$ = db.subscribeTo("views/all" + (id ? "/" + id : ""), {
     init: [],
@@ -72,10 +72,9 @@
         on_click(media)
       }}
     >
-      <Image
+      <Media
         style="object-fit:contain;"
-        width="300"
-        height="300"
+        {media}
         src="/media/{media.id}{make_query("max=1000_2")}"
       />
     </div>

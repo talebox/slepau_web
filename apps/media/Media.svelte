@@ -3,7 +3,8 @@
   // export let query
   // $: {src,...$$props} = $$props;
 
-  export let src
+  export let media;
+  export let query="";
 
   let loaded = false
   let error
@@ -21,14 +22,14 @@
   }
 </script>
 
-<!-- {#if media?.meta.type?.startsWith("video")}
+{#if media?.meta.type?.startsWith("video")}
   <video controls>
     <source src="/media/{media.id}?{query}" />
     <track kind="captions" />
   </video>
-{:else} -->
-<img on:error={on_error} on:load={on_load} alt {src} {...$$props} />
-<!-- {/if} -->
+{:else}
+  <img on:error={on_error} on:load={on_load} alt {src} {...$$props} />
+{/if}
 
 {#if !loaded || error}
   <div class="full backdrop">
