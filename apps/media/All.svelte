@@ -73,9 +73,10 @@
       }}
     >
       <Media
-        style="object-fit:contain;"
         {media}
-        src="/media/{media.id}{make_query("max=1000_2")}"
+				query="type=image/webp&max=300"
+				width="300"
+				height="300"
       />
     </div>
   {/each}
@@ -103,11 +104,11 @@
   .mygrid {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
+    justify-content: space-evenly;
   }
   .element {
     position: relative;
     height: 300px;
-    /* max-width: 300px; */
+    max-width: 300px;
   }
 </style>

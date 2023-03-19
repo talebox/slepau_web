@@ -66,7 +66,7 @@ const query_to_uri = (query) =>
         .join("&")
     : query
 
-const query_from_uri = (query) =>
+export const query_from_uri = (query) =>
   typeof query === "string"
     ? Object.fromEntries(
         query
