@@ -39,10 +39,7 @@
 			actions
 				.mod_site(selected.id, selected)
 				.then(refresh)
-				.then(
-					() => notifications.add(`Change saved.`),
-					notifications.addError
-				);
+				.then(() => notifications.add(`Change saved.`), notifications.addError);
 		} else {
 			refresh().then(() => notifications.add("Changes reset."));
 		}
@@ -190,6 +187,66 @@
 								(site.max_age = parse_seconds(site.max_age, 86400))}
 						/>
 					</details>
+					<details>
+						<summary>
+							Claims: <code>{Object.entries(site.claims).length}</code>
+						</summary>
+						<p>What are the global claims for this site?</p>
+						<p>
+							These get applied to users on every login. But users can override
+							them.
+						</p>
+						<p>
+							Claims will be parsed to JSON, so you can use it's data
+							structures.
+						</p>
+						<p>
+							We override claims <code>user</code>, <code>admin</code>, and
+							<code>super</code>.
+						</p>
+						<p>
+							Example: A flower expert and founder in the flower shop might have
+							claim: <code>groups: ["expert", "founder"]</code>.
+						</p>
+						{#each Object.entries(site.claims) as [k, v], i}
+							<div style="display:flex;gap:1em;align-items:center">
+								<span
+									><code style="width: 10em;display:inline-block">{k}</code
+									>:</span
+								>
+								<input
+									class="border"
+									bind:value={site.claims[k]}
+									placeholder="value"
+								/>
+								<button
+									class="icon delete"
+									on:click={() => {
+										delete site.claims[k];
+										site.claims = site.claims;
+									}}
+								>
+									<svg fill="currentColor" viewBox="0 0 16 16">
+										<path
+											d="M2.037 3.225A.703.703 0 0 1 2 3c0-1.105 2.686-2 6-2s6 .895 6 2a.702.702 0 0 1-.037.225l-1.684 10.104A2 2 0 0 1 10.305 15H5.694a2 2 0 0 1-1.973-1.671L2.037 3.225zm9.89-.69C10.966 2.214 9.578 2 8 2c-1.58 0-2.968.215-3.926.534-.477.16-.795.327-.975.466.18.14.498.307.975.466C5.032 3.786 6.42 4 8 4s2.967-.215 3.926-.534c.477-.16.795-.327.975-.466-.18-.14-.498-.307-.975-.466z"
+										/>
+									</svg>
+								</button>
+							</div>
+						{/each}
+						<input
+							style="border: 1px dashed grey;margin-top:.5em"
+							on:blur={(e) => {
+								if (!e.target.value) return;
+								if (typeof site.claims[e.target.value] !== "undefined") return;
+								site.claims[e.target.value] = "";
+								site.claims = site.claims;
+								e.target.value = "";
+							}}
+							placeholder="key"
+						/>
+					</details>
+
 					<details>
 						<summary
 							>Hosts:

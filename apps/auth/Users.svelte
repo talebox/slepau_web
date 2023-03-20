@@ -138,10 +138,9 @@
 					</details>
 
 					<details>
-						<summary
-							>Claims: <code>{Object.entries(user.claims).length}</code
-							></summary
-						>
+						<summary>
+							Claims: <code>{Object.entries(user.claims).length}</code>
+						</summary>
 						<p>What claims will the user have?</p>
 						<p>
 							Claims will be parsed to JSON, so you can use it's data

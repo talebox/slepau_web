@@ -176,6 +176,44 @@ export function bytes_to_pretty(bytes, precision = 0) {
   }
 }
 
+const SI_PREFIX = {
+	"Y": 10 ** 24,
+	"Z": 10 ** 21,
+	"E": 10 ** 18,
+	"P": 10 ** 15,
+	"T": 10 ** 12,
+	"G": 10 ** 9,
+	"M": 10 ** 6,
+	"k": 10 ** 3,
+	"m": 10 ** -3,
+	"u": 10 ** -6,
+	"n": 10 ** -9,
+	"p": 10 ** -12,
+	"f": 10 ** -15,
+	"a": 10 ** -18,
+	"y": 10 ** -21,
+	"z": 10 ** -24,
+}
+
+/**
+ * Turns si suffixed number into number. Ex `5k` -> `5000`
+ * If `default` is supplied, this will be returned when the string can't be parsed
+ */
+export function parse_si_prefix(v, _default = undefined) {
+  if (_default === undefined) _default = v
+  if (typeof v !== "string") return v
+  let match = /(\d+)(\w*)/.exec(v)
+  if (match) {
+		let digit = match[1]
+		let multiplier = SI_PREFIX[match[2]] || 1;
+    digit = Number(digit)
+    if (multiplier && !Number.isNaN(digit)) {
+      return digit * multiplier
+    }
+  }
+  return _default
+}
+
 export function str_insert(source, index, string) {
   if (index > 0) {
     return source.substring(0, index) + string + source.substr(index)

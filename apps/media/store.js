@@ -9,139 +9,139 @@ import { fetchJson } from "../../common/utils/network"
 export const editing_id$ = writable()
 
 class MediaDB extends SocketDB {
-  constructor() {
-    super("/stream")
-  }
-  on_open() {
-    super.on_open()
+	constructor() {
+		super("/stream")
+	}
+	on_open() {
+		super.on_open()
 
-    Object.entries(this.subs).forEach(
-      ([k, v]) =>
-        v.listening &&
-        v.request_on !== false &&
-        this.send({ resource: v.resource })
-    )
-  }
-  /**
-   * Request update for view subscribers with at least 1 listener
-   */
-  maybe_request_views() {
-    Object.entries(this.subs).forEach(([k, v]) => {
-      if (k.startsWith("views")) this.maybe_request_update(k)
-    })
-  }
-  on_message(event) {
-    let m = super.on_message(event)
+		Object.entries(this.subs).forEach(
+			([k, v]) =>
+				v.listening &&
+				v.request_on !== false &&
+				this.send({ resource: v.resource })
+		)
+	}
+	/**
+	 * Request update for view subscribers with at least 1 listener
+	 */
+	maybe_request_views() {
+		Object.entries(this.subs).forEach(([k, v]) => {
+			if (k.startsWith("views")) this.maybe_request_update(k)
+		})
+	}
+	on_message(event) {
+		let m = super.on_message(event)
 
-    // Resource changes
-    if (m.resource && typeof m.value === "undefined") {
-      if (m.resource === "media") {
-        this.maybe_request_views()
-      } else if (m.resource.startsWith("media")) {
-        this.maybe_request_update(m.resource)
-      }
-    }
+		// Resource changes
+		if (m.resource && typeof m.value === "undefined") {
+			if (m.resource === "media") {
+				this.maybe_request_views()
+			} else if (m.resource.startsWith("media")) {
+				this.maybe_request_update(m.resource)
+			}
+		}
 
-    return m
-  }
+		return m
+	}
 }
 
 export const db = new MediaDB()
 
 function mediaPost(v) {
-  return fetchE("/media", { method: "POST", body: v }).then((v) => v.json())
+	return fetchE("/media", { method: "POST", body: v }).then((v) => v.json())
 }
 function mediaDelete(id) {
-  return fetchE(`/media/${id}`, { method: "DELETE" }).then((v) => v.json())
+	return fetchE(`/media/${id}`, { method: "DELETE" }).then((v) => v.json())
 }
 
 let notification_id
 
 const query_to_uri = (query) =>
-  typeof query === "object"
-    ? (Object.entries(query).length ? "?" : "") +
-      Object.entries(query)
-        .filter(([k, v]) => k && v)
-        .map(([k, v]) => encodeURIComponent(k) + "=" + encodeURIComponent(v))
-        .join("&")
-    : query
+	typeof query === "object"
+		? (Object.entries(query).length ? "?" : "") +
+		Object.entries(query)
+			.filter(([k, v]) => k && v)
+			.map(([k, v]) => encodeURIComponent(k) + "=" + encodeURIComponent(v))
+			.join("&")
+		: query
 
 export const query_from_uri = (query) =>
-  typeof query === "string"
-    ? Object.fromEntries(
-        query
-          .replace(/^\?/, "")
-          .split("&")
-          .map((v) => {
-            v = v.split("=")
-            return [decodeURIComponent(v[0]), decodeURIComponent(v[1])]
-          })
-          .filter(([k, v]) => k && v)
-      )
-    : query
+	typeof query === "string"
+		? Object.fromEntries(
+			query
+				.replace(/^\?/, "")
+				.split("&")
+				.map((v) => {
+					v = v.split("=")
+					return [decodeURIComponent(v[0]), decodeURIComponent(v[1])]
+				})
+				.filter(([k, v]) => k && v)
+		)
+		: query
 
 export const make_query = (query) => {
-  query = query_from_uri(query ?? "")
-  // console.log(query)
-  // query = { ...base_query, ...query }
-  return query_to_uri(query)
+	query = query_from_uri(query ?? "")
+	// console.log(query)
+	// query = { ...base_query, ...query }
+	return query_to_uri(query)
 }
 
 export const actions = {
-  media: {
-    post: (v) =>
-      setStatus(mediaPost(v), {
-        timeout: 40000,
-        on_resolve: "Upload success!",
-      }),
-    post_many: (v_array) =>
-      batch_upload(
-        v_array,
-        mediaPost,
-        ({ result, done, left }) => {
-          let value = `Uploaded ${done} of ${done + left}.`
-          notification_id = notifications.add({
-            id: notification_id,
-            value,
-            timeout: 0,
-          })
-        },
-        (results) => {
-          notifications.add({
-            id: notification_id,
-            timeout: 10000,
-            value: `Uploaded ${results.length} items successfully!`,
-          })
-          notification_id = undefined
-          db.maybe_request_views()
-        }
-      ),
-    patch: ({ id, ...v }) => {
-      fetchJson(`/media/${id}`, { method: "PATCH", body: v }).then((v) =>
-        v.json()
-      )
-    },
-    remove_many: (v_array) =>
-      batch_upload(
-        v_array,
-        mediaDelete,
-        ({ result, done, left }) => {
-          let value = `Removed ${done} of ${done + left}.`
-          notification_id = notifications.add({
-            id: notification_id,
-            value,
-            timeout: 0,
-          })
-        },
-        (results) => {
-          notifications.add({
-            id: notification_id,
-            timeout: 10000,
-            value: `Removed ${results.length} items successfully!`,
-          })
-          notification_id = undefined
-          db.maybe_request_views()
-        }
-      ),
-  },
+	media: {
+		post: (v) =>
+			setStatus(mediaPost(v), {
+				timeout: 40000,
+				on_resolve: "Upload success!",
+			}),
+		post_many: (v_array) =>
+			batch_upload(
+				v_array,
+				(f) => mediaPost(f).catch(err => setStatus(Promise.reject(err.toString()))),
+				({ result, done, left }) => {
+					let value = `Uploaded ${done} of ${done + left}.`
+					notification_id = notifications.add({
+						id: notification_id,
+						value,
+						timeout: 0,
+					})
+				},
+				(results) => {
+					notifications.add({
+						id: notification_id,
+						timeout: 10000,
+						value: `Uploaded ${results.length} items successfully!`,
+					})
+					notification_id = undefined
+					db.maybe_request_views()
+				}
+			),
+		patch: ({ id, ...v }) => {
+			fetchJson(`/media/${id}`, { method: "PATCH", body: v }).then((v) =>
+				v.json()
+			)
+		},
+		remove_many: (v_array) =>
+			batch_upload(
+				v_array,
+				mediaDelete,
+				({ result, done, left }) => {
+					let value = `Removed ${done} of ${done + left}.`
+					notification_id = notifications.add({
+						id: notification_id,
+						value,
+						timeout: 0,
+					})
+				},
+				(results) => {
+					notifications.add({
+						id: notification_id,
+						timeout: 10000,
+						value: `Removed ${results.length} items successfully!`,
+					})
+					notification_id = undefined
+					db.maybe_request_views()
+				}
+			),
+	},
 }
