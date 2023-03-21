@@ -2,8 +2,9 @@
 	import All from "./All.svelte";
 import { make_query, query_from_uri } from "./store";
 
-	export let media;
-	export let query = "";
+	export let {media, query="", ...rest} = $$props;
+	// export let media;
+	// export let query = "";
 	$: is_video =
 		!query_from_uri(query)?.type?.startsWith("image") 
 		&&
@@ -26,7 +27,7 @@ import { make_query, query_from_uri } from "./store";
 </script>
 
 {#if is_video}
-	<video controls {...$$props}>
+	<video controls {...rest}>
 		<source src="/media/{media.id}{make_query(query)}" />
 		<track kind="captions" />
 	</video>
@@ -36,7 +37,7 @@ import { make_query, query_from_uri } from "./store";
 		on:load={on_load}
 		alt
 		src="/media/{media.id}{make_query(query)}"
-		{...$$props}
+		{...rest}
 	/>
 {/if}
 

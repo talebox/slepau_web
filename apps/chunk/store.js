@@ -2,9 +2,11 @@
  * App specific store
  */
 import { writable, get } from "svelte/store"
-import { fetchJson } from "@utils/network"
+import { fetchJson, fetchE } from "@utils/network"
 import { setStatus } from "/common/stores/status"
 import { SocketDB } from "../../common/stores/socket"
+import { batch_upload } from "../../common/utils/utils"
+import notifications from "../../common/stores/notifications"
 
 class ChunkDB extends SocketDB {
   constructor() {
@@ -66,18 +68,21 @@ class ChunkDB extends SocketDB {
 
     return m
   }
-
-  subscribeToUser() {
-    return this.subscribeTo("user", { request_on: "undefined" })
-  }
 }
 
 export const db = new ChunkDB()
 
+let notification_id;
+
 export const actions = {
+  auth: {
+    patch: (v) => 
+      setStatus(fetchJson("/user", { body: v, method: "PATCH" }).then((v) => v.json()))
+    
+  },
   chunks: {
     del: (v) =>
-      setStatus(fetchJson("/api/chunks", { body: v, method: "DELETE" })),
+      setStatus(fetchJson("/chunks", { body: v, method: "DELETE" })),
     put: (id, value) =>
       db.send(
         { resource: `chunks/${id}/value`, value },
@@ -89,15 +94,48 @@ export const actions = {
       ),
     new: (value) =>
       setStatus(
-        fetchJson("/api/chunks", {
+        fetchJson("/chunks", {
           body: { value: value ?? "# New Chunk\n\n" },
           method: "PUT",
         })
       ),
   },
+  media: {
+    post: (v) =>
+      setStatus(
+        fetch("/media", { method: "POST", body: v }).then((v) => v.json()),
+        {
+          timeout: 40000,
+          on_resolve: "Upload success!",
+        }
+      ),
+    post_many: (v_array) => 
+      batch_upload(
+        v_array,
+        (v) =>
+          fetchE("/media", { method: "POST", body: v })
+            .then((v) => v.json())
+            .catch((err) => setStatus(Promise.reject(err.toString()))),
+        ({ result, done, left }) => {
+          let value = `Uploaded ${done} of ${done + left}.`
+          notification_id = notifications.add({
+            id: notification_id,
+            value,
+            timeout: 0,
+          })
+        },
+        (results) => {
+          notifications.add({
+            id: notification_id,
+            timeout: 10000,
+            value: `Uploaded ${results.length} items successfully!`,
+          })
+          notification_id = undefined
+          db.maybe_request_views()
+        }
+      ),
+  },
 }
-
-
 
 export const editing_id$ = writable()
 

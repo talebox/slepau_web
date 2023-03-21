@@ -134,15 +134,15 @@
       let [v, selection] = get_editor()
       // If only 1 file selected, and there is a textarea selection, then replace with path, instead of markdown images :)
       if (items.length === 1 && selection[1] > selection[0]) {
-        editor_typeout(`/api/media/${items[0].id}`)
+        editor_typeout(`/media/${items[0].id}`)
       } else {
         editor_typeout(
           items
             .map((item) =>
-              item.type === "Image"
-                ? `![](media/${item.id})`
-                : item.type === "Video"
-                ? `<video controls> <source src="/api/media/${items[0].id}"/> </video>`
+              item.meta.type.startsWith("image")
+                ? `(image/${item.id})`
+                : item.meta.type.startsWith("video")
+                ? `<video controls> <source src="/media/${item.id}"/> </video>`
                 : item.id
             )
             .join("\n")

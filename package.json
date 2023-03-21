@@ -38,11 +38,14 @@
     "@utils/*": "/common/utils/$1"
   },
   "targets": {
+    "login": {
+      "source": "apps/login/index.html",
+      "distDir": "./dist/login"
+    },
     "auth": {
       "source": [
         "apps/auth/index.html",
-        "apps/auth/home.html",
-        "apps/auth/login.html"
+        "apps/auth/home.html"
       ],
       "distDir": "./dist/auth"
     },

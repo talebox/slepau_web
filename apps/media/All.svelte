@@ -74,7 +74,7 @@
     >
       <Media
         {media}
-				query="type=image/webp&max=300"
+				query="type=image/webp&max=500_2"
 				width="300"
 				height="300"
       />

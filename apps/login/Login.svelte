@@ -1,12 +1,10 @@
 <script>
 	import { Router, Route, Link, navigate } from "@deps/routing";
 	import * as s from "./Login.module.scss";
-	import { slide } from "svelte/transition";
 	import Notifications from "@comps/Notifications.svelte";
 	import { notifications } from "/common/stores/notifications";
-	import { fetchE, fetchJson } from "@utils/network";
+	import { fetchJson } from "@utils/network";
 	import cnfc from "@utils/classname";
-	import { debounce } from "@utils/timeout";
 	const c = cnfc(s);
 
 	let as_admin = false;
@@ -24,25 +22,21 @@
 	}
 
 	function onLogin(e) {
-		fetchJson(`/login`, { body: getValues(), query: { admin: as_admin } }).then(
+		fetchJson(`/auth/login`, { body: getValues(), query: { admin: as_admin } }).then(
 			() => {
-				if (global.referer) {
-					location.href = referer;
-				} else {
-					location.href = "/";
-				}
+				location.href = "/app";
 			},
 			notifications.addError
 		);
 	}
 	function onReset(e) {
-		fetchJson(`/reset`, { body: getValues() }).then(() => {
+		fetchJson(`/auth/reset`, { body: getValues() }).then(() => {
 			navigate("/login");
 			notifications.add("Reset!");
 		}, notifications.addError);
 	}
 	function onRegister(e) {
-		fetchJson(`/register`, { body: getValues() }).then(() => {
+		fetchJson(`/auth/register`, { body: getValues() }).then(() => {
 			navigate("/login");
 			notifications.add("Registered!");
 		}, notifications.addError);
@@ -127,13 +121,5 @@
 	}
 	.container > button {
 		margin-top: 1em;
-	}
-	.message {
-		color: green;
-		margin-block: 0.5em;
-		padding: 0.5em;
-	}
-	.error {
-		color: red;
 	}
 </style>

@@ -5,17 +5,35 @@ import Index from "./Index.svelte"
 import remove_loading from "@utils/remove_loading"
 import setup_service_worker from "@utils/setup_service_worker"
 
-// Return if public.
-if (globalThis.user?.user === "public") return
+const message = document.getElementById("loading-message")
+const icon = document.getElementById("loading-icon")
+const login = document.getElementById("loading-login")
 
-// Setup service worker
-setup_service_worker()
+message.innerText = "Figuring out who you are..."
 
-// Remove loading
-remove_loading()
+fetch("/auth/user")
+  .then((r) => (r.ok ? r.json() : Promise.reject()))
+  .then((claims) =>
+    claims.user !== "public" ? Promise.resolve() : Promise.reject()
+  )
+  .then(
+    () => {
+      message.innerText = "Hello (ʘ‿ʘ)╯"
 
-// Mount app
-const app = new Index({
-  target: document.getElementById("app"),
-  props: {},
-})
+      // Setup service worker
+      setup_service_worker()
+
+      // Remove loading
+      remove_loading()
+
+      // Mount app
+      new Index({
+        target: document.getElementById("app"),
+      })
+    },
+    () => {
+      message.innerText = "Who are you (⊙_⊙')?"
+      icon.style.display = "none"
+      login.style.display = "initial"
+    }
+  )

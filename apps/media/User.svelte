@@ -19,10 +19,14 @@
   />
 
   <table class="content">
-    <tr><td>User: </td><td in:slide>{user?.user ?? "<user>"}</td></tr>
-    <tr><td>Visible:</td><td in:slide>{user?.notes_visible ?? "<x>"}</td></tr>
-    <tr><td>Owned: </td><td in:slide>{user?.notes_owned ?? "<x>"}</td></tr>
-    <tr><td>Public: </td><td in:slide>{user?.notes_owned_public ?? "<x>"}</td></tr>
+    <tr><td>User: </td><td in:slide>{globalThis?.user ?? "<user>"}</td></tr>
+    <tr
+      ><td>Storage: </td><td in:slide
+        >{user?.size ?? "<user>"}/{globalThis.user.media_limit
+          ? globalThis.user.media_limit / 2 ** 20 + "MB"
+          : "♾️"}</td
+      ></tr
+    >
   </table>
 </div>
 

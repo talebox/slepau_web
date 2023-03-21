@@ -88,6 +88,10 @@ export function applyDiff(left, diff, s = []) {
 
 export const REGEX_TITLE = new RegExp(process.env.REGEX_TITLE)
 export const REGEX_ACCESS = new RegExp(process.env.REGEX_ACCESS, "im")
+export const REGEX_IMAGE = new RegExp(
+  `\\(image\\/(${process.env.REGEX_PROQUINT})\\)`,
+  "g"
+)
 export const REGEX_MEDIA = new RegExp(
   `\\(media\\/(${process.env.REGEX_PROQUINT})\\)`,
   "g"
@@ -177,22 +181,22 @@ export function bytes_to_pretty(bytes, precision = 0) {
 }
 
 const SI_PREFIX = {
-	"Y": 10 ** 24,
-	"Z": 10 ** 21,
-	"E": 10 ** 18,
-	"P": 10 ** 15,
-	"T": 10 ** 12,
-	"G": 10 ** 9,
-	"M": 10 ** 6,
-	"k": 10 ** 3,
-	"m": 10 ** -3,
-	"u": 10 ** -6,
-	"n": 10 ** -9,
-	"p": 10 ** -12,
-	"f": 10 ** -15,
-	"a": 10 ** -18,
-	"y": 10 ** -21,
-	"z": 10 ** -24,
+  Y: 10 ** 24,
+  Z: 10 ** 21,
+  E: 10 ** 18,
+  P: 10 ** 15,
+  T: 10 ** 12,
+  G: 10 ** 9,
+  M: 10 ** 6,
+  k: 10 ** 3,
+  m: 10 ** -3,
+  u: 10 ** -6,
+  n: 10 ** -9,
+  p: 10 ** -12,
+  f: 10 ** -15,
+  a: 10 ** -18,
+  y: 10 ** -21,
+  z: 10 ** -24,
 }
 
 /**
@@ -204,8 +208,8 @@ export function parse_si_prefix(v, _default = undefined) {
   if (typeof v !== "string") return v
   let match = /(\d+)(\w*)/.exec(v)
   if (match) {
-		let digit = match[1]
-		let multiplier = SI_PREFIX[match[2]] || 1;
+    let digit = match[1]
+    let multiplier = SI_PREFIX[match[2]] || 1
     digit = Number(digit)
     if (multiplier && !Number.isNaN(digit)) {
       return digit * multiplier
@@ -226,7 +230,7 @@ export function str_remove(source, from, to) {
 }
 
 export function logout() {
-  location.href = `${global.auth_url}/logout`
+  location.href = `/logout`
 }
 
 const UPLOADS = {}
@@ -270,4 +274,5 @@ export async function batch_upload(
   }
   done_callback(store.done)
   delete UPLOADS[key]
+  return store.done
 }

@@ -74,7 +74,7 @@ export class SocketDB {
 	}
 	next_id = 1
 
-	constructor(url = "/api/stream") {
+	constructor(url = "/stream") {
 		this.url = url
 
 		this.on_open = this.on_open.bind(this)
@@ -251,4 +251,7 @@ export class SocketDB {
 			subscribe: sub.subscribe,
 		}
 	}
+	subscribeToUser() {
+    return this.subscribeTo("user", { request_on: "undefined" })
+  }
 }
