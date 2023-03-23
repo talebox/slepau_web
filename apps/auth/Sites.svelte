@@ -6,6 +6,7 @@
 	import { second_to_pretty, parse_seconds } from "@utils/utils";
 	import { notifications } from "/common/stores/notifications";
 	import CodeList from "../../common/comps/CodeList.svelte";
+	import { user } from "../../common/stores/user";
 
 	let name;
 	let sites_slice;
@@ -15,6 +16,9 @@
 	// If true, we're showing editing screen
 	// instead of slice with search.
 	// let is_editing;
+
+	let claims = {};
+	user.then((v) => (claims = v.claims));
 
 	function refresh() {
 		return actions
@@ -58,7 +62,7 @@
 <h1>
 	Sites
 
-	{#if global.user.super}
+	{#if claims.super}
 		<button
 			class="icon admin-edit"
 			on:click={() => {
