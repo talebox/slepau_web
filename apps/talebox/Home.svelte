@@ -112,7 +112,7 @@
 		console.log(gears);
 	}
 	
-	const t_r = 4;
+	const t_r = 4.1;
 </script>
 
 <svg
@@ -154,8 +154,8 @@
 						font-weight="bold" fill="var(--text-main)" stroke="none">
 							<textPath href="#t_path">Talebox</textPath>
 						</text>
-						<text font-size="5"
-						font-weight="normal" fill="var(--text-muted)" stroke="none">
+						<text font-size="6"
+						font-weight="normal" fill="var(--text-main)" stroke="none">
 							<textPath href="#t_path2">your story</textPath>
 						</text>
 					{:else}

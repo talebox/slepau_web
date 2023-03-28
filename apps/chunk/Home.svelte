@@ -31,11 +31,6 @@
     })
   }
 
-  let user
-
-  fetch("/auth/user")
-    .then((v) => v.json())
-    .then((v) => (user = v))
 </script>
 
 <h1>Chunk</h1>

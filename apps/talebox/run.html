@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>Run Talebox</title>
+	<link rel="icon" type="image/x-icon" href="./assets/favicon.ico">
+	<meta charset="UTF-8">
+	<meta name="viewport"
+		content="width=device-width, height=device-height,  initial-scale=1.0, user-scalable=no;user-scalable=0;" />
+
+	<!-- Style -->
+	<link rel="stylesheet" href="/common/water.css">
+	<link rel="stylesheet" href="npm:@styles/index.scss">
+	<link rel="stylesheet" href="npm:@styles/home.scss">
+	<style>
+		.frw {
+			gap: 1em;
+		}
+
+		.frw>*,
+		.contain {
+			padding: 1em;
+			border: 1px solid var(--text-main);
+			border-radius: 10px;
+		}
+
+		img {
+			display: inline;
+		}
+	</style>
+</head>
+
+<body style="max-width: 800px;margin:auto">
+
+	<h1 style="margin-block:30vh">Run your own.</h1>
+
+	<div style="margin-block: 5em; " class="contain">
+		<h2>Linux <img src="assets/linux.png?as=webp&width=36&height=36" height="36" width="36" /></h2>
+		<ol>
+			<li>Install <code>ffmpeg</code> and <code>nginx</code> with your package manager.</li>
+			<li>Run below to download, extract, and execute for the first time.</li>
+		</ol>
+		<div class="frw">
+			<div style="flex: 1 1 0px">
+				<h2>Arch <img src="assets/arch.png?as=webp&width=36&height=36" height="36" width="36" /></h2>
+				<p>
+
+					<code>curl https://talebox.anty.dev/standalone_linux_x86_64.sh | sh</code>
+				</p>
+			</div>
+			<div style="flex: 1 1 0px">
+				<h2><a href="https://musl.libc.org/"><b>Musl</b></a> static x86_64</h2>
+				<p>
+					<code>curl https://talebox.anty.dev/standalone_musl_x86_64.sh | sh</code>
+				</p>
+			</div>
+		</div>
+	</div>
+
+	<div style="margin-block: 5em; " class="contain">
+		<h2>Windows <img src="assets/windows.png?as=webp&width=36&height=36" height="36" width="36" /> <br />and <br />Mac
+			<img src="assets/apple.png?as=webp&width=36&height=36" height="36" width="36" /> <br /> aren't supported.</h2>
+		<p>Talebox isn't consumer centric platforms friendly.</p>
+	</div>
+
+
+</body>
+
+</html>

@@ -1,69 +1,75 @@
 <script>
-  import { get } from "svelte/store"
-  import { fade, slide } from "svelte/transition"
-  import { db } from "../store"
+	import { get } from "svelte/store";
+	import { fade, slide } from "svelte/transition";
+	import { db } from "./store";
+	import { user as _user } from "/common/stores/user";
 
-  let user$ = db.subscribeToUser()
-  let user = get(user$)
-  $: {
-    user = $user$
-  }
+	let user_info$ = db.subscribeToUser();
+	let user_info = get(user_info$);
+	$: {
+		user_info = $user_info$;
+	}
+
+	let user = {};
+	_user.then((u) => (user = u));
 </script>
 
 <div class="container">
-  <img
-    class="photo"
-    in:fade
-    alt="user"
-    src={user?.photo ? `/media/${user?.photo}` : ""}
-  />
+	<img
+		class="photo"
+		in:fade
+		alt=""
+		src={user?.claims?.photo ? `/media/${user.claims.photo}` : ""}
+	/>
 
-  <table class="content">
-    <tr><td>User: </td><td in:slide>{globalThis?.user ?? "<user>"}</td></tr>
-    <tr
-      ><td>Storage: </td><td in:slide
-        >{user?.size ?? "<user>"}/{globalThis.user.media_limit
-          ? globalThis.user.media_limit / 2 ** 20 + "MB"
-          : "♾️"}</td
-      ></tr
-    >
-  </table>
+	<table class="content">
+		<tr><td>User: </td><td in:slide>{user?.claims?.user ?? "<user>"}</td></tr>
+		<tr
+			><td>Size: </td><td in:slide
+				>{user_info.size
+					? (user_info.size / 2 ** 20).toFixed(0)
+					: "<size>"} / {user?.claims?.media_limit
+					? (user.claims.media_limit / 2 ** 20).toFixed(0) + "MB"
+					: "♾️"}</td
+			></tr
+		>
+	</table>
 </div>
 
 <style>
-  .container {
-    display: flex;
-    padding: 8px;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-  .container td:first-child {
-    width: 4.4em;
-    text-align: right;
-  }
-  .content {
-    font-size: 0.8em;
-    margin: 0;
-    flex: 0 1 160px;
-  }
-  .content td {
-    padding: 4px;
-  }
-  .content tr:not(:last-child) td {
-    padding-bottom: 0;
-  }
-  .photo {
-    flex: 0 0 auto;
-    border-radius: 999px;
-    background: #1375d190;
-    outline: 1px solid var(--text-main);
-    /* text-align: center; */
-    /* padding-block: 1em; */
-    width: 80px;
-    height: 80px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+	.container {
+		display: flex;
+		padding: 8px;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+	}
+	.container td:first-child {
+		width: min-content;
+		text-align: right;
+	}
+	.content {
+		font-size: 0.8em;
+		margin: 0;
+		flex: 0 1 160px;
+	}
+	.content td {
+		padding: 4px;
+	}
+	.content tr:not(:last-child) td {
+		padding-bottom: 0;
+	}
+	.photo {
+		flex: 0 0 auto;
+		border-radius: 999px;
+		background: #1375d190;
+		outline: 1px solid var(--text-main);
+		/* text-align: center; */
+		/* padding-block: 1em; */
+		width: 80px;
+		height: 80px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
 </style>

@@ -19,7 +19,7 @@
 		<!-- Edit URL -->
 		<Route path="edit/:id" component={Edit} />
 		<!-- Public Previews -->
-		<Route path="preview/:id" component={Preview} />
+		<!-- <Route path="preview/:id" component={Preview} /> -->
 	</Router>
 </div>
 

@@ -114,7 +114,7 @@
               <div>
                 <code>{version}</code>
                 {info.meta.type}
-                <b>{info.time.toFixed(1)}s {bytes_to_pretty(info.meta.size)}</b>
+                <b>{info.error ?? info.time.toFixed(1) + "s " + bytes_to_pretty(info.meta.size)}</b>
               </div>
             {/each}
           </details>

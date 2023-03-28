@@ -7,6 +7,7 @@
 	import { actions, db } from "./store";
 	import Details from "./Details.svelte";
 	import notifications from "../../common/stores/notifications";
+	import Drawer from "./Drawer.svelte";
 
 	const tasks$ = db.subscribeTo("tasks", { init_with: 0 });
 	$: tasks = $tasks$;
@@ -23,7 +24,7 @@
 	}
 
 	function dragover(ev) {
-		console.log("In drop zone");
+		// console.log("In drop zone");
 
 		// Prevent default behavior (Prevent file from being opened)
 		ev.preventDefault();
@@ -53,6 +54,7 @@
 
 <Notifications />
 <Status />
+<Drawer />
 
 <Router basepath="/app">
 	<Route component={All} />

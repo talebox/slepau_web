@@ -10,6 +10,8 @@
 		? db.subscribeTo(`chunks/${id}`, { request_on: "undefined" })
 		: undefined;
 	$: chunk = $chunk$;
+	
+	// $: console.log(chunk)
 </script>
 
 {#if chunk?.value}

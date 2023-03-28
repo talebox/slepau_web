@@ -4,7 +4,7 @@
 import Index from "./Index.svelte"
 import remove_loading from "@utils/remove_loading"
 import setup_service_worker from "@utils/setup_service_worker"
-import { user } from "../../common/stores/user"
+import { user_assert_logged_in } from "../../common/stores/user"
 
 const message = document.getElementById("loading-message")
 const icon = document.getElementById("loading-icon")
@@ -12,7 +12,7 @@ const login = document.getElementById("loading-login")
 
 message.innerText = "Figuring out who you are..."
 
-user.then(
+user_assert_logged_in.then(
 	() => {
 		message.innerText = "Hello (ʘ‿ʘ)╯"
 

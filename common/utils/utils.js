@@ -92,6 +92,10 @@ export const REGEX_IMAGE = new RegExp(
   `\\(image\\/(${process.env.REGEX_PROQUINT})\\)`,
   "g"
 )
+export const REGEX_VIDEO = new RegExp(
+  `\\(video\\/(${process.env.REGEX_PROQUINT})\\)`,
+  "g"
+)
 export const REGEX_MEDIA = new RegExp(
   `\\(media\\/(${process.env.REGEX_PROQUINT})\\)`,
   "g"
@@ -230,7 +234,7 @@ export function str_remove(source, from, to) {
 }
 
 export function logout() {
-  location.href = `/logout`
+  fetch(`/auth/logout`).then(() => location.href = "/")
 }
 
 const UPLOADS = {}

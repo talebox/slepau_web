@@ -44,12 +44,15 @@
   }
 </script>
 
+{#if process.env.NODE_ENV === 'development'}
+
 <button
   on:click={() => {
     actions.media.remove_many(view_all.map((v) => v.id))
     selected = undefined
   }}>RemoveAll</button
 >
+{/if}
 
 <input
   bind:this={file_input}

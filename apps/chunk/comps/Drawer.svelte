@@ -49,7 +49,7 @@
       Logout
     </button>
   {:else}
-    <button class="menu" on:click={() => navigate("/app/login")}>
+    <button class="menu" on:click={() => navigate("/login")}>
       <svg fill="currentColor" viewBox="0 0 16 16" class="icon">
         <path
           fill-rule="evenodd"
