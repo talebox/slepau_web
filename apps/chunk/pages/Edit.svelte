@@ -124,7 +124,14 @@
 		update_value(v);
 	}
 	function add_media_(files) {
-		actions.media.post_many(files).then((items) => {
+		if (!files?.length) {
+			notifications.add("No files selected");
+			return;
+		}
+		(files.length == 1
+			? actions.media.post(files[0]).then((x) => [x])
+			: actions.media.post_many(files)
+		).then((items) => {
 			let [v, selection] = get_editor();
 			// If only 1 file selected, and there is a textarea selection, then replace with path, instead of markdown images :)
 			if (items.length === 1 && selection[1] > selection[0]) {

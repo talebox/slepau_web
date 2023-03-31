@@ -15,11 +15,11 @@ export function valueTransform(value) {
 	value = value.replace(/\[x\]/g, '&#x2612;');
 	value = value.replace(/\[check\]/g, '&#x2713;');
 	value = value.replace(REGEX_ACCESS, "");
-	
+
 	console.log(value)
-  
-  value = value.replace(REGEX_IMAGE, (m,id) => 
-  `<img
+
+	value = value.replace(REGEX_IMAGE, (m, id) =>
+		`<img
 		style="display: block"
 		src="/media/${id}?max=800x"
 		srcset="
@@ -30,25 +30,26 @@ export function valueTransform(value) {
 		"
 		sizes="(min-width:800px) 800px, 100vw"
 	/>`
-  )
-	value = value.replace(REGEX_VIDEO, (m,id) => 
-  `<video controls> 
-	<source src="/media/${id}?type=video/webm" type="video/webm" />
-	<source src="/media/${id}?c_v=libx264&c_a=aac&b_v=2M&b_a=90k&type=video/mp4" type="video/mp4" />\
-		Your browser doesn't support HTML video. Click to download\
-		<a href="/media/${id}?c_v=libx264&c_a=aac&b_v=2M&b_a=90k&type=video/mp4">${id}</a> instead.\
+	)
+	value = value.replace(REGEX_VIDEO, (m, id) =>
+		`\
+<video controls poster="/media/${id}?type=image/webp"> \
+<source src=\"/media/${id}?type=video/webm\" type=\"video/webm\" /> \
+<source src=\"/media/${id}?c_v=libx264&c_a=aac&b_v=2M&b_a=90k&type=video/mp4\" type=\"video/mp4\" /> \
+	Your browser doesn't support HTML video. Click to download \
+	<a href=\"/media/${id}?c_v=libx264&c_a=aac&b_v=2M&b_a=90k&type=video/mp4\">${id}</a> instead. \
 </video>`
-  )
-	
-	
-  
+	)
+
+
+
 	value = value.replace(REGEX_MEDIA, (m, id) => `(/media/${id})`);
 	return value;
 }
 
 export function chunkValueToHtml(value) {
 	value = valueTransform(value)
-	
+
 	value = value.replace(REGEX_CHUNK, (m, id) => `(/page/${id})`);
 	return mdToHtml(value);
 }
