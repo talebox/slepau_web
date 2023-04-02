@@ -4,9 +4,8 @@
 
 	const toothRatio = 22 / 8;
 	let gears = {
-		
 		auth: {
-			link: "https://auth.anty.dev",
+			link: globalThis.HOSTS.auth.origin,
 			toothWidth: 1.7,
 			toothHeight: 1.4,
 			radius: 8,
@@ -17,7 +16,7 @@
 			toothOffset: 0.3,
 		},
 		chunk: {
-			link: "https://chunk.anty.dev",
+			link: globalThis.HOSTS.chunk.origin,
 			toothWidth: 1.7,
 			toothHeight: 1.4,
 			inactive: false,
@@ -28,7 +27,7 @@
 			// center: polarToCartesian(0.8 * Math.PI, 26).map((x) => x + 50),
 		},
 		media: {
-			link: "https://media.anty.dev",
+			link: globalThis.HOSTS.media.origin,
 			toothWidth: 1.7,
 			toothHeight: 1.4,
 			inactive: true,
@@ -39,18 +38,7 @@
 			// center: polarToCartesian(0.2 * Math.PI, 29).map((x) => x + 50),
 			// center_inactive: polarToCartesian(0.2 * Math.PI, 29).map((x) => x + 50),
 		},
-		gibos: {
-			link: "https://gibos.anty.dev",
-			toothWidth: 1.7,
-			toothHeight: 1.4,
-			inactive: true,
-			radius: 9,
-			center: [50, 50],
-			toothOffset: 0.47,
-			pos_engaged: polarToCartesian(1.75 * Math.PI, 29),
-			// center: polarToCartesian(0.2 * Math.PI, 29).map((x) => x + 50),
-			// center_inactive: polarToCartesian(0.2 * Math.PI, 29).map((x) => x + 50),
-		},
+
 		talebox: {
 			teeth: 100,
 			toothWidth: 2,
@@ -60,6 +48,25 @@
 			time: 120,
 		},
 	};
+
+	if (
+		//process.env.NODE_ENV === "production" &&
+		!window.location.hostname.endsWith(".local")
+	) {
+		gears.gibos = {
+			link: globalThis.HOSTS.gibos.origin,
+			toothWidth: 1.7,
+			toothHeight: 1.4,
+			inactive: true,
+			radius: 9,
+			center: [50, 50],
+			toothOffset: 0.47,
+			pos_engaged: polarToCartesian(1.75 * Math.PI, 29),
+			// center: polarToCartesian(0.2 * Math.PI, 29).map((x) => x + 50),
+			// center_inactive: polarToCartesian(0.2 * Math.PI, 29).map((x) => x + 50),
+		};
+	}
+
 	{
 		let d = "M1 50";
 		d += "A 49 49 0 0 1 99 50";
@@ -111,7 +118,7 @@
 		);
 		console.log(gears);
 	}
-	
+
 	const t_r = 4.1;
 </script>
 
@@ -140,42 +147,58 @@
 					<path d={gear.path} />
 
 					{#if name === "talebox"}
-						<path id="t_path" d="
-						M {polarToCartesian(Math.PI * .6,gear.radius+t_r, [50,50]).join(' ')}
-						A {gear.radius+t_r} {gear.radius+t_r} 0 0 1 {polarToCartesian(Math.PI * 0,gear.radius+t_r, [50,50]).join(' ')}
+						<path
+							id="t_path"
+							d="
+						M {polarToCartesian(Math.PI * 0.6, gear.radius + t_r, [50, 50]).join(' ')}
+						A {gear.radius + t_r} {gear.radius + t_r} 0 0 1 {polarToCartesian(
+								Math.PI * 0,
+								gear.radius + t_r,
+								[50, 50]
+							).join(' ')}
 						Z
-						" style="stroke:none;fill:none;"/>
-						<path id="t_path2" d="
-						M {polarToCartesian(Math.PI * 1.6,gear.radius+t_r, [50,50]).join(' ')}
-						A {gear.radius+t_r} {gear.radius+t_r} 0 0 1 {polarToCartesian(Math.PI * 1,gear.radius+t_r, [50,50]).join(' ')}
+						"
+							style="stroke:none;fill:none;"
+						/>
+						<path
+							id="t_path2"
+							d="
+						M {polarToCartesian(Math.PI * 1.6, gear.radius + t_r, [50, 50]).join(' ')}
+						A {gear.radius + t_r} {gear.radius + t_r} 0 0 1 {polarToCartesian(
+								Math.PI * 1,
+								gear.radius + t_r,
+								[50, 50]
+							).join(' ')}
 						Z
-						" style="stroke:none;fill:none;"/>
-						<text font-size="6"
-						font-weight="bold" fill="var(--text-main)" stroke="none">
+						"
+							style="stroke:none;fill:none;"
+						/>
+						<text
+							font-size="6"
+							style="font-weight:bold;text-anchor:start"
+						>
 							<textPath href="#t_path">Talebox</textPath>
 						</text>
-						<text font-size="6"
-						font-weight="normal" fill="var(--text-main)" stroke="none">
+						<text
+							font-size="6"
+							style="font-weight:normal;text-anchor:start"
+						>
 							<textPath href="#t_path2">your story</textPath>
 						</text>
 					{:else}
 						<text
 							x={gear.center[0]}
 							y={name === "talebox" ? 7.9 : gear.center[1] - 0.4}
-							fill="var(--text-main)"
-							text-anchor="middle"
-							font-weight="normal"
-							stroke="none"
+							
+							
 							font-size={name === "talebox" ? 6 : 3}
 							>{name[0].toUpperCase() + name.substring(1)}
 						</text>
 						{#if gear.link}<text
 								x={gear.center[0]}
 								y={name === "talebox" ? 7.9 : gear.center[1] - 0.4}
-								fill="var(--text-main)"
-								text-anchor="middle"
-								font-weight="normal"
-								stroke="none"
+								
+								
 								dx="0"
 								dy="4"
 								font-size={name === "talebox" ? 6 : 3}>🔗</text
@@ -185,6 +208,14 @@
 			</a>
 		</g>
 	{/each}
+	<text x="50" y="50" font-size="2">
+		Instance at
+	</text>
+	<text x="50" y="55" font-size="3" style="fill: var(--code)">
+		{window.location.origin}
+	</text>
+	<!-- {#if process.env.NODE_ENV === "production" && window.location.hostname.endsWith(".local")} -->
+	<!-- {/if} -->
 </svg>
 {#if process.env.NODE_ENV === "development"}
 	<button on:click={() => toggle()}>Toggle</button>
@@ -197,6 +228,12 @@
 		/* height: var(--s); */
 		width: 100%;
 		height: 100%;
+	}
+	text {
+		fill:var(--text-main);
+		stroke: none;
+		font-weight: normal;
+		text-anchor: middle;
 	}
 	@keyframes rotate {
 		0% {

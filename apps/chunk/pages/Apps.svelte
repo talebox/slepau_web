@@ -35,7 +35,7 @@
 
 <Edit />
 <Status />
-<Search />
+<!-- <Search /> -->
 
 <Router>
 	<Route path="calendar" component={Calendar} />

@@ -44,14 +44,14 @@
 			<div style="flex: 1 1 0px">
 				<h2>Arch <img src="assets/arch.png?as=webp&width=36&height=36" height="36" width="36" /></h2>
 				<p>
-					<code>curl https://talebox.anty.dev/standalone_linux_x86_64.sh | sh</code>
+					<code id="link">curl https://talebox.dev/standalone_linux_x86_64.sh | sh</code>
 				</p>
 			</div>
 			<div style="flex: 1 1 0px">
 				<h2><a href="https://musl.libc.org/"><b>Musl</b></a> static x86_64</h2>
 				<p>
 					Runs on any x86_64 linux<br />
-					<code>curl https://talebox.anty.dev/standalone_musl_x86_64.sh | sh</code>
+					<code id="link">curl https://talebox.dev/standalone_musl_x86_64.sh | sh</code>
 				</p>
 			</div>
 		</div>
@@ -67,7 +67,12 @@
 		</p>
 	</div>
 
-
+	<script src="npm:@utils/hosts.js"></script>
+	<!-- <script >
+		document.querySelectorAll("#link").forEach(el => {
+			el.innerText = el.innerText.replace("https://talebox.dev", HOSTS.talebox.origin)
+		})
+	</script> -->
 </body>
 
 </html>
