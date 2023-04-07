@@ -24,7 +24,7 @@
 	function onLogin(e) {
 		fetchJson(`/auth/login`, { body: getValues(), query: { admin: as_admin } }).then(
 			() => {
-				location.href = "/app";
+				location.href = `${globalThis.PREFIX}/app`;
 			},
 			notifications.addError
 		);

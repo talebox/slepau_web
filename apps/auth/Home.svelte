@@ -3,7 +3,7 @@
 
 	function auth_click() {
 		if (logged_in) {
-			fetch("/logout").then(
+			fetch("/auth/logout").then(
 				() => location.reload(),
 				() => {}
 			);
@@ -159,11 +159,14 @@
 		<span id="user">an <b>entity</b> that <strong>interacts</strong> 📡</span>
 		<br />
 	{/if}
-	with <code>{domain}</code>.
+	with 
+	<!-- <code>{domain}</code> -->
+	<b>Talebox</b>
+	.
 </p>
 
 {#if claims.admin}
-	<a href="/app">
+	<a href={`${globalThis.PREFIX}/app`}>
 		<button style:background={color_alpha(color, "80")}>
 			Go to panel <svg
 				fill="currentColor"

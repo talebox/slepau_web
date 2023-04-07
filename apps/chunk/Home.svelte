@@ -56,7 +56,7 @@
 	A{arcR} {arcR} 0 0 0 {pc(Math.PI * 1.4, arcR)}
 	"
   />
-  <a href="/app">
+  <a href={`${globalThis.PREFIX}/app`}>
     <path
       fill="var(--selection)"
       stroke="none"

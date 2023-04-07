@@ -56,7 +56,7 @@
 <Status />
 <Drawer />
 
-<Router basepath="/app">
+<Router basepath={`${globalThis.PREFIX}/app`}>
 	<Route component={All} />
 </Router>
 

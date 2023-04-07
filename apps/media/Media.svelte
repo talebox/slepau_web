@@ -28,7 +28,7 @@ import { make_query, query_from_uri } from "./store";
 
 {#if is_video}
 	<video controls preload="none" {...rest}>
-		<source src="/media/{media.id}{make_query(query)}" />
+		<source src="/media/media/{media.id}{make_query(query)}" />
 		<track kind="captions" />
 	</video>
 {:else}
@@ -36,7 +36,7 @@ import { make_query, query_from_uri } from "./store";
 		on:error={on_error}
 		on:load={on_load}
 		alt
-		src="/media/{media.id}{make_query(query)}"
+		src="/media/media/{media.id}{make_query(query)}"
 		loading="lazy"
 		{...rest}
 	/>

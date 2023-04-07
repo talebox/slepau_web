@@ -17,7 +17,7 @@ user_assert_logged_in.then(
 		message.innerText = "Hello (ʘ‿ʘ)╯"
 
 		// Setup service worker
-		setup_service_worker()
+		if (globalThis.URL_IS_LOCAL) setup_service_worker()
 
 		// Remove loading
 		remove_loading()

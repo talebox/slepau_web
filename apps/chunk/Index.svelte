@@ -12,7 +12,7 @@
 
 <Notifications />
 <div class="main">
-	<Router basepath="/app">
+	<Router basepath={`${globalThis.PREFIX}/app`}>
 		<Route component={Apps} />
 		<Route path="settings/*" component={Settings} />
 		

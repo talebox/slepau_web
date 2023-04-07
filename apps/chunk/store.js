@@ -10,7 +10,7 @@ import notifications from "../../common/stores/notifications"
 
 class ChunkDB extends SocketDB {
 	constructor() {
-		super()
+		super("/chunk/stream")
 	}
 	on_open() {
 		super.on_open()
@@ -77,11 +77,11 @@ let notification_id;
 export const actions = {
 	auth: {
 		patch: (v) =>
-			setStatus(fetchJson("/user", { body: v, method: "PATCH" }).then((v) => v.json()))
+			setStatus(fetchJson("/auth/user", { body: v, method: "PATCH" }).then((v) => v.json()))
 	},
 	chunks: {
 		del: (v) =>
-			setStatus(fetchJson("/chunks", { body: v, method: "DELETE" })),
+			setStatus(fetchJson("/chunk/chunks", { body: v, method: "DELETE" })),
 		put: (id, value) =>
 			db.send(
 				{ resource: `chunks/${id}/value`, value },
@@ -93,7 +93,7 @@ export const actions = {
 			),
 		new: (value) =>
 			setStatus(
-				fetchJson("/chunks", {
+				fetchJson("/chunk/chunks", {
 					body: { value: value ?? "# New Chunk\n\n" },
 					method: "PUT",
 				})
@@ -102,7 +102,7 @@ export const actions = {
 	media: {
 		post: (v) =>
 			setStatus(
-				fetch("/media", { method: "POST", body: v }).then((v) => v.json()),
+				fetch("/media/media", { method: "POST", body: v }).then((v) => v.json()),
 				{
 					timeout: 40000,
 					on_resolve: "Upload success!",
@@ -112,7 +112,7 @@ export const actions = {
 			batch_upload(
 				v_array,
 				(v) =>
-					fetchE("/media", { method: "POST", body: v })
+					fetchE("/media/media", { method: "POST", body: v })
 						.then((v) => v.json())
 						.catch((err) => setStatus(Promise.reject(err.toString()))),
 				({ result, done, left }) => {

@@ -25,8 +25,15 @@
 	// }
 	export let location;
 	$: {
-		if (["/app", "/app/"].includes(location?.pathname)) {
-			setTimeout(() => navigate("/app/well/", { replace: true }), 50);
+		if (
+			[`${globalThis.PREFIX}/app`, `${globalThis.PREFIX}/app/`].includes(
+				location?.pathname
+			)
+		) {
+			setTimeout(
+				() => navigate(`${globalThis.PREFIX}/app/well/`, { replace: true }),
+				50
+			);
 		}
 	}
 </script>

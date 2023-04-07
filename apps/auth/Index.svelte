@@ -7,7 +7,7 @@
 </script>
 
 <Notifications />
-<Router basepath="/app">
+<Router basepath={`${globalThis.PREFIX}/app`}>
 	<Route component={Sites} />
 	<Route path="admins" component={Admins} />
 	<Route path="sites/:site_id/users" component={Users} />

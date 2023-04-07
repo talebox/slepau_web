@@ -5,7 +5,7 @@
 	const toothRatio = 22 / 8;
 	let gears = {
 		auth: {
-			link: globalThis.HOSTS.auth.origin,
+			link: globalThis.HOSTS.auth.href,
 			toothWidth: 1.7,
 			toothHeight: 1.4,
 			radius: 8,
@@ -16,7 +16,7 @@
 			toothOffset: 0.3,
 		},
 		chunk: {
-			link: globalThis.HOSTS.chunk.origin,
+			link: globalThis.HOSTS.chunk.href,
 			toothWidth: 1.7,
 			toothHeight: 1.4,
 			inactive: false,
@@ -27,7 +27,7 @@
 			// center: polarToCartesian(0.8 * Math.PI, 26).map((x) => x + 50),
 		},
 		media: {
-			link: globalThis.HOSTS.media.origin,
+			link: globalThis.HOSTS.media.href,
 			toothWidth: 1.7,
 			toothHeight: 1.4,
 			inactive: true,
@@ -50,11 +50,11 @@
 	};
 
 	if (
-		//process.env.NODE_ENV === "production" &&
-		!window.location.hostname.endsWith(".local")
+		window.location.hostname === "talebox.dev" ||
+		process.env.NODE_ENV === "development"
 	) {
 		gears.gibos = {
-			link: globalThis.HOSTS.gibos.origin,
+			link: globalThis.HOSTS.gibos.href,
 			toothWidth: 1.7,
 			toothHeight: 1.4,
 			inactive: true,
@@ -173,32 +173,22 @@
 						"
 							style="stroke:none;fill:none;"
 						/>
-						<text
-							font-size="6"
-							style="font-weight:bold;text-anchor:start"
-						>
+						<text font-size="6" style="font-weight:bold;text-anchor:start">
 							<textPath href="#t_path">Talebox</textPath>
 						</text>
-						<text
-							font-size="6"
-							style="font-weight:normal;text-anchor:start"
-						>
+						<text font-size="6" style="font-weight:normal;text-anchor:start">
 							<textPath href="#t_path2">your story</textPath>
 						</text>
 					{:else}
 						<text
 							x={gear.center[0]}
 							y={name === "talebox" ? 7.9 : gear.center[1] - 0.4}
-							
-							
 							font-size={name === "talebox" ? 6 : 3}
 							>{name[0].toUpperCase() + name.substring(1)}
 						</text>
 						{#if gear.link}<text
 								x={gear.center[0]}
 								y={name === "talebox" ? 7.9 : gear.center[1] - 0.4}
-								
-								
 								dx="0"
 								dy="4"
 								font-size={name === "talebox" ? 6 : 3}>🔗</text
@@ -208,9 +198,7 @@
 			</a>
 		</g>
 	{/each}
-	<text x="50" y="50" font-size="2">
-		Instance at
-	</text>
+	<text x="50" y="50" font-size="2"> Instance at </text>
 	<text x="50" y="55" font-size="3" style="fill: var(--code)">
 		{window.location.origin}
 	</text>
@@ -230,7 +218,7 @@
 		height: 100%;
 	}
 	text {
-		fill:var(--text-main);
+		fill: var(--text-main);
 		stroke: none;
 		font-weight: normal;
 		text-anchor: middle;

@@ -66,7 +66,7 @@
 		<button
 			class="icon admin-edit"
 			on:click={() => {
-				navigate(`/app/admins`);
+				navigate(`${globalThis.PREFIX}/app/admins`);
 			}}
 		>
 			<svg
@@ -116,7 +116,7 @@
 						<button
 							class="icon edit"
 							on:click={() => {
-								navigate(`/app/sites/${site.id}/users`);
+								navigate(`${globalThis.PREFIX}/app/sites/${site.id}/users`);
 							}}
 						>
 							{site.users}

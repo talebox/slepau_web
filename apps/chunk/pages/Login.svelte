@@ -19,7 +19,7 @@
     return Object.values(values)
   }
   function onLogin(e) {
-    actions.login(getValues()).then(() => navigate("/app"))
+    actions.login(getValues()).then(() => navigate(`${globalThis.PREFIX}/app`))
   }
   function onReset(e) {
     actions.reset(getValues()).then(() => navigate("/login"))

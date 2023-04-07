@@ -10,7 +10,7 @@ export const editing_id$ = writable()
 
 class MediaDB extends SocketDB {
 	constructor() {
-		super("/stream")
+		super("/media/stream")
 	}
 	on_open() {
 		super.on_open()
@@ -49,7 +49,7 @@ class MediaDB extends SocketDB {
 export const db = new MediaDB()
 
 function mediaDelete(id) {
-	return fetchE(`/media/${id}`, { method: "DELETE" }).then((v) => v.json())
+	return fetchE(`/media/media/${id}`, { method: "DELETE" }).then((v) => v.json())
 }
 
 let notification_id
@@ -88,7 +88,7 @@ export const actions = {
 	media: {
 		post: (v) =>
 			setStatus(
-				fetchE("/media", { method: "POST", body: v }).then((v) => v.json()),
+				fetchE("/media/media", { method: "POST", body: v }).then((v) => v.json()),
 				{
 					timeout: 40000,
 					on_resolve: "Upload success!",
@@ -98,7 +98,7 @@ export const actions = {
 			setStatus(batch_upload(
 				v_array,
 				(v) =>
-					fetchE("/media", { method: "POST", body: v })
+					fetchE("/media/media", { method: "POST", body: v })
 						.then((v) => v.json())
 						.catch((err) => setStatus(Promise.reject(err.toString()))),
 				({ result, done, left }) => {
@@ -120,7 +120,7 @@ export const actions = {
 				}
 			)),
 		patch: ({ id, ...v }) => {
-			fetchJson(`/media/${id}`, { method: "PATCH", body: v }).then((v) =>
+			fetchJson(`/media/media/${id}`, { method: "PATCH", body: v }).then((v) =>
 				v.json()
 			)
 		},
