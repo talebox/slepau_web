@@ -1,10 +1,11 @@
 import { SocketDB } from "../../common/stores/socket"
-import { setStatus } from "../../common/stores/status"
 import { fetchE } from "@utils/network"
 import { writable } from "svelte/store"
 import notifications from "../../common/stores/notifications"
 import { batch_upload } from "../../common/utils/utils"
 import { fetchJson } from "../../common/utils/network"
+import media from "../../common/stores/media"
+import { setStatus } from "../../common/stores/status"
 
 export const editing_id$ = writable()
 
@@ -52,7 +53,7 @@ function mediaDelete(id) {
 	return fetchE(`/media/media/${id}`, { method: "DELETE" }).then((v) => v.json())
 }
 
-let notification_id
+
 
 const query_to_uri = (query) =>
 	typeof query === "object"
@@ -84,43 +85,14 @@ export const make_query = (query) => {
 	return query_to_uri(query)
 }
 
+let notification_id
+
 export const actions = {
 	media: {
-		post: (v) =>
-			setStatus(
-				fetchE("/media/media", { method: "POST", body: v }).then((v) => v.json()),
-				{
-					timeout: 40000,
-					on_resolve: "Upload success!",
-				}
-			),
-		post_many: (v_array) =>
-			setStatus(batch_upload(
-				v_array,
-				(v) =>
-					fetchE("/media/media", { method: "POST", body: v })
-						.then((v) => v.json())
-						.catch((err) => setStatus(Promise.reject(err.toString()))),
-				({ result, done, left }) => {
-					let value = `Uploaded ${done} of ${done + left}.`
-					notification_id = notifications.add({
-						id: notification_id,
-						value,
-						timeout: 0,
-					})
-				},
-				(results) => {
-					notifications.add({
-						id: notification_id,
-						timeout: 10000,
-						value: `Uploaded ${results.length} items successfully!`,
-					})
-					notification_id = undefined
-					db.maybe_request_views()
-				}
-			)),
+		...media,
+		post_many: (...v) => media.post_many(...v).then(v => db.maybe_request_views()),
 		patch: ({ id, ...v }) => {
-			fetchJson(`/media/media/${id}`, { method: "PATCH", body: v }).then((v) =>
+			setStatus(fetchJson(`/media/media/${id}`, { method: "PATCH", body: v }), { on_resolve: "Changes saved!" }).then((v) =>
 				v.json()
 			)
 		},

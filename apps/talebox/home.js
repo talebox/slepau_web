@@ -12,8 +12,7 @@ const app = new Home({
 
 
 if (
-	process.env.NODE_ENV === "production" && 
-	window.location.hostname.endsWith(".local")
+	globalThis.URL_IS_LOCAL
 ) {
 	const appEl = document.getElementById("app-local");
 	while (appEl.firstChild) {
