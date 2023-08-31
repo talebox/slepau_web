@@ -112,7 +112,6 @@ export class SocketDB {
 		}
 
 		// Make new connection
-		//@ts-ignore
 		if (process.env.NODE_ENV === "development") {
 			console.log("Making new connection")
 		}

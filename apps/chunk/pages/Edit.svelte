@@ -10,7 +10,12 @@
 	} from "../store";
 	import notifications from "/common/stores/notifications";
 	import { mdToHtml, valueTransform } from "@utils/formatting";
-	import { applyDiff, REGEX_CHUNK, str_insert, str_remove } from "@utils/utils";
+	import {
+		applyDiff,
+		REGEX_CHUNK,
+		str_insert,
+		str_remove,
+	} from "@utils/utils";
 	import ChunkDetails from "../comps/ChunkDetails.svelte";
 
 	export let id = undefined;
@@ -77,13 +82,13 @@
 		navigator.clipboard.writeText(
 			`${location.protocol}//${location.host}/preview/${_id}`
 		);
-		notifications.add("Link copied.");
+		notifications.add("Preview link copied.");
 	}
 	function share_static() {
 		navigator.clipboard.writeText(
 			`${location.protocol}//${location.host}/page/${_id}`
 		);
-		notifications.add("Link copied.");
+		notifications.add("Public page link copied.");
 	}
 	function copy_id() {
 		navigator.clipboard.writeText(_id);
@@ -158,6 +163,40 @@
 		}
 		const files = Array.from(this.files);
 		add_media_(files);
+	}
+	let caretPos = 0;
+	let showTableButton = false;
+	
+	function check_caret() {
+		const newPos = editor.selectionStart;
+		if (newPos !== caretPos) {
+			console.log("change to " + newPos);
+			caretPos = newPos;
+			// -- What we want ---
+			// If line where crusor is at has '<table>' in it.
+			// Then show the table button.
+			let [first, second] = [newPos, newPos];
+			const text = editor.value;
+			// Go backwards to \n
+
+			// This is to make sure when caret is on last newline,
+			// that it actually finds the beggining of this line,
+			// instead of getting stuck on it.
+			if (first > 0) --first;
+
+			while (text[first] != "\n" && first > 0) {
+				--first;
+			}
+
+			// Go forwards to \n
+			while (text[second] != "\n" && second < text.length - 1) {
+				++second;
+			}
+			// Extract the line
+			const line = text.substring(first, second);
+			// Update showTableButton
+			showTableButton = !!line.includes("<table>");
+		}
 	}
 	function keydown(e) {
 		if (!["Tab"].includes(e.key)) return; // Trigger on these
@@ -245,10 +284,6 @@
 				e.preventDefault();
 				update_value(v);
 			}
-		} else {
-			if (process.env.NODE_ENV === "development") {
-				console.log(e);
-			}
 		}
 	}
 	function paste(e) {
@@ -280,6 +315,13 @@
 		add_media_(files);
 	}
 	let showing_details = false;
+	let showing_table = false;
+	// hide table on id change
+	$: {
+		if (id) {
+			showing_table = false;
+		}
+	}
 </script>
 
 {#if value}
@@ -302,6 +344,15 @@
 				on:input={(e) => {
 					update_value(e.target.value);
 				}}
+				on:keypress={check_caret}
+				on:mousedown={check_caret}
+				on:touchstart={check_caret}
+				on:input={check_caret}
+				on:paste={check_caret}
+				on:cut={check_caret}
+				on:mousemove={check_caret}
+				on:select={check_caret}
+				on:selectstart={check_caret}
 			/>
 			{#if $local_settings$?.showing_details}
 				<div class="details">
@@ -309,6 +360,19 @@
 				</div>
 			{/if}
 			<div class="side-actions">
+				{#if showTableButton}
+					<button
+						class="action icon"
+						title="Edit Table"
+						on:click={copy_id}
+					>
+						<svg fill="currentColor" viewBox="0 0 16 16">
+							<path
+								d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h3v2H6zm4 0v-2h3v1a1 1 0 0 1-1 1h-2zm3-3h-3v-2h3v2zm-7 0v-2h3v2H6z"
+							/>
+						</svg>
+					</button>
+				{/if}
 				<button
 					class="action icon"
 					title="Toggle Details"
@@ -410,7 +474,8 @@
 			<button
 				class="preview-btn icon"
 				on:click={() =>
-					($local_settings$.wants_preview = !$local_settings$.wants_preview)}
+					($local_settings$.wants_preview =
+						!$local_settings$.wants_preview)}
 			>
 				{#if showing_preview}
 					<svg fill="currentColor" viewBox="0 0 16 16">

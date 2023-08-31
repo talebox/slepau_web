@@ -42,7 +42,7 @@
     "login": {
       "source": "apps/login/index.html",
       "distDir": "./dist/login",
-			"publicUrl": "/web/login"
+      "publicUrl": "/web/login"
     },
     "auth": {
       "source": [
@@ -50,7 +50,7 @@
         "apps/auth/home.html"
       ],
       "distDir": "./dist/auth",
-			"publicUrl": "/web/auth"
+      "publicUrl": "/web/auth"
     },
     "chunk": {
       "source": [
@@ -60,7 +60,7 @@
         "apps/chunk/preview.html"
       ],
       "distDir": "./dist/chunk",
-			"publicUrl": "/web/chunk"
+      "publicUrl": "/web/chunk"
     },
     "talebox": {
       "source": [
@@ -75,7 +75,7 @@
         "apps/media/index.html"
       ],
       "distDir": "./dist/media",
-			"publicUrl": "/web/media"
+      "publicUrl": "/web/media"
     },
     "gibos": {
       "source": [

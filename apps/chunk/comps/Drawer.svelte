@@ -92,6 +92,9 @@
     <button class="menu experimental" on:click={() => navigate(`${globalThis.PREFIX}/app/clock/`)}>
       Clock</button
     >
+    <button class="menu experimental" on:click={() => navigate(`${globalThis.PREFIX}/app/table/`)}>
+      Table</button
+    >
   {/if}
 
   <button class="menu" on:click={() => navigate(`${globalThis.PREFIX}/app/well/`)}>
