@@ -106,7 +106,7 @@
 		{:else}
 			<div class="tip fc">
 				<span>
-					No notes here <br />😲
+					No chunks here <br />😲
 				</span>
 				<button on:click={on_add} class="f fac"
 					>Add one

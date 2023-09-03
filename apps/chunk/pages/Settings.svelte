@@ -3,7 +3,7 @@
   import User from "../comps/User.svelte"
   import { actions, db, local_settings$ } from "../store"
   import { parseDate } from "chrono-node"
-  import parse_coordinate from "geo-coordinates-parser"
+  import {convert as parse_coordinate} from "geo-coordinates-parser"
   import { logout } from "@utils/utils"
   let photoInput
 

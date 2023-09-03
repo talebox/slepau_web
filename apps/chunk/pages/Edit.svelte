@@ -17,6 +17,8 @@
 		str_remove,
 	} from "@utils/utils";
 	import ChunkDetails from "../comps/ChunkDetails.svelte";
+	import Emojis from "@comps/Emojis.svelte";
+    import TableHtml from "../comps/TableHTML.svelte";
 
 	export let id = undefined;
 	let editor, fileInput;
@@ -166,11 +168,11 @@
 	}
 	let caretPos = 0;
 	let showTableButton = false;
-	
+
 	function check_caret() {
 		const newPos = editor.selectionStart;
 		if (newPos !== caretPos) {
-			console.log("change to " + newPos);
+			// console.log("change to " + newPos);
 			caretPos = newPos;
 			// -- What we want ---
 			// If line where crusor is at has '<table>' in it.
@@ -314,12 +316,14 @@
 		}
 		add_media_(files);
 	}
-	let showing_details = false;
+	// let showing_details = false;
 	let showing_table = false;
+	let showing_emojis = false;
 	// hide table on id change
 	$: {
 		if (id) {
 			showing_table = false;
+			showing_emojis=false;
 		}
 	}
 </script>
@@ -359,6 +363,7 @@
 					<ChunkDetails id={_id} />
 				</div>
 			{/if}
+
 			<div class="side-actions">
 				{#if showTableButton}
 					<button
@@ -373,6 +378,22 @@
 						</svg>
 					</button>
 				{/if}
+				<button
+					class="action icon"
+					title="Insert Emoji"
+					on:click={() => {
+						showing_emojis = !showing_emojis;
+					}}
+				>
+					<svg fill="currentColor" viewBox="0 0 16 16">
+						<path
+							d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+						/>
+						<path
+							d="M4.285 9.567a.5.5 0 0 1 .683.183A3.498 3.498 0 0 0 8 11.5a3.498 3.498 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.498 4.498 0 0 1 8 12.5a4.498 4.498 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683zM7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z"
+						/>
+					</svg>
+				</button>
 				<button
 					class="action icon"
 					title="Toggle Details"
@@ -498,6 +519,27 @@
 				{/if}
 			</button>
 		{/if}
+		{#if showing_emojis}
+				<div
+					class="emojis"
+					on:keydown={(v) => {
+						if (v.key == "Escape") showing_emojis = false;
+					}}
+				>
+					<Emojis
+						on_emoji_selected={(emoji) => {
+							editor_typeout(emoji);
+							showing_emojis = false;
+						}}
+					/>
+					<button style="position: absolute;bottom:0;right:0" on:click={() => showing_emojis=false}>Close</button>
+				</div>
+			{/if}
+		{#if showing_table}
+				<div>
+					<TableHtml />
+				</div>
+		{/if}
 	</div>
 {/if}
 
@@ -578,6 +620,18 @@
 		.preview-c {
 			left: 50%;
 		}
+	}
+
+	.emojis {
+		left: calc(50vw - (min(400px, 100vw) / 2));
+		top: calc(50vh - 200px);
+		position: fixed;
+		width: calc(min(400px, 100vw));
+		height: 370px;
+		padding: 8px;
+		background: var(--background-body);
+		border-radius: 8px;
+		overflow-y: auto;
 	}
 
 	.details {

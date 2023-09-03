@@ -13,6 +13,8 @@
 	import Alarms from "./Alarms.svelte";
 	import Clock from "./Clock.svelte";
     import Table from "../comps/Table.svelte";
+    import Emojis from "@comps/Emojis.svelte";
+    import TableHtml from "../comps/TableHTML.svelte";
 
 	let user$ = db.subscribeToUser();
 	let user = get(user$);
@@ -49,7 +51,8 @@
 	<Route path="calendar" component={Calendar} />
 	<Route path="alarms" component={Alarms} />
 	<Route path="clock" component={Clock} />
-	<Route path="table" component={Table} />
+	<Route path="table" component={TableHtml} />
+	<Route path="emoji" component={Emojis} />
 
 	<Route path="well/:?id" component={Well} />
 	<Route path="graph/:?id" component={Graph} />

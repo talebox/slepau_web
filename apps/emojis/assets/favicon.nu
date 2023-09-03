@@ -1,0 +1,1 @@
+convert favicon.png -resize 256x256 -define icon:auto-resize="96,32,16" favicon.ico

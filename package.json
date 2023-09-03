@@ -69,6 +69,13 @@
       "distDir": "./dist/talebox",
       "publicUrl": "/"
     },
+    "emojis": {
+      "source": [
+        "apps/emojis/index.html"
+      ],
+      "distDir": "./dist/talebox/emojis",
+      "publicUrl": "/emojis"
+    },
     "media": {
       "source": [
         "apps/media/home.html",

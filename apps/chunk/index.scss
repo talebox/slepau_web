@@ -2,3 +2,9 @@ body{
 	padding-bottom: 5em;
 	max-width: none;
 }
+
+.table-editable td {
+	border: 1px solid #777;
+	height: calc(1em + 16px);
+	nav-index: 0;
+}

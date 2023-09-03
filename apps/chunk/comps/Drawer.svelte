@@ -86,14 +86,17 @@
 		>
 			Calendar</button
 		> -->
-    <button class="menu experimental" on:click={() => navigate(`${globalThis.PREFIX}/app/alarms/`)}>
+    <!-- <button class="menu experimental" on:click={() => navigate(`${globalThis.PREFIX}/app/alarms/`)}>
       Alarms</button
-    >
+    > -->
     <button class="menu experimental" on:click={() => navigate(`${globalThis.PREFIX}/app/clock/`)}>
       Clock</button
     >
     <button class="menu experimental" on:click={() => navigate(`${globalThis.PREFIX}/app/table/`)}>
       Table</button
+    >
+    <button class="menu experimental" on:click={() => navigate(`${globalThis.PREFIX}/app/emoji/`)}>
+      Emoji</button
     >
   {/if}
 
