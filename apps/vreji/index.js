@@ -2,20 +2,30 @@
  * Mounts the svelte app
  */
 import Index from "./Index.svelte"
+import remove_loading from "@utils/remove_loading"
+import { user_assert_super } from "@stores/user"
 
-// if (location.protocol === 'https:' && navigator.serviceWorker) navigator.serviceWorker.register(
-// 	new URL('utils/service_worker.js', import.meta.url), {scope:'/app'}
-// );
-// navigator.serviceWorker?.getRegistrations().then(reg => console.log("Registrations:", reg))
+const message = document.getElementById("loading-message")
+const icon = document.getElementById("loading-icon")
+const login = document.getElementById("loading-login")
 
-// Remove loading element
-document.getElementById("loading")?.classList.add("close");
-setTimeout(() => {
-	document.getElementById("preload")?.remove();
-	document.getElementById("loading")?.remove();
-}, 200);
+message.innerText = "Figuring out who you are..."
 
+user_assert_super.then(
+	() => {
+		message.innerText = "Hello super (ʘ‿ʘ)╯"
 
-new Index({
-	target: document.getElementById("app")
-})
+		// Remove loading
+		remove_loading()
+
+		// Mount app
+		new Index({
+			target: document.getElementById("app"),
+		})
+	},
+	() => {
+		message.innerText = "You need to be a super (⊙_⊙')?"
+		icon.style.display = "none"
+		login.style.display = "initial"
+	}
+)

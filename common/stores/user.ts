@@ -7,3 +7,8 @@ export let user_assert_logged_in = user.then(u => {
 		throw "User not logged in";
 	}
 })
+export let user_assert_super = user.then(u => {
+	if (!u.claims.super) {
+		throw "You're not a super";
+	}
+})

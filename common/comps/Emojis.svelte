@@ -4,7 +4,7 @@
     // If user clicks on emoji, let outer know
     export let on_emoji_selected=()=>{};
     export let max = 100;
-    console.log(emojis);
+    // console.log(emojis);
     let filter = "";
     let more = false;
     let emojis_filtered=[];
