@@ -1,3 +1,11 @@
 // .nav > a:not(:last-child) {
 //     border-right: 1px solid black;
 // }
+
+svg.frappe-chart line{
+    stroke: #7773 !important; 
+}
+svg.frappe-chart {
+    // margin-left: -30px;
+    margin-right: -20px;
+}
