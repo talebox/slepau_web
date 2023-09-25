@@ -1,6 +1,5 @@
 <script>
-	import All from "./All.svelte";
-import { make_query, query_from_uri } from "./store";
+	import { make_query, query_from_uri } from "./store";
 
 	export let {media, query="", ...rest} = $$props;
 	// export let media;
@@ -78,16 +77,6 @@ import { make_query, query_from_uri } from "./store";
 								repeatCount="indefinite"
 							/>
 						</path>
-						<!-- <circle fill="#fff" cx="36" cy="18" r="1">
-            <animateTransform
-              attributeName="transform"
-              type="rotate"
-              from="0 18 18"
-              to="360 18 18"
-              dur="0.9s"
-              repeatCount="indefinite"
-            />
-          </circle> -->
 					</g>
 				</g>
 			</svg>

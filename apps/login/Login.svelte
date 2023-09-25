@@ -12,30 +12,26 @@
 	function getValues() {
 		let form = document.forms[0];
 		if (!form) return;
-		let fd = new FormData(form),
-			values = {};
-
-		for (const e of fd) {
-			if (e[0] && e[1]) values[e[0]] = e[1];
-		}
-		return Object.values(values);
-	}
-
-	function onLogin(e) {
-		fetchJson(`/auth/login`, { body: getValues(), query: { admin: as_admin } }).then(
-			() => {
-				location.href = `${globalThis.PREFIX}/app`;
-			},
-			notifications.addError
+		return Object.fromEntries(
+			new FormData(form).entries()
 		);
 	}
-	function onReset(e) {
+
+	function onLogin() {
+		fetchJson(`/auth/login`, {
+			body: getValues(),
+			query: { admin: as_admin },
+		}).then(() => {
+			location.href = `${globalThis.PREFIX}/app`;
+		}, notifications.addError);
+	}
+	function onReset() {
 		fetchJson(`/auth/reset`, { body: getValues() }).then(() => {
 			navigate("/login");
 			notifications.add("Reset!");
 		}, notifications.addError);
 	}
-	function onRegister(e) {
+	function onRegister() {
 		fetchJson(`/auth/register`, { body: getValues() }).then(() => {
 			navigate("/login");
 			notifications.add("Registered!");
@@ -67,10 +63,16 @@
 			<label
 				style="display: flex;align-items:center;gap:1em;justify-content:center"
 			>
-				<input style="width:auto" type="checkbox" bind:checked={as_admin} />
+				<input
+					style="width:auto"
+					type="checkbox"
+					bind:checked={as_admin}
+				/>
 				as admin?
 			</label>
-			<button type="submit" on:click|preventDefault={onLogin}>Login</button>
+			<button type="submit" on:click|preventDefault={onLogin}
+				>Login</button
+			>
 		</Route>
 		<Route path="reset">
 			<label>

@@ -3,7 +3,7 @@
  */
 import Index from "./Index.svelte"
 import remove_loading from "@utils/remove_loading"
-import { user_assert_logged_in } from "../../common/stores/user"
+import { user_assert_logged_in } from "@stores/user"
 // import setup_service_worker from "@utils/setup_service_worker"
 
 const message = document.getElementById("loading-message")
@@ -12,12 +12,9 @@ const login = document.getElementById("loading-login")
 
 message.innerText = "Figuring out who you are..."
 
-user_assert_logged_in.then(
-	() => {
-		message.innerText = "Hello (ʘ‿ʘ)╯"
-
-		// Setup service worker
-		// setup_service_worker()
+user_assert_logged_in().then(
+	(m) => {
+		message.innerText = m
 
 		// Remove loading
 		remove_loading()
@@ -27,8 +24,8 @@ user_assert_logged_in.then(
 			target: document.getElementById("app"),
 		})
 	},
-	() => {
-		message.innerText = "Who are you (⊙_⊙')?"
+	(err_m) => {
+		message.innerText = err_m
 		icon.style.display = "none"
 		login.style.display = "initial"
 	}

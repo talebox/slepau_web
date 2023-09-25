@@ -26,7 +26,7 @@ type Subscription = {
 	 */
 	resource: string
 	/**
-	 * How many listeners are subscribed
+	 * Anyone subscribed to us?
 	 */
 	listening: boolean
 	/**
@@ -42,7 +42,9 @@ type Subscription = {
 	request_on: "undefined" | "subscription" | false
 } & Writable<any>
 
+
 type Subscriptions = Record<string, Subscription>
+
 
 /**
  * Create a RAM/Browser tiny state.
@@ -75,22 +77,32 @@ export class SocketDB {
 	next_id = 1
 
 	constructor(url = "/stream") {
-		this.url = url
+		this.url = `${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.host
+			}${url}`;
 
+		// We bind these because when these events are fired by the socket.
+		// The functions need to know what object `this` is referring to.
 		this.on_open = this.on_open.bind(this)
 		this.on_close = this.on_close.bind(this)
 		this.on_message = this.on_message.bind(this)
 		this.attach()
 	}
 
+	/** Socket fires this event when the connection opens */
 	on_open() {
 		this.timeout_ms = 10000
 
+		Object.entries(this.subs).forEach(([k, v]) => {
+			if (v.listening && !!v.request_on) {
+				this.send({ resource: v.resource })
+			}
+		});
+
 		this.tick_messages()
 	}
+	/** Socket fires this event when the connection closes */
 	on_close() {
 		this.timeout = setTimeout(() => {
-			//@ts-ignore
 			if (process.env.NODE_ENV === "development") {
 				console.log(
 					`Connection closed, retrying in '${(this.timeout_ms / 1000).toFixed(
@@ -103,6 +115,7 @@ export class SocketDB {
 		this.timeout_ms = this.timeout_ms * 1.3
 	}
 
+	/** Clears up last connection/buffers and attemps a new one */
 	attach() {
 		// Clear last timeout and close connection
 		if (this.socket) {
@@ -111,19 +124,17 @@ export class SocketDB {
 			this.socket.close()
 		}
 
-		// Make new connection
 		if (process.env.NODE_ENV === "development") {
 			console.log("Making new connection")
 		}
 		// Attempt a connection
-		this.socket = new WebSocket(
-			`${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.host
-			}${this.url}`
-		)
+		this.socket = new WebSocket(this.url)
 
+		// Reset buffers
 		this.messages = []
 		this.callbacks = {}
 
+		// Add listeners
 		this.socket.addEventListener("open", this.on_open)
 		this.socket.addEventListener("close", this.on_close)
 		this.socket.addEventListener("message", this.on_message)
@@ -132,9 +143,7 @@ export class SocketDB {
 	tick_messages() {
 		if (!this.messages.length) return
 		if (this.socket.readyState === 1 /**Open*/) {
-			this.messages.forEach((m) => {
-				this.socket.send(m)
-			})
+			this.messages.forEach(v => this.socket.send(v))
 			this.messages = []
 		}
 	}
@@ -158,6 +167,11 @@ export class SocketDB {
 		} else {
 			this.messages.push(m_str)
 		}
+	}
+	send_promise(message: SocketMessage) {
+		return new Promise((resolve, reject) => {
+			this.send(message, (v, sub) => resolve([v,sub]), (v, sub) => reject([v,sub]))
+		})
 	}
 
 	/**
@@ -186,9 +200,12 @@ export class SocketDB {
 
 		// Set the value on the subscription
 		// `resource + value`
-		if (m.resource && typeof m.value !=='undefined' && m.type != "Err") {
+		if (m.resource && m.type != "Err") {
+			// Make value {} for all m.values that are undefined. 
+			// So we can then easily ask the stores if a new value has come in.
+			const v = typeof m.value !== 'undefined' ? m.value : {};
 			// Update the subscription with the new value
-			this.subs[m.resource]?.set(m.value)
+			this.subs[m.resource]?.set(v)
 		}
 
 		// Execute and remove respective callbacks
@@ -223,11 +240,8 @@ export class SocketDB {
 			sub = { resource, listening: 0, request_on }
 
 			let { subscribe, set, update } = writable(init_with, () => {
-				if (
-					request_on === "undefined"
-						? get(sub) === undefined
-						: request_on === "subscription"
-				) {
+				// This function gets executed when subscriber count goes from 0 to 1
+				if (request_on === "subscription" || (request_on === 'undefined' && get(sub) === undefined)) {
 					this.send({ resource })
 				}
 				sub.listening = true
@@ -251,6 +265,6 @@ export class SocketDB {
 		}
 	}
 	subscribeToUser() {
-    return this.subscribeTo("user", { request_on: "undefined" })
-  }
+		return this.subscribeTo("user", { request_on: "undefined" })
+	}
 }

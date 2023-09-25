@@ -284,7 +284,7 @@
 							on:click={() => {
 								selected = site;
 								on_save_confirm(false);
-							}}>Reset</button
+							}}>Reset Changes</button
 						>
 						<button
 							class="good"

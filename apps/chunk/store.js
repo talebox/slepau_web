@@ -3,23 +3,14 @@
  */
 import { writable, get } from "svelte/store"
 import { fetchJson, fetchE } from "@utils/network"
+import { applyDiff } from "@utils/utils"
 import { setStatus } from "/common/stores/status"
-import { SocketDB } from "../../common/stores/socket"
-import media from "../../common/stores/media"
+import { SocketDB } from "@stores/socket"
+import media from "@stores/media"
 
 class ChunkDB extends SocketDB {
 	constructor() {
 		super("/chunk/stream")
-	}
-	on_open() {
-		super.on_open()
-
-		Object.entries(this.subs).forEach(
-			([k, v]) =>
-				v.listening &&
-				v.request_on !== false &&
-				this.send({ resource: v.resource })
-		)
 	}
 	/**
 	 * Request update for view subscribers with at least 1 listener
@@ -74,7 +65,7 @@ export const db = new ChunkDB()
 let notification_id;
 
 export const actions = {
-	
+
 	auth: {
 		patch: (v) =>
 			setStatus(fetchJson("/auth/user", { body: v, method: "PATCH" }).then((v) => v.json()))
@@ -82,15 +73,7 @@ export const actions = {
 	chunks: {
 		del: (v) =>
 			setStatus(fetchJson("/chunk/chunks", { body: v, method: "DELETE" })),
-		put: (id, value) =>
-			db.send(
-				{ resource: `chunks/${id}/value`, value },
-				(v, sub) => {
-					sub?.update((v) => value)
-					setStatus(Promise.resolve("Saved"))
-				},
-				(v, sub) => sub?.update((v) => v)
-			),
+		search: (term) => setStatus(fetchJson("/chunk/search", {body: term, headers: {'content-type': "text/plain"}}).then((v) => v.json())),
 		new: (value) =>
 			setStatus(
 				fetchJson("/chunk/chunks", {

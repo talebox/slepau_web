@@ -8,13 +8,6 @@ import { fetchE } from "./network"
  * @returns
  */
 export function applyDiff(left, diff, s = []) {
-	/** Converts absolute 'offset' to [line,offset] */
-	// const offset_to_line = (str, offset) => {
-	// 	if (offset > str.length) { return str.length }
-	// 	let l = 0, i = 0, ll = 1;
-	// 	while (i < str.length && i <= offset) { if (str[i] === '\n') { ++l; offset -= ll; ll = 0 } ++ll; ++i }
-	// 	return [l, offset]
-	// }
 	const offset_to_line = (str, offset) =>
 		str
 			.split("\n")
@@ -285,3 +278,4 @@ export async function batch_upload(
 	delete UPLOADS[key]
 	return store.done
 }
+

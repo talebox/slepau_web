@@ -8,6 +8,7 @@
 	import Details from "./Details.svelte";
 	import notifications from "../../common/stores/notifications";
 	import Drawer from "./Drawer.svelte";
+    import PagedView from "./PagedView.svelte";
 
 	const tasks$ = db.subscribeTo("tasks", { init_with: 0 });
 	$: tasks = $tasks$;

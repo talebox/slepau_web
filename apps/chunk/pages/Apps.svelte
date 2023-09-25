@@ -7,7 +7,7 @@
 	import Status from "@comps/Status.svelte";
 	import Graph from "./Graph.svelte";
 	import { db } from "../store";
-	import Search from "@comps/Search.svelte";
+	import Search from "./Search.svelte";
 	import { get } from "svelte/store";
 	import Calendar from "./Calendar.svelte";
 	import Alarms from "./Alarms.svelte";
@@ -45,8 +45,6 @@
 
 <Edit />
 <Status />
-<!-- <Search /> -->
-
 <Router>
 	<Route path="calendar" component={Calendar} />
 	<Route path="alarms" component={Alarms} />
@@ -57,3 +55,4 @@
 	<Route path="well/:?id" component={Well} />
 	<Route path="graph/:?id" component={Graph} />
 </Router>
+<Search />

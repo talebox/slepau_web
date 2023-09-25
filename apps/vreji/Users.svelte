@@ -30,8 +30,8 @@
                     >{JSON.stringify(actions, undefined, 2)}</code
                 >
             </details>
-            <Link to="/app/totals?user={user}">
-                <button style="width: 100%;">Totals</button>
+            <Link to="/app/details?user={user}">
+                <button style="width: 100%;">Details</button>
             </Link>
         </details>
     {/each}

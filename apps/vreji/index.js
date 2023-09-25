@@ -11,9 +11,9 @@ const login = document.getElementById("loading-login")
 
 message.innerText = "Figuring out who you are..."
 
-user_assert_super.then(
-	() => {
-		message.innerText = "Hello super (ʘ‿ʘ)╯"
+user_assert_super().then(
+	(m) => {
+		message.innerText = m
 
 		// Remove loading
 		remove_loading()
@@ -23,8 +23,8 @@ user_assert_super.then(
 			target: document.getElementById("app"),
 		})
 	},
-	() => {
-		message.innerText = "You need to be a super (⊙_⊙')?"
+	(err_m) => {
+		message.innerText = err_m
 		icon.style.display = "none"
 		login.style.display = "initial"
 	}

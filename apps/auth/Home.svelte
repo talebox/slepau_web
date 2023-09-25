@@ -1,5 +1,5 @@
 <script>
-	import { user } from "../../common/stores/user";
+	import { user } from "@stores/user";
 
 	function auth_click() {
 		if (logged_in) {

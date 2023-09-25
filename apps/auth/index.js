@@ -3,19 +3,30 @@
  */
 import Index from "./Index.svelte"
 
-// if (location.protocol === 'https:' && navigator.serviceWorker) navigator.serviceWorker.register(
-// 	new URL('utils/service_worker.js', import.meta.url), {scope:'/app'}
-// );
-// navigator.serviceWorker?.getRegistrations().then(reg => console.log("Registrations:", reg))
+import remove_loading from "@utils/remove_loading"
+import { user_assert_admin } from "@stores/user"
 
-// Remove loading element
-document.getElementById("loading")?.classList.add("close");
-setTimeout(() => {
-	document.getElementById("preload")?.remove();
-	document.getElementById("loading")?.remove();
-}, 200);
+const message = document.getElementById("loading-message")
+const icon = document.getElementById("loading-icon")
+const login = document.getElementById("loading-login")
 
+message.innerText = "Figuring out who you are..."
 
-const app = new Index({
-	target: document.getElementById("app")
-})
+user_assert_admin().then(
+	(m) => {
+		message.innerText = m
+
+		// Remove loading
+		remove_loading()
+
+		// Mount app
+		new Index({
+			target: document.getElementById("app"),
+		})
+	},
+	(err_m) => {
+		message.innerText = err_m
+		icon.style.display = "none"
+		login.style.display = "initial"
+	}
+)

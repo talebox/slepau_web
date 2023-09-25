@@ -1,4 +1,5 @@
 import { fetchE, fetchJson } from "@utils/network";
+import {get, writable} from 'svelte/store';
 
 export const actions = {
 	ips: () => fetchE("/ips").then(v => v.json())
@@ -23,3 +24,14 @@ export const actions = {
 			)
 	}
 }
+
+export const period = writable(Number(localStorage.getItem("period")) || 3600);
+period.subscribe((v) => {
+	localStorage.setItem("period", v)
+})
+
+const get_limit = () => window.innerWidth < 500 ? 12 : 24;
+export const limit = writable(get_limit())
+const set_limit = () => {const l = get_limit(); if (get(limit) !== l) limit.set(l)}
+window.addEventListener("resize", set_limit);
+

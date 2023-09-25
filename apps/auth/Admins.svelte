@@ -64,8 +64,9 @@
 			.catch(notifications.addError);
 	}
 
+	refresh(filter)
 	$: {
-		debounce(() => refresh(filter));
+		debounce(() => refresh(filter), 1000);
 	}
 	function on_want_new() {
 		selected = ["", ""];

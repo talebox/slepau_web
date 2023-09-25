@@ -1,5 +1,4 @@
 <script>
-	import { fly, slide } from "svelte/transition";
 	import { debounce } from "@utils/timeout";
 	import {
 		db,
@@ -19,6 +18,8 @@
 	import ChunkDetails from "../comps/ChunkDetails.svelte";
 	import Emojis from "@comps/Emojis.svelte";
     import TableHtml from "../comps/TableHTML.svelte";
+    import { get } from "svelte/store";
+    import { setStatus } from "@stores/status";
 
 	export let id = undefined;
 	let editor, fileInput;
@@ -28,16 +29,17 @@
 	// Clear editor when opening new view
 	$: if (_id && editor) editor.value = "";
 
+	// Subscribe to value
 	$: value$ = _id ? db.subscribeTo(`chunks/${_id}/value`) : undefined;
 	let value$;
 	$: value = value$ ? $value$ : undefined;
 
-	// $: value =  value$ ? $value$ : undefined;
+	// Subscribe to diff
 	$: diff$ = _id
 		? db.subscribeTo(`chunks/${_id}/value/diff`, { request_on: false })
 		: undefined;
 	$: diff = diff$ ? $diff$ : undefined;
-	// $: console.log(value);
+	
 
 	// Set editor value when chunk arrives
 	$: if (value && editor) {
@@ -57,18 +59,30 @@
 		editor.selectionStart = _s[0];
 		editor.selectionEnd = _s[1];
 	}
+	
 
 	// Update preview if enabled
 	$: showing_preview = $local_settings$.wants_preview || !$is_phone$;
+	
+	// Reset preview_value based on value.
+	$: preview_value = value
+	
+	// Apply diffs on preview_value as they come in
+	// $: {
+	// 	if (diff && preview_value) {
+	// 		const [right, _s] = applyDiff(preview_value, diff, [0,0]);
+	// 		preview_value = right;
+	// 	}
+	// }
 
-	// Triggers on chunk.value and showing_preview
-	let preview;
+	let preview_html;
+	// Update preview_html based on preview_value
 	$: {
-		if (value && (id || showing_preview)) {
-			let v = valueTransform(value);
+		if (preview_value && (id || showing_preview)) {
+			let v = valueTransform(preview_value);
 
 			v = v.replace(REGEX_CHUNK, (m, id) => `(/edit/${id})`);
-			preview = mdToHtml(v);
+			preview_html = mdToHtml(v);
 		}
 	}
 
@@ -97,7 +111,23 @@
 		notifications.add("Id copied.");
 	}
 	function update_value(value) {
-		debounce(() => actions.chunks.put(_id, value), 500, _id);
+		debounce(() => {
+			db.send(
+				{ resource: `chunks/${_id}/value`, value },
+				(v, sub) => {
+					sub?.set(value)
+					setStatus(Promise.resolve("Saved"))
+				},
+				(v, sub) => {
+					// Get last value
+					const v_ = get(sub);
+					// Reset to that, triggering events
+					sub.set(v_)
+					// Reset the editor to the last valid value
+					editor.value = v_;
+				}
+			)
+		}, 500, _id);
 	}
 	function get_editor(e) {
 		let _editor = e ? e.target : editor;
@@ -448,7 +478,7 @@
 		<div class="preview-c" class:showing_preview>
 			<div class="preview">
 				<div class="page">
-					{@html preview}
+					{@html preview_html}
 				</div>
 			</div>
 			<div class="side-actions">

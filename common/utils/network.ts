@@ -1,10 +1,8 @@
-
-
 /** 
  * Rejects with an "error string" if answer is not ok.
  * Otherwiser returns the response.
  */
-export const fetchE = (input, _init:any={}) => {
+export const fetchE = (input, _init: any = {}) => {
 	const { query, ...init } = _init
 	const _query = typeof query === 'object' ?
 		Object.entries(query)
@@ -19,11 +17,11 @@ export const fetchE = (input, _init:any={}) => {
 		.then(([v, body]) => v.ok ? Promise.resolve(v) : Promise.reject(`${v.status} ${body ? body : v.statusText}`))
 }
 
-export const fetchJson = (input, init:any={}) =>
+export const fetchJson = (input, init: any = {}) =>
 	fetchE(input, {
 		method: "POST",
 		...init,
 		body: typeof init.body !== "string" ? JSON.stringify(init.body) : init.body,
-		headers: { ...init.headers, "content-type": "application/json" },
+		headers: { "content-type": "application/json", ...init.headers },
 	})
 

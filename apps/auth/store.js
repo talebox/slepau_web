@@ -8,7 +8,7 @@ export const actions = {
 
 	get_users: (site_id, filter) => fetchE(`/auth/sites/${site_id}/users`, { query: filter }),
 	new_user: (site_id, user) => fetchJson(`/auth/sites/${site_id}/users`, { method: "POST", body: user }),
-	mod_user: (site_id, user_id, user) => fetchJson(`/auth/sites/${site_id}/users/${user_id}`, { method: "PUT", body: user }),
+	mod_user: (site_id, user_id, user) => fetchJson(`/auth/sites/${site_id}/users/${user_id}`, { method: "PATCH", body: user }),
 	del_user: (site_id, user_id) => fetchE(`/auth/sites/${site_id}/users/${user_id}`, { method: "DELETE" }),
 
 	get_admins: (filter) => fetchE(`/auth/admins`, { query: filter }),

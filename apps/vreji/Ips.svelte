@@ -5,7 +5,13 @@
     import states from "@utils/states";
 
     let ips = actions.ips();
-    const ipg_token = localStorage.getItem("ipg_token");
+
+    let ipg_token = localStorage.getItem("ipg_token") || "";
+
+    $: {
+        localStorage.setItem("ipg_token", ipg_token);
+    }
+
     let ipg_cache = JSON.parse(localStorage.getItem("ipg_cache") || "{}");
     $: {
         localStorage.setItem("ipg_cache", JSON.stringify(ipg_cache));
@@ -89,14 +95,17 @@
                     >{JSON.stringify(actions, undefined, 2)}</code
                 >
             </details>
-            <Link to="/app/totals?ip={ip}">
-                <button style="width: 100%;">Totals</button>
+            <Link to="/app/details?ip={ip}">
+                <button style="width: 100%;">Details</button>
             </Link>
         </details>
     {/each}
 {:catch err}
     {err}
 {/await}
+
+<h4>Location Token</h4>
+<input bind:value={ipg_token} placeholder="IpGeolocation.io token..." />
 
 <style>
     code {

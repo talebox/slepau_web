@@ -12,9 +12,9 @@ const login = document.getElementById("loading-login")
 
 message.innerText = "Figuring out who you are..."
 
-user_assert_logged_in.then(
-	() => {
-		message.innerText = "Hello (ʘ‿ʘ)╯"
+user_assert_logged_in().then(
+	(m) => {
+		message.innerText = m
 
 		// Setup service worker
 		if (globalThis.URL_IS_LOCAL) setup_service_worker()
@@ -27,8 +27,8 @@ user_assert_logged_in.then(
 			target: document.getElementById("app"),
 		})
 	},
-	() => {
-		message.innerText = "Who are you (⊙_⊙')?"
+	(m) => {
+		message.innerText = m
 		icon.style.display = "none"
 		login.style.display = "initial"
 	}
