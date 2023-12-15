@@ -1,5 +1,5 @@
 <script>
-	import { user } from "@stores/user";
+	import { user_promise } from "@stores/user";
 
 	function auth_click() {
 		if (logged_in) {
@@ -22,7 +22,7 @@
 
 	let claims = {};
 	let logged_in = false;
-	user.then((v) => {
+	user_promise.then((v) => {
 		claims = v.claims;
 		logged_in = v.logged_in;
 	});

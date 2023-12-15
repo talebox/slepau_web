@@ -2,7 +2,7 @@
 	import { get } from "svelte/store";
 	import { fade, slide } from "svelte/transition";
 	import { db } from "./store";
-	import { user as _user } from "/common/stores/user";
+	import { user_claims } from "/common/stores/user";
 
 	let user_info$ = db.subscribeToUser();
 	let user_info = get(user_info$);
@@ -10,8 +10,8 @@
 		user_info = $user_info$;
 	}
 
-	let user = {};
-	_user.then((u) => (user = u));
+	// let user = {};
+	// _user.then((u) => (user = u));
 </script>
 
 <div class="container">
@@ -19,17 +19,17 @@
 		class="photo"
 		in:fade
 		alt=""
-		src={user?.claims?.photo ? `/media/${user.claims.photo}` : ""}
+		src={user_claims.photo ? `/media/${user_claims.photo}` : ""}
 	/>
 
 	<table class="content">
-		<tr><td>User: </td><td in:slide>{user?.claims?.user ?? "<user>"}</td></tr>
+		<tr><td>User: </td><td in:slide>{user_claims.user ?? "<user>"}</td></tr>
 		<tr
 			><td>Size: </td><td in:slide
 				>{user_info.size
 					? (user_info.size / 2 ** 20).toFixed(0)
-					: "<size>"} / {user?.claims?.media_limit
-					? (user.claims.media_limit / 2 ** 20).toFixed(0) + "MB"
+					: "<size>"} / {user_claims.media_limit
+					? (user_claims.media_limit / 2 ** 20).toFixed(0) + "MB"
 					: "♾️"}</td
 			></tr
 		>

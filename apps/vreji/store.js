@@ -32,6 +32,5 @@ period.subscribe((v) => {
 
 const get_limit = () => window.innerWidth < 500 ? 12 : 24;
 export const limit = writable(get_limit())
-const set_limit = () => {const l = get_limit(); if (get(limit) !== l) limit.set(l)}
-window.addEventListener("resize", set_limit);
+window.addEventListener("resize", () => limit.set(get_limit()));
 

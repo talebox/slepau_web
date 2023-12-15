@@ -1,12 +1,12 @@
 <script>
-  import { get } from "svelte/store"
-  import { fade, slide } from "svelte/transition"
-  import { db } from "../store"
+  import { get } from "svelte/store";
+  import { fade, slide } from "svelte/transition";
+  import { db } from "../store";
 
-  let user$ = db.subscribeToUser()
-  let user = get(user$)
+  let user$ = db.subscribeToUser();
+  let user = get(user$);
   $: {
-    user = $user$
+    user = $user$;
   }
 </script>
 
@@ -15,14 +15,22 @@
     class="photo"
     in:fade
     alt="user"
-    src={user?.photo ? `/media/${user?.photo}` : ""}
+    src={user?.photo ? `/media/media/${user?.photo}?max=80_2` : ""}
+    srcset={user?.photo
+      ? `/media/${user?.photo}?max=80x80,
+        /media/${user?.photo}?max=160x160 2x,
+        /media/${user?.photo}?max=320x320 3x`
+      : ""}
   />
 
   <table class="content">
     <tr><td>User: </td><td in:slide>{user?.user ?? "<user>"}</td></tr>
     <tr><td>Visible:</td><td in:slide>{user?.notes_visible ?? "<x>"}</td></tr>
     <tr><td>Owned: </td><td in:slide>{user?.notes_owned ?? "<x>"}</td></tr>
-    <tr><td>Public: </td><td in:slide>{user?.notes_owned_public ?? "<x>"}</td></tr>
+    <tr
+      ><td>Public: </td><td in:slide>{user?.notes_owned_public ?? "<x>"}</td
+      ></tr
+    >
   </table>
 </div>
 

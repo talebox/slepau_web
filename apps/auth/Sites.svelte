@@ -6,7 +6,7 @@
 	import { second_to_pretty, parse_seconds } from "@utils/utils";
 	import { notifications } from "/common/stores/notifications";
 	import CodeList from "../../common/comps/CodeList.svelte";
-	import { user } from "../../common/stores/user";
+	import { user_claims } from "../../common/stores/user";
 
 	let name;
 	let sites_slice;
@@ -17,8 +17,7 @@
 	// instead of slice with search.
 	// let is_editing;
 
-	let claims = {};
-	user.then((v) => (claims = v.claims));
+	let claims = user_claims;
 
 	function refresh() {
 		return actions

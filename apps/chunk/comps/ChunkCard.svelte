@@ -1,7 +1,9 @@
 <script>
 	import { getContext, onDestroy } from "svelte";
 	import { chunkValueToHtml } from "@utils/formatting";
-	import { passed_since_pretty } from "@utils/utils";
+	import { passed_since_pretty, stringToColour } from "@utils/utils";
+	import { user_data } from "../store";
+	import { user_claims } from '@stores/user';
 	export let chunk;
 	export let selected = false,
 		selectable = false;
@@ -9,6 +11,8 @@
 	$: modified =
 		(view_type === "well" ? chunk?.props_dynamic?.modified : undefined) ??
 		chunk?.modified;
+	
+	
 
 	let mstring;
 	let clear;
@@ -26,7 +30,16 @@
 	}
 	$: update(modified);
 	onDestroy(() => clearTimeout(clear));
-	// console.log(chunk.value)
+	// An array of all users
+	let user_photos = [];
+	$: {
+		if (chunk?.props?.access?.length){
+			let users = new Set(chunk.props.access.map(({user, access}) => user))
+			users.add(chunk.owner); // Add chunk owner
+			users.delete(user_claims.user); // Remove ourselves
+			user_photos = user_data.get_photos([...users].sort()).sort((a,b) => !a.photo && !!b.photo )
+		}
+	}
 </script>
 
 <div
@@ -43,37 +56,72 @@
 
 	<div class="top-tags">
 		<slot {chunk} name="top-tags" />
+	</div>
+	<div class="bottom-tags">
+		<slot name="bottom-tags" />
+		{#if user_photos?.length}
+			<div class="photos">
+				{#each user_photos as { user, photo }, i}
+					{#if i <= 3}
+						{#if i === 3 && user_photos.length > 4}
+							<div
+								style="font-size:12px;width: 20px;height:20px;text-align:center"
+							>
+								+
+							</div>
+						{:else if photo}
+							<img
+								src={`/media/${photo}?max=21x21`}
+								alt={`${user}'s photo`}
+								style="border-radius:99px;width: 21px;height:21px;"
+								srcset={`/media/${photo}?max=21x21,
+								/media/${photo}?max=42x42 2x,
+								/media/${photo}?max=84x84 3x
+								`}
+							/>
+						{:else}
+							<div
+								style={`width: 21px;height:21px;border-radius:99px;background:${stringToColour(
+									user,
+								)}66;font-size:14px;font-weight:bold;text-align:center`}
+							>
+								{user.charAt(0).toUpperCase()}
+							</div>
+						{/if}
+					{/if}
+				{/each}
+			</div>
+		{/if}
 		{#if chunk?.access}
 			<div class="tag icon">
 				{#if chunk.access === "Read"}
 					<svg fill="currentColor" viewBox="0 0 16 16">
-						<path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
 						<path
-							d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"
+							d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"
+						/>
+						<path
+							d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"
 						/>
 					</svg>
 				{:else if chunk.access === "Write"}
-					<svg fill="currentColor" viewBox="0 0 16 16">
+					<svg fill="currentColor" viewBox="0 0 16 16" style="padding:2px">
 						<path
-							d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"
+							d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"
 						/>
 					</svg>
 				{:else if chunk.access === "Admin"}
 					<svg fill="currentColor" viewBox="0 0 16 16">
 						<path
-							d="M3.5 11.5a3.5 3.5 0 1 1 3.163-5H14L15.5 8 14 9.5l-1-1-1 1-1-1-1 1-1-1-1 1H6.663a3.5 3.5 0 0 1-3.163 2zM2.5 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"
+							d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11 9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4 4 0 0 1 0 8m4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.793-.793-1-1h-6.63a.5.5 0 0 1-.451-.285A3 3 0 0 0 4 5"
 						/>
+						<path d="M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0" />
 					</svg>
 				{/if}
 			</div>
 		{/if}
-	</div>
-	<div class="bottom-tags">
-		<slot name="bottom-tags">
-			<div class="tag icon">
-				{mstring}
-			</div>
-		</slot>
+		<div class="tag icon">
+			{mstring}
+		</div>
 	</div>
 </div>
 
@@ -105,12 +153,12 @@
 	.bottom-tags {
 		pointer-events: none;
 		display: flex;
-		flex-direction: row;
+		flex-direction: column;
 		position: absolute;
-
-		overflow: hidden;
+		/* overflow-x: hidden; */
 		background: var(--background);
 	}
+
 	/* @media (hover: hover) and (pointer: fine) {
 		@supports (backdrop-filter: blur(12px)) {
 			.top-tags,
@@ -129,30 +177,40 @@
 		right: 0;
 		bottom: 0;
 		border-top-left-radius: 0.7em;
-		opacity: 1;
+		opacity: .5;
 		transition: opacity 200ms;
 	}
-	/* @media (hover: hover) and (pointer: fine) {
+	.chunk:hover .bottom-tags {
+		opacity: 1;
+	}
+	@media (hover: hover) and (pointer: fine) {
 		.bottom-tags {
-			opacity: 0;
+			opacity: 0.2;
 		}
 		.chunk:hover .bottom-tags {
 			opacity: 1;
 		}
-	} */
+	}
 
+	.photos,
 	.tag {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		--size: 56px;
-		/* margin: 0; */
-		/* border-radius: 0; */
-		/* padding: 12px; */
+		--size: 45px;
 		width: var(--size);
 		height: var(--size);
 	}
+	.photos {
+		flex-wrap: wrap;
+	}
+	.photos {
+		position: absolute;
+		gap: 2px;
+		right:2px;
+		top: -45px;
+	}
 	.tag.icon {
-		padding: 12px;
+		padding: 8px;
 	}
 </style>

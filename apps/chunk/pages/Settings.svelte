@@ -1,36 +1,39 @@
 <script>
-  import Drawer from "../comps/Drawer.svelte"
-  import User from "../comps/User.svelte"
-  import { actions, db, local_settings$ } from "../store"
-  import { parseDate } from "chrono-node"
-  import {convert as parse_coordinate} from "geo-coordinates-parser"
-  import { logout } from "@utils/utils"
-  let photoInput
+  import Drawer from "../comps/Drawer.svelte";
+  import Status from "@comps/Status.svelte";
+  import {notifications} from '/common/stores/notifications';
+  import User from "../comps/User.svelte";
+  import { actions, db, local_settings$ } from "../store";
+  import { parseDate } from "chrono-node";
+  import { convert as parse_coordinate } from "geo-coordinates-parser";
+  import { logout } from "@utils/utils";
+  let photoInput;
 
   function photoUpload() {
     if (!this.files.length) {
-      console.error("no files selected")
-      return
+      console.error("no files selected");
+      return;
     }
-    const files = Array.from(this.files)
+    const files = Array.from(this.files);
 
     actions.media.post(files[0]).then((media) => {
-      actions.auth.patch({ photo: media.id })
-    })
+      actions.auth.patch({ photo: media.id }).then(() => notifications.add("Profile updated!\nWill work on re-login."));
+    });
   }
   function update_location(value) {
     try {
-      const parsed = parse_coordinate(value)
+      const parsed = parse_coordinate(value);
       local_settings$.update((v) => ({
         ...v,
         location: [parsed.decimalLatitude, parsed.decimalLongitude],
-      }))
+      }));
     } catch {}
   }
 </script>
 
 <sctipt />
 
+<Status />
 <Drawer />
 
 <div class="page">
@@ -134,7 +137,7 @@
       <h2>Info</h2>
       <table>
         <tr><td>App Version:</td><td>{process.env.APP_VERSION}</td></tr>
-				<tr><td>Build Time:</td><td>{process.env.APP_BUILD_TIME}</td></tr>
+        <tr><td>Build Time:</td><td>{process.env.APP_BUILD_TIME}</td></tr>
       </table>
     </section>
   </div>

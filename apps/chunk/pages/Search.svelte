@@ -79,8 +79,21 @@
                 <div
                     style="text-align: center; padding:8px; border-radius: 8px; border: 1px dashed #7777"
                 >
-                    Results are empty...<br />
-                    You can also use a regex pattern to search. {";)"}
+                    Results are empty...
+                    <br />
+                    <br />
+                    You can also use a
+                    <a href="https://en.wikipedia.org/wiki/Regular_expression"
+                        >regex</a
+                    >
+                    pattern to search. {";)"}
+                    <br />
+                    The specific implementation is
+                    <a href="https://docs.rs/regex/latest/regex/#usage">here</a
+                    >. 
+                    <br/>
+                    By default flags <code>m</code> (multiline) and
+                    <code>i</code> (case insensitive) are used.
                 </div>
             {/if}
         {/await}

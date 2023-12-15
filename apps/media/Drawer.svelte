@@ -2,7 +2,7 @@
 	import { navigate } from "@deps/routing";
 	import { db } from "./store";
 	import { get } from "svelte/store";
-	import { user as _user } from "/common/stores/user";
+	import { user_promise as _user } from "/common/stores/user";
 	import { logout } from "@utils/utils";
 	import Drawer from "/common/comps/Drawer.svelte";
 	import User from "./User.svelte";

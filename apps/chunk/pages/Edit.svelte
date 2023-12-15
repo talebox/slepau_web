@@ -9,17 +9,13 @@
 	} from "../store";
 	import notifications from "/common/stores/notifications";
 	import { mdToHtml, valueTransform } from "@utils/formatting";
-	import {
-		applyDiff,
-		REGEX_CHUNK,
-		str_insert,
-		str_remove,
-	} from "@utils/utils";
+	import { applyDiff, REGEX_CHUNK, str_insert, str_remove } from "@utils/utils";
 	import ChunkDetails from "../comps/ChunkDetails.svelte";
 	import Emojis from "@comps/Emojis.svelte";
-    import TableHtml from "../comps/TableHTML.svelte";
-    import { get } from "svelte/store";
-    import { setStatus } from "@stores/status";
+	import TableHtml from "../comps/TableHTML.svelte";
+	import { get } from "svelte/store";
+	import { setStatus } from "@stores/status";
+	import { onMount } from "svelte";
 
 	export let id = undefined;
 	let editor, fileInput;
@@ -39,7 +35,6 @@
 		? db.subscribeTo(`chunks/${_id}/value/diff`, { request_on: false })
 		: undefined;
 	$: diff = diff$ ? $diff$ : undefined;
-	
 
 	// Set editor value when chunk arrives
 	$: if (value && editor) {
@@ -59,14 +54,13 @@
 		editor.selectionStart = _s[0];
 		editor.selectionEnd = _s[1];
 	}
-	
 
 	// Update preview if enabled
 	$: showing_preview = $local_settings$.wants_preview || !$is_phone$;
-	
+
 	// Reset preview_value based on value.
-	$: preview_value = value
-	
+	$: preview_value = value;
+
 	// Apply diffs on preview_value as they come in
 	// $: {
 	// 	if (diff && preview_value) {
@@ -96,13 +90,13 @@
 	}
 	function share_live() {
 		navigator.clipboard.writeText(
-			`${location.protocol}//${location.host}/preview/${_id}`
+			`${location.protocol}//${location.host}/preview/${_id}`,
 		);
 		notifications.add("Preview link copied.");
 	}
 	function share_static() {
 		navigator.clipboard.writeText(
-			`${location.protocol}//${location.host}/page/${_id}`
+			`${location.protocol}//${location.host}/page/${_id}`,
 		);
 		notifications.add("Public page link copied.");
 	}
@@ -110,24 +104,33 @@
 		navigator.clipboard.writeText(_id);
 		notifications.add("Id copied.");
 	}
-	function update_value(value) {
-		debounce(() => {
-			db.send(
-				{ resource: `chunks/${_id}/value`, value },
-				(v, sub) => {
-					sub?.set(value)
-					setStatus(Promise.resolve("Saved"))
-				},
-				(v, sub) => {
-					// Get last value
-					const v_ = get(sub);
-					// Reset to that, triggering events
-					sub.set(v_)
-					// Reset the editor to the last valid value
-					editor.value = v_;
-				}
-			)
-		}, 500, _id);
+	function update_value(value, on_success) {
+		db.send(
+			{ resource: `chunks/${_id}/value`, value },
+			(v, sub) => {
+				sub?.set(value);
+				setStatus(Promise.resolve("Saved"));
+				on_success?.();
+			},
+			(v, sub) => {
+				// Get last value
+				const v_ = get(sub);
+				// Reset to that, triggering events
+				sub.set(v_);
+				// Reset the editor to the last valid value
+				editor.value = v_;
+			},
+		);
+	}
+
+	function update_value_debounce(value) {
+		debounce(
+			() => {
+				update_value(value);
+			},
+			500,
+			_id,
+		);
 	}
 	function get_editor(e) {
 		let _editor = e ? e.target : editor;
@@ -158,7 +161,7 @@
 		}
 
 		set_editor(undefined, [v, selection]);
-		update_value(v);
+		update_value_debounce(v);
 	}
 	function add_media_(files) {
 		if (!files?.length) {
@@ -180,10 +183,10 @@
 							item.meta.type.startsWith("image")
 								? `(image/${item.id})`
 								: item.meta.type.startsWith("video")
-								? `(video/${item.id})`
-								: item.id
+								  ? `(video/${item.id})`
+								  : item.id,
 						)
-						.join("\n")
+						.join("\n"),
 				);
 			}
 		});
@@ -245,7 +248,7 @@
 
 			set_editor(e, [v, selection]);
 			e.preventDefault();
-			update_value(v);
+			update_value_debounce(v);
 		}
 	}
 	function keypress(e) {
@@ -267,17 +270,17 @@
 				e.key === "["
 					? "]"
 					: e.key === "("
-					? ")"
-					: e.key === "{"
-					? "}"
-					: e.key === "<"
-					? ">"
-					: e.key
+					  ? ")"
+					  : e.key === "{"
+					    ? "}"
+					    : e.key === "<"
+					      ? ">"
+					      : e.key,
 			);
 
 			set_editor(e, [v, selection]);
 			e.preventDefault();
-			update_value(v);
+			update_value_debounce(v);
 		} else if (selection[1] > selection[0]) {
 			// let before = v.substring(0, selection[0]),
 			// 	after = v.substring(selection[1]);
@@ -287,7 +290,7 @@
 			// selection = selection.map((v) => v + 1);
 			// set_editor(e, [v, selection]);
 			// e.preventDefault();
-			// update_value(v);
+			// update_value_debounce(v);
 		} else if (e.key === "Enter") {
 			let lineStart = selection[0] - 1;
 			while (lineStart > 0) {
@@ -314,7 +317,7 @@
 
 				set_editor(e, [v, selection]);
 				e.preventDefault();
-				update_value(v);
+				update_value_debounce(v);
 			}
 		}
 	}
@@ -353,7 +356,15 @@
 	$: {
 		if (id) {
 			showing_table = false;
-			showing_emojis=false;
+			showing_emojis = false;
+		}
+	}
+	$: {
+		let _editor = editor;
+		if (_editor) {
+			_editor.selectionStart = 0;
+			_editor.selectionEnd = 0;
+			_editor.focus();
 		}
 	}
 </script>
@@ -364,6 +375,12 @@
 		style:display={!_id ? "none" : "initial"}
 		on:dragover={dragover}
 		on:drop={drop}
+		on:keydown={(v) => {
+			if (v.key == "Escape") {
+				close();
+				v.stopPropagation();
+			}
+		}}
 	>
 		<div class="edit">
 			<textarea
@@ -376,7 +393,7 @@
 				on:paste={paste}
 				bind:this={editor}
 				on:input={(e) => {
-					update_value(e.target.value);
+					update_value_debounce(e.target.value);
 				}}
 				on:keypress={check_caret}
 				on:mousedown={check_caret}
@@ -396,11 +413,7 @@
 
 			<div class="side-actions">
 				{#if showTableButton}
-					<button
-						class="action icon"
-						title="Edit Table"
-						on:click={copy_id}
-					>
+					<button class="action icon" title="Edit Table" on:click={copy_id}>
 						<svg fill="currentColor" viewBox="0 0 16 16">
 							<path
 								d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h3v2H6zm4 0v-2h3v1a1 1 0 0 1-1 1h-2zm3-3h-3v-2h3v2zm-7 0v-2h3v2H6z"
@@ -525,8 +538,7 @@
 			<button
 				class="preview-btn icon"
 				on:click={() =>
-					($local_settings$.wants_preview =
-						!$local_settings$.wants_preview)}
+					($local_settings$.wants_preview = !$local_settings$.wants_preview)}
 			>
 				{#if showing_preview}
 					<svg fill="currentColor" viewBox="0 0 16 16">
@@ -550,25 +562,31 @@
 			</button>
 		{/if}
 		{#if showing_emojis}
-				<div
-					class="emojis"
-					on:keydown={(v) => {
-						if (v.key == "Escape") showing_emojis = false;
+			<div
+				class="emojis"
+				on:keydown={(v) => {
+					if (v.key == "Escape") {
+						showing_emojis = false;
+						v.stopPropagation();
+					}
+				}}
+			>
+				<Emojis
+					on_emoji_selected={(emoji) => {
+						editor_typeout(emoji);
+						showing_emojis = false;
 					}}
+				/>
+				<button
+					style="position: absolute;bottom:0;right:0"
+					on:click={() => (showing_emojis = false)}>Close</button
 				>
-					<Emojis
-						on_emoji_selected={(emoji) => {
-							editor_typeout(emoji);
-							showing_emojis = false;
-						}}
-					/>
-					<button style="position: absolute;bottom:0;right:0" on:click={() => showing_emojis=false}>Close</button>
-				</div>
-			{/if}
+			</div>
+		{/if}
 		{#if showing_table}
-				<div>
-					<TableHtml />
-				</div>
+			<div>
+				<TableHtml />
+			</div>
 		{/if}
 	</div>
 {/if}
