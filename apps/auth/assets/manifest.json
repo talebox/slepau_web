@@ -1,5 +1,5 @@
 {
-  "name": "Media",
+  "name": "Auth",
   "icons": [
     {
       "src": "favicon.png?width=256&height=256",
@@ -19,19 +19,19 @@
   "display": "standalone",
   "scope": "/app",
   "theme_color": "#202b38",
-  "description": "A media management app.",
+  "description": "A user management utility for admins.",
   "screenshots": [
     {
       "src": "screen_narrow.png?as=jpeg",
       "sizes": "1125x2436",
       "type": "image/jpeg",
-      "form_factor": "narrow"
+      "form_factor":"narrow"
     },
-    {
+		{
       "src": "screen_wide.png?as=jpeg",
       "sizes": "2160x1620",
       "type": "image/jpeg",
-      "form_factor": "wide"
+      "form_factor":"wide"
     }
   ],
   "dir": "auto",

@@ -361,7 +361,7 @@
 	}
 	$: {
 		let _editor = editor;
-		if (_editor) {
+		if (_editor && !get(is_phone$)) {
 			_editor.selectionStart = 0;
 			_editor.selectionEnd = 0;
 			_editor.focus();

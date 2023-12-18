@@ -3,41 +3,36 @@
   "name": "Chunk",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "256x256 128x128 64x64 48x48 16x16",
-      "type": "image/x-icon",
-			"purpose": "any"
+      "src": "favicon.png?width=256&height=256",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "maskable.png",
       "type": "image/png",
       "sizes": "512x512",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     }
   ],
   "start_url": "/app",
   "background_color": "#161f27",
-  "display": "fullscreen",
-  "scope": "/",
+  "display": "standalone",
+  "scope": "/app",
   "theme_color": "#202b38",
-  "shortcuts": [
-    {
-      "name": "Well",
-      "url": "/well",
-      "description": ""
-    }
-  ],
   "description": "A chunking based notes app.",
   "screenshots": [
     {
-      "src": "screen0.png",
-      "sizes": "555x961",
-      "type": "image/png"
+      "src": "screen_narrow.png?as=jpeg",
+      "sizes": "1125x2436",
+      "type": "image/jpeg",
+      "form_factor":"narrow"
     },
 		{
-      "src": "screen1.png",
-      "sizes": "1005x955",
-      "type": "image/png"
+      "src": "screen_wide.png?as=jpeg",
+      "sizes": "2160x1620",
+      "type": "image/jpeg",
+      "form_factor":"wide"
     }
   ],
   "dir": "auto",

@@ -1,7 +1,8 @@
 <script>
   import { get } from "svelte/store";
-  import { fade, slide } from "svelte/transition";
+  import { slide } from "svelte/transition";
   import { db } from "../store";
+  import UserImg from '@comps/UserImg.svelte';
 
   let user$ = db.subscribeToUser();
   let user = get(user$);
@@ -11,17 +12,7 @@
 </script>
 
 <div class="container">
-  <img
-    class="photo"
-    in:fade
-    alt="user"
-    src={user?.photo ? `/media/media/${user?.photo}?max=80_2` : ""}
-    srcset={user?.photo
-      ? `/media/${user?.photo}?max=80x80,
-        /media/${user?.photo}?max=160x160 2x,
-        /media/${user?.photo}?max=320x320 3x`
-      : ""}
-  />
+  <UserImg />
 
   <table class="content">
     <tr><td>User: </td><td in:slide>{user?.user ?? "<user>"}</td></tr>
@@ -56,18 +47,5 @@
   }
   .content tr:not(:last-child) td {
     padding-bottom: 0;
-  }
-  .photo {
-    flex: 0 0 auto;
-    border-radius: 999px;
-    background: #1375d190;
-    outline: 1px solid var(--text-main);
-    /* text-align: center; */
-    /* padding-block: 1em; */
-    width: 80px;
-    height: 80px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
 </style>

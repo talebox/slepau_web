@@ -119,7 +119,7 @@
 				{/if}
 			</div>
 		{/if}
-		<div class="tag icon">
+		<div class="tag icon" style="white-space: nowrap;">
 			{mstring}
 		</div>
 	</div>
@@ -130,7 +130,7 @@
 		background: var(--background-alt);
 		border-radius: 2em;
 
-		white-space: nowrap;
+		/* white-space: nowrap; */
 
 		transition: box-shadow 0.1s;
 		outline: var(--border) solid 1px;
@@ -139,6 +139,7 @@
 
 		overflow: hidden;
 		cursor: pointer;
+		font-size: .9em;
 
 		position: absolute;
 		top: 0;

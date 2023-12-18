@@ -1,34 +1,25 @@
 <script>
 	import { get } from "svelte/store";
-	import { fade, slide } from "svelte/transition";
+	import { slide } from "svelte/transition";
 	import { db } from "./store";
 	import { user_claims } from "/common/stores/user";
+	import UserImg from "@comps/UserImg.svelte";
 
 	let user_info$ = db.subscribeToUser();
 	let user_info = get(user_info$);
 	$: {
 		user_info = $user_info$;
 	}
-
-	// let user = {};
-	// _user.then((u) => (user = u));
 </script>
 
 <div class="container">
-	<img
-		class="photo"
-		in:fade
-		alt=""
-		src={user_claims.photo ? `/media/${user_claims.photo}` : ""}
-	/>
+	<UserImg />
 
 	<table class="content">
 		<tr><td>User: </td><td in:slide>{user_claims.user ?? "<user>"}</td></tr>
 		<tr
 			><td>Size: </td><td in:slide
-				>{user_info.size
-					? (user_info.size / 2 ** 20).toFixed(0)
-					: "<size>"} / {user_claims.media_limit
+				>{user_info.size ? (user_info.size / 2 ** 20).toFixed(0) : "<size>"} / {user_claims.media_limit
 					? (user_claims.media_limit / 2 ** 20).toFixed(0) + "MB"
 					: "♾️"}</td
 			></tr
@@ -58,18 +49,5 @@
 	}
 	.content tr:not(:last-child) td {
 		padding-bottom: 0;
-	}
-	.photo {
-		flex: 0 0 auto;
-		border-radius: 999px;
-		background: #1375d190;
-		outline: 1px solid var(--text-main);
-		/* text-align: center; */
-		/* padding-block: 1em; */
-		width: 80px;
-		height: 80px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
 	}
 </style>
