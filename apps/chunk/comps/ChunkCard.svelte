@@ -2,8 +2,8 @@
 	import { getContext, onDestroy } from "svelte";
 	import { chunkValueToHtml } from "@utils/formatting";
 	import { passed_since_pretty, stringToColour } from "@utils/utils";
-	import { user_data } from "../store";
-	import { user_claims } from '@stores/user';
+	
+	import UserPhotos from "./UserPhotos.svelte";
 	export let chunk;
 	export let selected = false,
 		selectable = false;
@@ -11,8 +11,6 @@
 	$: modified =
 		(view_type === "well" ? chunk?.props_dynamic?.modified : undefined) ??
 		chunk?.modified;
-	
-	
 
 	let mstring;
 	let clear;
@@ -30,16 +28,6 @@
 	}
 	$: update(modified);
 	onDestroy(() => clearTimeout(clear));
-	// An array of all users
-	let user_photos = [];
-	$: {
-		if (chunk?.props?.access?.length){
-			let users = new Set(chunk.props.access.map(({user, access}) => user))
-			users.add(chunk.owner); // Add chunk owner
-			users.delete(user_claims.user); // Remove ourselves
-			user_photos = user_data.get_photos([...users].sort()).sort((a,b) => !a.photo && !!b.photo )
-		}
-	}
 </script>
 
 <div
@@ -59,37 +47,9 @@
 	</div>
 	<div class="bottom-tags">
 		<slot name="bottom-tags" />
-		{#if user_photos?.length}
+		{#if chunk?.props?.access?.length}
 			<div class="photos">
-				{#each user_photos as { user, photo }, i}
-					{#if i <= 3}
-						{#if i === 3 && user_photos.length > 4}
-							<div
-								style="font-size:12px;width: 20px;height:20px;text-align:center"
-							>
-								+
-							</div>
-						{:else if photo}
-							<img
-								src={`/media/${photo}?max=21x21`}
-								alt={`${user}'s photo`}
-								style="border-radius:99px;width: 21px;height:21px;"
-								srcset={`/media/${photo}?max=21x21,
-								/media/${photo}?max=42x42 2x,
-								/media/${photo}?max=84x84 3x
-								`}
-							/>
-						{:else}
-							<div
-								style={`width: 21px;height:21px;border-radius:99px;background:${stringToColour(
-									user,
-								)}66;font-size:14px;font-weight:bold;text-align:center`}
-							>
-								{user.charAt(0).toUpperCase()}
-							</div>
-						{/if}
-					{/if}
-				{/each}
+				<UserPhotos {chunk} />
 			</div>
 		{/if}
 		{#if chunk?.access}
@@ -104,7 +64,11 @@
 						/>
 					</svg>
 				{:else if chunk.access === "Write"}
-					<svg fill="currentColor" viewBox="0 0 16 16" style="padding:2px">
+					<svg
+						fill="currentColor"
+						viewBox="0 0 16 16"
+						style="padding:2px"
+					>
 						<path
 							d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"
 						/>
@@ -139,7 +103,7 @@
 
 		overflow: hidden;
 		cursor: pointer;
-		font-size: .9em;
+		font-size: 0.9em;
 
 		position: absolute;
 		top: 0;
@@ -178,7 +142,7 @@
 		right: 0;
 		bottom: 0;
 		border-top-left-radius: 0.7em;
-		opacity: .5;
+		opacity: 0.5;
 		transition: opacity 200ms;
 	}
 	.chunk:hover .bottom-tags {
@@ -204,12 +168,10 @@
 	}
 	.photos {
 		flex-wrap: wrap;
-	}
-	.photos {
 		position: absolute;
 		gap: 2px;
-		right:2px;
-		top: -45px;
+		right: 2px;
+		top: calc(var(--size) * -1 - 2px);
 	}
 	.tag.icon {
 		padding: 8px;

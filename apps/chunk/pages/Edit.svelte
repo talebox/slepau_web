@@ -1,5 +1,5 @@
 <script>
-	import { debounce } from "@utils/timeout";
+	import { debounce, debounce_clear } from "@utils/timeout";
 	import {
 		db,
 		local_settings$,
@@ -9,13 +9,20 @@
 	} from "../store";
 	import notifications from "/common/stores/notifications";
 	import { mdToHtml, valueTransform } from "@utils/formatting";
-	import { applyDiff, REGEX_CHUNK, str_insert, str_remove } from "@utils/utils";
+	import {
+		applyDiff,
+		REGEX_CHUNK,
+		str_insert,
+		str_remove,
+	} from "@utils/utils";
 	import ChunkDetails from "../comps/ChunkDetails.svelte";
 	import Emojis from "@comps/Emojis.svelte";
 	import TableHtml from "../comps/TableHTML.svelte";
 	import { get } from "svelte/store";
 	import { setStatus } from "@stores/status";
 	import { onMount } from "svelte";
+	import { scale, fade, slide } from "svelte/transition";
+    import UserPhotos from "../comps/UserPhotos.svelte";
 
 	export let id = undefined;
 	let editor, fileInput;
@@ -80,9 +87,13 @@
 		}
 	}
 
+	// This function is called by close to save hastly.
+	let update_value_hastly = (on_success) => {
+		on_success?.();
+	};
 	function close() {
 		if (id) {
-			window.history.back();
+			update_value_hastly(() => window.history.back());
 		} else if ($editing_id$) {
 			$editing_id$ = undefined;
 			db.maybe_request_views();
@@ -104,6 +115,7 @@
 		navigator.clipboard.writeText(_id);
 		notifications.add("Id copied.");
 	}
+
 	function update_value(value, on_success) {
 		db.send(
 			{ resource: `chunks/${_id}/value`, value },
@@ -131,6 +143,12 @@
 			500,
 			_id,
 		);
+		update_value_hastly = (on_success) => {
+			// Clear the debounce
+			debounce_clear(_id);
+			// Then update with the value
+			update_value(value, on_success);
+		};
 	}
 	function get_editor(e) {
 		let _editor = e ? e.target : editor;
@@ -413,7 +431,11 @@
 
 			<div class="side-actions">
 				{#if showTableButton}
-					<button class="action icon" title="Edit Table" on:click={copy_id}>
+					<button
+						class="action icon"
+						title="Edit Table"
+						on:click={copy_id}
+					>
 						<svg fill="currentColor" viewBox="0 0 16 16">
 							<path
 								d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h3v2H6zm4 0v-2h3v1a1 1 0 0 1-1 1h-2zm3-3h-3v-2h3v2zm-7 0v-2h3v2H6z"
@@ -538,7 +560,8 @@
 			<button
 				class="preview-btn icon"
 				on:click={() =>
-					($local_settings$.wants_preview = !$local_settings$.wants_preview)}
+					($local_settings$.wants_preview =
+						!$local_settings$.wants_preview)}
 			>
 				{#if showing_preview}
 					<svg fill="currentColor" viewBox="0 0 16 16">
@@ -576,11 +599,11 @@
 						editor_typeout(emoji);
 						showing_emojis = false;
 					}}
-				/>
-				<button
-					style="position: absolute;bottom:0;right:0"
-					on:click={() => (showing_emojis = false)}>Close</button
 				>
+					<button on:click={() => (showing_emojis = false)}
+						>Close</button
+					>
+				</Emojis>
 			</div>
 		{/if}
 		{#if showing_table}
@@ -670,6 +693,8 @@
 		}
 	}
 
+	
+
 	.emojis {
 		left: calc(50vw - (min(400px, 100vw) / 2));
 		top: calc(50vh - 200px);
@@ -687,8 +712,7 @@
 		position: absolute;
 		top: 92px;
 		right: 0;
-		white-space: pre-wrap;
-		width: 12em;
+		width: 10em;
 		border-radius: 12px 0 0 12px;
 		background: var(--background);
 		border: 1px solid var(--background-transparent);

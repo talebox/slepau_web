@@ -23,3 +23,6 @@ export const debounce = (handler, delay_ms=200, id = "default") => {
 	if (!timers[id]) timers[id] = debounceGenerator();
 	timers[id](handler, delay_ms)
 };
+export const debounce_clear = (id = "default") => {
+	clearTimeout(timers[id])
+}
