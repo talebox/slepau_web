@@ -13,7 +13,7 @@
 	function getValues() {
 		if (!form) return;
 		let data = Object.fromEntries(new FormData(form).entries());
-		console.log(data);
+		// console.log(data);
 		return data;
 	}
 

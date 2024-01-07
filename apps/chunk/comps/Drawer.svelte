@@ -137,6 +137,10 @@
   .menu {
     display: flex;
     align-items: center;
+    transition: font-weight 400ms;
+  }
+  .menu:hover {
+    font-weight: bold;
   }
   .menu .icon {
     display: inline-block;

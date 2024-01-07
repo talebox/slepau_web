@@ -21,8 +21,8 @@ class ChunkDB extends SocketDB {
 			if (k.startsWith("views")) this.maybe_request_update(k)
 		})
 	}
-	on_message(event) {
-		let m = super.on_message(event)
+	on_message(text) {
+		let m = super.on_message(text)
 
 		if (m.resource && m.value && m.type != "Err") {
 			// If it's a diff for a chunk
@@ -85,7 +85,7 @@ export const actions = {
 	},
 	media: {
 		...media,
-		post_many: (...v) => media.post_many(...v).then(v => db.maybe_request_views())
+		post_many: (...v) => media.post_many(...v).then(v => {db.maybe_request_views();return v})
 	},
 }
 

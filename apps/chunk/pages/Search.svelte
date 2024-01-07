@@ -22,9 +22,12 @@
         if (e.keyCode == 70 && (e.ctrlKey || e.metaKey)) {
             // Don't open search window
             e.preventDefault();
+            e.stopPropagation();
             showing = true;
         }
         if (e.key === "Escape") {
+            e.preventDefault();
+            e.stopPropagation();
             showing = false;
         }
     }

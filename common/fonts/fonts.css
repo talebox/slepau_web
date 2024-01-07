@@ -1,0 +1,22 @@
+@font-face {
+  font-family: "OpenSans";
+  font-style: normal;
+  src:
+    local("OpenSans"),
+    url("OpenSans-VariableFont_wdth\,wght.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "OpenSans";
+  font-style: italic;
+  src:
+    local("OpenSans"),
+    url("OpenSans-Italic-VariableFont_wdth\,wght.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "NotoColorEmoji";
+  src:
+    local("NotoColorEmoji"),
+    url("NotoColorEmoji-Regular.woff2") format("woff2");
+}

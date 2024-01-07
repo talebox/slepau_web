@@ -180,14 +180,22 @@ svg {
 	height: 1em;
 }
 
-.selectable {
+
+
+.selectable,.selected {
+	cursor: pointer;
+}
+.selectable{
 	// box-shadow: 0 0 0 4px get-color(primary);
-	outline: 4px solid get-color(primary) !important;
+	outline: 1px dashed get-color(primary);
+}
+.selectable:hover {
+	outline: 1px solid get-color(primary);
 }
 
-.selected {
+.selectable.selected,.selected {
 	// box-shadow: 0 0 0 4px get-color(error);
-	outline: 4px solid get-color(error) !important;
+	outline: 2px solid get-color(secondary) ;
 }
 
 .side-actions {

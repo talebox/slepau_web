@@ -8,7 +8,7 @@
 	<Route>
 		<div class="tip">
 			Previews need an <b>id</b> <br /> 
-			where URL is <code>preview/:id</code>
+			where URL is <code>/preview/:id</code>.
 		</div>
 	</Route>
 	<Route path="preview/:id" component={Preview} />

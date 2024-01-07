@@ -9,12 +9,7 @@
 	} from "../store";
 	import notifications from "/common/stores/notifications";
 	import { mdToHtml, valueTransform } from "@utils/formatting";
-	import {
-		applyDiff,
-		REGEX_CHUNK,
-		str_insert,
-		str_remove,
-	} from "@utils/utils";
+	import { applyDiff, REGEX_CHUNK, str_insert, str_remove } from "@utils/utils";
 	import ChunkDetails from "../comps/ChunkDetails.svelte";
 	import Emojis from "@comps/Emojis.svelte";
 	import TableHtml from "../comps/TableHTML.svelte";
@@ -22,7 +17,8 @@
 	import { setStatus } from "@stores/status";
 	import { onMount } from "svelte";
 	import { scale, fade, slide } from "svelte/transition";
-    import UserPhotos from "../comps/UserPhotos.svelte";
+	import UserPhotos from "../comps/UserPhotos.svelte";
+	import AllBasic from "../../../common/comps/AllSelectable.svelte";
 
 	export let id = undefined;
 	let editor, fileInput;
@@ -92,6 +88,9 @@
 		on_success?.();
 	};
 	function close() {
+		if (all_off()) {
+			return;
+		}
 		if (id) {
 			update_value_hastly(() => window.history.back());
 		} else if ($editing_id$) {
@@ -181,33 +180,35 @@
 		set_editor(undefined, [v, selection]);
 		update_value_debounce(v);
 	}
-	function add_media_(files) {
+	function add_media_from_selected(items) {
+		let [v, selection] = get_editor();
+		// If only 1 file selected, and there is a textarea selection, then replace with path, instead of markdown images :)
+		if (items.length === 1 && selection[1] > selection[0]) {
+			editor_typeout(`/media/${items[0].id}`);
+		} else {
+			editor_typeout(
+				items
+					.map((item) =>
+						item.meta.type.startsWith("image")
+							? `(image/${item.id})`
+							: item.meta.type.startsWith("video")
+							  ? `(video/${item.id})`
+							  : item.id,
+					)
+					.join("\n"),
+			);
+		}
+	}
+	function add_media_from_files(files) {
 		if (!files?.length) {
 			notifications.add("No files selected");
 			return;
 		}
-		(files.length == 1
-			? actions.media.post(files[0]).then((x) => [x])
-			: actions.media.post_many(files)
-		).then((items) => {
-			let [v, selection] = get_editor();
-			// If only 1 file selected, and there is a textarea selection, then replace with path, instead of markdown images :)
-			if (items.length === 1 && selection[1] > selection[0]) {
-				editor_typeout(`/media/${items[0].id}`);
-			} else {
-				editor_typeout(
-					items
-						.map((item) =>
-							item.meta.type.startsWith("image")
-								? `(image/${item.id})`
-								: item.meta.type.startsWith("video")
-								  ? `(video/${item.id})`
-								  : item.id,
-						)
-						.join("\n"),
-				);
-			}
-		});
+		return (
+			files.length == 1
+				? actions.media.post(files[0]).then((x) => [x])
+				: actions.media.post_many(files)
+		).then(add_media_from_selected);
 	}
 	function add_media() {
 		if (!this.files.length) {
@@ -215,7 +216,7 @@
 			return;
 		}
 		const files = Array.from(this.files);
-		add_media_(files);
+		return add_media_from_files(files).then(() => (showing_media = false));
 	}
 	let caretPos = 0;
 	let showTableButton = false;
@@ -343,7 +344,7 @@
 		let clip = e.clipboardData || window.clipboardData; // DataTransfer
 		if (clip?.files?.length) {
 			e.preventDefault();
-			add_media_([...clip.files]);
+			add_media_from_files([...clip.files]);
 		}
 	}
 	function dragover(ev) {
@@ -365,27 +366,54 @@
 			// Use DataTransfer interface to access the file(s)
 			files = [...ev.dataTransfer.files];
 		}
-		add_media_(files);
+		add_media_from_files(files);
 	}
 	// let showing_details = false;
 	let showing_table = false;
 	let showing_emojis = false;
+	let showing_media = false;
+	/** Returns true if any popup was active */
+	function all_off() {
+		const any = showing_emojis || showing_media || showing_table;
+		showing_table = showing_emojis = showing_media = false;
+		return any;
+	}
+
 	// hide table on id change
 	$: {
-		if (id) {
-			showing_table = false;
-			showing_emojis = false;
+		if (_id) {
+			all_off();
 		}
 	}
 	$: {
 		let _editor = editor;
 		if (_editor && !get(is_phone$)) {
-			_editor.selectionStart = 0;
-			_editor.selectionEnd = 0;
+			// _editor.selectionStart = 0;
+			// _editor.selectionEnd = 0;
 			_editor.focus();
 		}
 	}
+	let media_selected = [];
+
+	let media_trigger;
+	function media_scroll(e) {
+		e = e.target;
+		const height = e.scrollTop + e.clientHeight + 10;
+		const total = e.scrollHeight;
+		if (height >= total) {
+			media_trigger?.();
+		}
+	}
 </script>
+
+<svelte:window
+	on:keydown={(v) => {
+		if (v.key == "Escape") {
+			close();
+			v.stopPropagation();
+		}
+	}}
+/>
 
 {#if value}
 	<div
@@ -431,11 +459,7 @@
 
 			<div class="side-actions">
 				{#if showTableButton}
-					<button
-						class="action icon"
-						title="Edit Table"
-						on:click={copy_id}
-					>
+					<button class="action icon" title="Edit Table" on:click={copy_id}>
 						<svg fill="currentColor" viewBox="0 0 16 16">
 							<path
 								d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5v2zM3 12v-2h2v2H3zm0 1h2v2H4a1 1 0 0 1-1-1v-1zm3 2v-2h3v2H6zm4 0v-2h3v1a1 1 0 0 1-1 1h-2zm3-3h-3v-2h3v2zm-7 0v-2h3v2H6z"
@@ -476,25 +500,17 @@
 					</svg>
 				</button>
 
-				<input
-					bind:this={fileInput}
-					on:change={add_media}
-					type="file"
-					style="display:none;"
-					multiple
-				/>
 				<button
 					class="action icon"
-					title="Upload"
-					on:click={() => fileInput?.click()}
+					title="Insert media"
+					on:click={() => {
+						media_selected = [];
+						showing_media = !showing_media;
+					}}
 				>
 					<svg fill="currentColor" viewBox="0 0 16 16">
-						<path
-							d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"
-						/>
-						<path
-							d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"
-						/>
+						<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+						<path d="M10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0M8 4a4 4 0 0 0-4 4 .5.5 0 0 1-1 0 5 5 0 0 1 5-5 .5.5 0 0 1 0 1m4.5 3.5a.5.5 0 0 1 .5.5 5 5 0 0 1-5 5 .5.5 0 0 1 0-1 4 4 0 0 0 4-4 .5.5 0 0 1 .5-.5"/>
 					</svg>
 				</button>
 				<button class="action icon" title="Copy Id" on:click={copy_id}>
@@ -560,8 +576,7 @@
 			<button
 				class="preview-btn icon"
 				on:click={() =>
-					($local_settings$.wants_preview =
-						!$local_settings$.wants_preview)}
+					($local_settings$.wants_preview = !$local_settings$.wants_preview)}
 			>
 				{#if showing_preview}
 					<svg fill="currentColor" viewBox="0 0 16 16">
@@ -585,30 +600,67 @@
 			</button>
 		{/if}
 		{#if showing_emojis}
-			<div
-				class="emojis"
-				on:keydown={(v) => {
-					if (v.key == "Escape") {
-						showing_emojis = false;
-						v.stopPropagation();
-					}
-				}}
-			>
+			<div class="emojis">
 				<Emojis
 					on_emoji_selected={(emoji) => {
 						editor_typeout(emoji);
 						showing_emojis = false;
 					}}
 				>
-					<button on:click={() => (showing_emojis = false)}
-						>Close</button
-					>
+					<button on:click={() => (showing_emojis = false)}>Close</button>
 				</Emojis>
 			</div>
 		{/if}
 		{#if showing_table}
 			<div>
 				<TableHtml />
+			</div>
+		{/if}
+		{#if showing_media}
+			<div
+				class="media"
+				style="display: flex;flex-flow:column"
+				on:scroll={media_scroll}
+			>
+				<input
+					bind:this={fileInput}
+					on:change={add_media}
+					type="file"
+					style="display:none;"
+					multiple
+				/>
+				<div style="display: flex;justify-content:center">
+					<div style="flex-grow: 1;" />
+					<button
+						style="display: block;"
+						title="Upload"
+						on:click={() => fileInput?.click()}
+					>
+						<svg fill="currentColor" viewBox="0 0 16 16">
+							<path
+								d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"
+							/>
+							<path
+								d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"
+							/>
+						</svg>
+					</button>
+					<button
+						on:click={() => {
+							add_media_from_selected(media_selected);
+							showing_media = false;
+						}}
+					>
+						Select
+					</button>
+					<div style="flex-grow: 1;" />
+					<button on:click={() => (showing_media = false)}>Close</button>
+				</div>
+
+				<AllBasic
+					bind:trigger_new_items={media_trigger}
+					bind:selected={media_selected}
+				/>
 			</div>
 		{/if}
 	</div>
@@ -693,9 +745,8 @@
 		}
 	}
 
-	
-
-	.emojis {
+	.emojis,
+	.media {
 		left: calc(50vw - (min(400px, 100vw) / 2));
 		top: calc(50vh - 200px);
 		position: fixed;
@@ -704,7 +755,15 @@
 		padding: 8px;
 		background: var(--background-body);
 		border-radius: 8px;
+		border: 1px solid currentColor;
 		overflow-y: auto;
+	}
+	.media {
+		left: 50vw;
+		top: 50vh;
+		width: calc(min(640px, 100vw));
+		height: calc(min(640px, 100vw));
+		transform: translate(-50%, -50%);
 	}
 
 	.details {

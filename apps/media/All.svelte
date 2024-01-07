@@ -7,7 +7,9 @@
 
 	let medias = [],
 		medias_done = { before: false, after: false };
-	let incoming = db.subscribeTo("views/all/paged", { request_on: "subscription" });
+	let incoming = db.subscribeTo("views/all/paged", {
+		request_on: "subscription",
+	});
 
 	$: {
 		if ($incoming) {
@@ -98,7 +100,7 @@
 						cursor: { after: medias[medias.length - 1].id },
 					}),
 				},
-				() => (fetching_after = false)
+				() => (fetching_after = false),
 			);
 		}
 	}
@@ -148,8 +150,6 @@
 	{/each}
 </div>
 
-
-
 {#if !medias_done.after}
 	{#if fetching_after}
 		<div class="scroll-hint">
@@ -176,28 +176,12 @@
 		font-weight: bold;
 		/* height: 30vh; */
 	}
-	.clickable,
-	.selectable,
-	.selected {
+	.clickable {
 		cursor: pointer;
 	}
-	.selectable {
-		outline: 4px dashed var(--selection);
+	.clickable:hover{
+		outline: 1px solid var(--selection);
 	}
-
-	.clickable:hover,
-	.selectable:hover {
-		outline: 4px solid var(--selection);
-	}
-	.selected {
-		outline: 6px solid var(--selection);
-	}
-	/* .mygrid {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: space-evenly;
-		gap:20px;
-	} */
 	.element {
 		position: relative;
 		height: 300px;

@@ -46,12 +46,25 @@
     navigator.clipboard.writeText(`/media/${media.id}${make_query(query)}`)
     notifications.add("Path copied.")
   }
+  function close() {
+    $editing_id$ = undefined
+  }
+  
   let name_input
   $: name = media?.name
   $: {
     if (media && name_input) name_input.value = media.name
   }
 </script>
+
+<svelte:window
+	on:keydown={(v) => {
+		if (v.key == "Escape") {
+			close();
+			v.stopPropagation();
+		}
+	}}
+/>
 
 {#if media}
   <div class="container">
@@ -62,7 +75,7 @@
       {/if}
       <button
         style="position:absolute;top:0;right:0"
-        on:click={() => ($editing_id$ = undefined)}>Close</button
+        on:click={close}>Close</button
       >
 
       <div class="original">
@@ -179,6 +192,7 @@
     z-index: 2;
     overflow-y: auto;
     background: var(--background-body);
+    padding-bottom: 20vh;
   }
   input {
     width: 100%;

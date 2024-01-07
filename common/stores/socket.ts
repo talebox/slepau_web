@@ -4,6 +4,7 @@
 
 import { get, Writable, writable } from "svelte/store"
 import { setStatus } from "./status"
+import decompress from 'brotli/decompress';
 
 interface SocketMessage {
 	id?: number
@@ -84,7 +85,7 @@ export class SocketDB {
 		// The functions need to know what object `this` is referring to.
 		this.on_open = this.on_open.bind(this)
 		this.on_close = this.on_close.bind(this)
-		this.on_message = this.on_message.bind(this)
+		this._on_message = this._on_message.bind(this)
 		this.attach()
 	}
 
@@ -137,7 +138,7 @@ export class SocketDB {
 		// Add listeners
 		this.socket.addEventListener("open", this.on_open)
 		this.socket.addEventListener("close", this.on_close)
-		this.socket.addEventListener("message", this.on_message)
+		this.socket.addEventListener("message", this._on_message)
 	}
 
 	tick_messages() {
@@ -170,7 +171,7 @@ export class SocketDB {
 	}
 	send_promise(message: SocketMessage) {
 		return new Promise((resolve, reject) => {
-			this.send(message, (v, sub) => resolve([v,sub]), (v, sub) => reject([v,sub]))
+			this.send(message, (v, sub) => resolve([v, sub]), (v, sub) => reject([v, sub]))
 		})
 	}
 
@@ -183,13 +184,24 @@ export class SocketDB {
 			this.send({ resource })
 		}
 	}
+	text_decoder = new TextDecoder();
+	async _on_message(event) {
+		if (typeof event.data !== 'string') {
+			const r = new Uint8Array(await event.data.arrayBuffer());
+			const w = decompress(r)
+			const text = this.text_decoder.decode(w)
+			this.on_message(text)
+		} else {
+			this.on_message(event.data)
+		}
+	}
 	/**
 	 * React to an incoming websocket message
 	 * https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/message_event
 	 * @param event WebSocket Message Event
 	 */
-	on_message(event) {
-		let m = JSON.parse(event.data) as SocketMessage
+	on_message(text) {
+		let m = JSON.parse(text) as SocketMessage
 
 		if (!['undefined', 'null'].includes(typeof m.value)) {
 			// Try parsing as json or abort otherwise

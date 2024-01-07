@@ -1,3 +1,20 @@
 body{
 	padding-bottom: 5em;
 }
+
+.edit-button {
+	display: none;
+	position: absolute;
+	top:12px;
+	right:12px;
+	background: var(--button-base);
+	border-radius: 8px;
+	padding: 8px;
+}
+.edit-button:hover {
+	background: var(--button-hover);
+}
+
+.visible {
+	display: initial;
+}

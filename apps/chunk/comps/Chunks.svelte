@@ -1,4 +1,5 @@
 <script>
+	import "./Chunk.css";
 	import { flip } from "svelte/animate";
 	import { fade } from "svelte/transition";
 	export let selected = undefined;

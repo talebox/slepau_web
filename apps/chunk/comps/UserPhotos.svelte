@@ -7,27 +7,28 @@
 
     let user_photos = [];
     $: {
-        if (chunk?.props?.access?.length) {
-            const access_map = { Read: 1, Write: 2, Admin: 3 };
-            let access = Object.fromEntries(
-                chunk.props.access
-                    .map(({ user, access }) => [user, access])
-                    .sort((a, b) => access_map[b[1]] < access_map[a[1]]),
-            );
-            let users = new Set(chunk.props.access.map(({ user, access }) => user));
-            users.add(chunk.owner); // Add chunk owner
-            users.delete(user_claims.user); // Remove ourselves
-            users = user_data
-                .get_photos([...users].sort())
-                .sort((a, b) => !a.photo && !!b.photo);
-            // Rehydrate the users with their access
-            users = users.map((u) => ({
-                ...u,
-                access:
-                    u.user === chunk.owner ? "Admin" : access[u.user] ?? "Read",
-            }));
-            user_photos = users;
-        }
+        const access = chunk?.props?.access ?? []
+        const access_map = { Read: 1, Write: 2, Admin: 3 };
+        let user_access = Object.fromEntries(
+            access
+                .map(({ user, access }) => [user, access])
+                .sort((a, b) => access_map[b[1]] < access_map[a[1]]),
+        );
+        let users = new Set(access.map(({ user, access }) => user));
+        users.add(chunk?.owner); // Add chunk owner
+        users.delete(user_claims.user); // Remove ourselves
+        users = user_data
+            .get_photos([...users].sort())
+            .sort((a, b) => !a.photo && !!b.photo);
+        // console.log(users)
+        // Rehydrate the users with their access
+        users = users.map((u) => ({
+            ...u,
+            access:
+                u.user === chunk?.owner ? "Admin" : user_access[u.user] ?? "Read",
+        }));
+        user_photos = users;
+        
     }
     function user_decorator(access) {
         return `outline: 1px ${
@@ -56,7 +57,7 @@
                     /media/${photo}?max=84x84 3x
                     `}
             />
-        {:else}
+        {:else if user}
             <div
                 style={`width: 21px;height:21px;border-radius:99px;background:${stringToColour(
                     user,

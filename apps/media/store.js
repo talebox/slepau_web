@@ -21,8 +21,8 @@ class MediaDB extends SocketDB {
 			if (k.startsWith("views") && v.request_on) this.maybe_request_update(k)
 		})
 	}
-	on_message(event) {
-		let m = super.on_message(event)
+	on_message(text) {
+		let m = super.on_message(text)
 
 		// Resource changes
 		if (m.resource && typeof m.value === "undefined") {
@@ -80,7 +80,7 @@ let notification_id
 export const actions = {
 	media: {
 		...media,
-		post_many: (...v) => media.post_many(...v).then(v => db.maybe_request_views()),
+		post_many: (...v) => media.post_many(...v).then(v => {db.maybe_request_views();return v}),
 		patch: ({ id, ...v }) => {
 			setStatus(fetchJson(`/media/media/${id}`, { method: "PATCH", body: v }), { on_resolve: "Changes saved!" }).then((v) =>
 				v.json()
