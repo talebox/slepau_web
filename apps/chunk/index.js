@@ -10,11 +10,11 @@ const message = document.getElementById("loading-message")
 const icon = document.getElementById("loading-icon")
 const login = document.getElementById("loading-login")
 
-message.innerText = "Figuring out who you are..."
+message.innerHTML = "Figuring out who you are..."
 
 user_assert_logged_in().then(
 	(m) => {
-		message.innerText = m
+		message.innerHTML = m
 
 		// Setup service worker
 		if (globalThis.URL_IS_LOCAL) setup_service_worker()
@@ -28,8 +28,9 @@ user_assert_logged_in().then(
 		})
 	},
 	(m) => {
-		message.innerText = m
+		message.innerHTML = m
 		icon.style.display = "none"
 		login.style.display = "initial"
+		login.href = `/login?path=${window.location.pathname}`
 	}
 )

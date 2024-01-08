@@ -9,11 +9,11 @@ const message = document.getElementById("loading-message")
 const icon = document.getElementById("loading-icon")
 const login = document.getElementById("loading-login")
 
-message.innerText = "Figuring out who you are..."
+message.innerHTML = "Figuring out who you are..."
 
 user_assert_super().then(
 	(m) => {
-		message.innerText = m
+		message.innerHTML = m
 
 		// Remove loading
 		remove_loading()
@@ -24,8 +24,9 @@ user_assert_super().then(
 		})
 	},
 	(err_m) => {
-		message.innerText = err_m
+		message.innerHTML = err_m
 		icon.style.display = "none"
 		login.style.display = "initial"
+		login.href = `/login?path=${window.location.pathname}`
 	}
 )

@@ -74,9 +74,13 @@
 				? "initial"
 				: "1px solid #8888"}
 		>
-			<Link to={parent.id || "./"}>
+			<Link to={"/app/well/" + (parent.id || "")}>
 				{parent.props?.title ??
-					"<" + passed_since_pretty(parent?.props_dynamic?.modified)?.[0] + ">"}
+					"<" +
+						passed_since_pretty(
+							parent?.props_dynamic?.modified,
+						)?.[0] +
+						">"}
 			</Link>
 		</div>
 	{/each}

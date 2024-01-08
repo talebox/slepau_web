@@ -19,13 +19,18 @@
     let ipg_requests = {};
     function fetch_geo(ip) {
         return fetchE(
-            `https://api.ipgeolocation.io/ipgeo?apiKey=${ipg_token}&ip=${ip}`
+            `https://api.ipgeolocation.io/ipgeo?apiKey=${ipg_token}&ip=${ip}`,
         )
             .then((v) => v.json())
             .then((v) => {
                 ipg_cache[ip] = v;
                 return v;
             });
+    }
+    function fetch_all(ips) {
+        ips.map(([ip, ..._]) => ip)
+            .filter((ip) => !ipg_cache[ip] && !ipg_requests[ip])
+            .forEach((ip) => (ipg_requests[ip] = fetch_geo(ip)));
     }
 </script>
 
@@ -100,6 +105,7 @@
             </Link>
         </details>
     {/each}
+    <button on:click={() => fetch_all(ips)}>Fetch all ips</button>
 {:catch err}
     {err}
 {/await}

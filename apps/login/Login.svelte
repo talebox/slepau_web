@@ -6,6 +6,9 @@
 	import { fetchJson } from "@utils/network";
 	import cnfc from "@utils/classname";
 	const c = cnfc(s);
+	const path = new URLSearchParams(window.location.search).get(
+		"path",
+	);
 
 	let as_admin = false;
 	let form;
@@ -22,7 +25,7 @@
 			body: getValues(),
 			query: { admin: as_admin },
 		}).then(() => {
-			location.href = `${globalThis.PREFIX}/app`;
+			location.href = `${globalThis.PREFIX}${path || "/app"}`;
 		}, notifications.addError);
 	}
 	function onReset() {
@@ -57,14 +60,24 @@
 			<label
 				style="display: flex;align-items:center;gap:1em;justify-content:center"
 			>
-				<input style="width:auto" type="checkbox" bind:checked={as_admin} />
+				<input
+					style="width:auto"
+					type="checkbox"
+					bind:checked={as_admin}
+				/>
 				as admin?
 			</label>
-			<button type="submit" on:click|preventDefault={onLogin}>Login</button>
+			<button type="submit" on:click|preventDefault={onLogin}
+				>Login</button
+			>
 		</Route>
 		<Route path="reset">
 			<input name="user" placeholder="Username 🙂" />
-			<input type="password" name="pass_old" placeholder="Old Password 🗝️" />
+			<input
+				type="password"
+				name="pass_old"
+				placeholder="Old Password 🗝️"
+			/>
 			<input type="password" name="pass" placeholder="New Password 🔑" />
 			<button type="submit" on:click|preventDefault={onReset}
 				>Reset Password</button
@@ -90,12 +103,12 @@
 					e.target.setCustomValidity(
 						e.target.value != e.target.form.elements["pass"].value
 							? "Doesn't match"
-							: ""
+							: "",
 					)}
 				placeholder="Password again 🔐"
 			/>
 			<span class="error-hint">Doesn't match</span>
-			
+
 			<button type="submit" on:click|preventDefault={onRegister}
 				>Register</button
 			>
