@@ -1,0 +1,31 @@
+{
+  "short_name": "Samn",
+  "name": "Samn",
+  "icons": [
+    {
+      "src": "favicon.png?width=256&height=256",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "maskable.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/app",
+  "background_color": "#161f27",
+  "display": "standalone",
+  "scope": "/app",
+  "theme_color": "#202b38",
+  "description": "A smart arduino mesh network.",
+  "screenshots": [],
+  "dir": "auto",
+  "lang": "en",
+  "categories": [
+    "productivity",
+    "utilities"
+  ]
+}

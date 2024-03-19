@@ -17,8 +17,10 @@ function make_app(v, href) {
 
 	if (href) {
 		let url_in = new URL(href);
-		if (url_in.pathname !== "/")
-			url.pathname += url_in.pathname;
+		if (url_in.pathname !== "/"){
+			url.pathname += url.pathname.endsWith("/") ? url_in.pathname.replace(/^\//, "") : url_in.pathname;
+		}
+			
 		url.search = url_in.search;
 		url.hash = url_in.hash;
 	}

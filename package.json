@@ -87,6 +87,13 @@
       "distDir": "./dist/vreji",
       "publicUrl": "/web/vreji"
     },
+    "samn": {
+      "source": [
+        "apps/samn/index.html"
+      ],
+      "distDir": "./dist/samn",
+      "publicUrl": "/web/samn"
+    },
     "media": {
       "source": [
         "apps/media/home.html",
