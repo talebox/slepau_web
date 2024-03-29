@@ -2159,6 +2159,10 @@ prebuild-install@^7.1.1:
     tar-fs "^2.0.0"
     tunnel-agent "^0.6.0"
 
+"proquint@https://github.com/rubend056/proquint-js":
+  version "0.0.1"
+  resolved "https://github.com/rubend056/proquint-js#5ea2d666950093f77747899235923d85595c3bfa"
+
 pump@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/pump/-/pump-3.0.0.tgz#b4a2116815bde2f4e1ea602354e8c75565107a64"

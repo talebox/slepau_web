@@ -1,18 +1,20 @@
 <script>
   import Node from "./Node.svelte";
+  import {db} from "./store"
 
   // Get nodes here
-  let nodes = new Promise((resolve, reject) =>
-    setTimeout(() => resolve([14]), 400),
-  );
+  let nodes = [];
+  let incoming = db.subscribeTo("views/nodes")
+
+  $: {
+    if ($incoming) {
+      console.log($incoming)
+    }
+  }
 </script>
 
-{#await nodes}
-  Loading...
-{:then nodes}
-  <div style="gap: 8px" class="grid-r">
-    {#each nodes as id}
-      <Node {id} />
-    {/each}
-  </div>
-{/await}
+<div style="gap: 8px" class="grid-r">
+  {#each nodes as id}
+    <Node {id} />
+  {/each}
+</div>

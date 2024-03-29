@@ -31,6 +31,7 @@
     "chrono-node": "^2.5.0",
     "commonmark": "^0.30.0",
     "geo-coordinates-parser": "1.5.8",
+    "proquint": "https://github.com/rubend056/proquint-js",
     "svelte": "^3.50.1",
     "svelte-frappe-charts": "^1.10.0"
   },
