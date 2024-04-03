@@ -1,8 +1,7 @@
 import { SocketDB } from "../../common/stores/socket"
 import { fetchE } from "@utils/network"
+import { decode } from "proquint";
 import { writable } from "svelte/store"
-import notifications from "../../common/stores/notifications"
-import { batch_upload } from "../../common/utils/utils"
 import { fetchJson } from "../../common/utils/network"
 import { setStatus } from "../../common/stores/status"
 
@@ -37,3 +36,24 @@ class SamnDB extends SocketDB {
 }
 
 export const db = new SamnDB()
+
+export const actions = {
+	setLimb: {
+		light: (node_id, limb_id, value) =>
+			setStatus(fetchJson("/command/wait", {
+				body: {
+					for_id: node_id,
+					command: { SetLimb: [decode(limb_id)[0], { Actuator: { Light: value } }] },
+				}
+			}), {timeout: 30 * 1000}).then(v => { db.maybe_request_views(); return v })
+	},
+}
+
+export const period = writable(Number(localStorage.getItem("period")) || 3600);
+period.subscribe((v) => {
+	localStorage.setItem("period", v)
+})
+
+const get_limit = () => window.innerWidth < 500 ? 12 : 24;
+export const limit = writable(get_limit())
+window.addEventListener("resize", () => limit.set(get_limit()));

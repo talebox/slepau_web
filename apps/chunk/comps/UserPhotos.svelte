@@ -12,14 +12,14 @@
         let user_access = Object.fromEntries(
             access
                 .map(({ user, access }) => [user, access])
-                .sort((a, b) => access_map[b[1]] < access_map[a[1]]),
+                .sort((a, b) => access_map[b[1]] < access_map[a[1]] ? 1 : -1),
         );
         let users = new Set(access.map(({ user, access }) => user));
         users.add(chunk?.owner); // Add chunk owner
         users.delete(user_claims.user); // Remove ourselves
         users = user_data
             .get_photos([...users].sort())
-            .sort((a, b) => !a.photo && !!b.photo);
+            .sort((a, b) => !a.photo && !!b.photo ? 1 : -1);
         // console.log(users)
         // Rehydrate the users with their access
         users = users.map((u) => ({

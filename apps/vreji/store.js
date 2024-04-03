@@ -5,13 +5,13 @@ export const actions = {
 	ips: () => fetchE("/ips").then(v => v.json())
 		.then((v) => {
 			// Order
-			const a = Object.entries(v).sort((a, b) => a[1][0] < b[1][0]);
+			const a = Object.entries(v).sort((a, b) => a[1][0] < b[1][0]? 1 : -1);
 			return a
 		}),
 	users: () => fetchE("/by_user").then(v => v.json())
 		.then((v) => {
 			// Order
-			const a = Object.entries(v).sort((a, b) => a[1][0] < b[1][0]);
+			const a = Object.entries(v).sort((a, b) => a[1][0] < b[1][0] ? 1 : -1);
 			return a
 		}),
 	stats_data: (query = {}) => {

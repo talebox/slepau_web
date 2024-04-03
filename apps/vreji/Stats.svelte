@@ -1,5 +1,5 @@
 <script>
-    import Chart from "./Chart.svelte";
+    import Chart from "@comps/Chart.svelte";
     import { actions, period, limit } from "./store";
     export let query = {};
 
