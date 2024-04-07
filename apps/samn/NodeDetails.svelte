@@ -26,14 +26,12 @@
 
 <div class="container">
   <h2>
-    Details for {node?.info?.name || node?.id} ({node?.id
-      ? decode(node?.id)[0]
-      : 0})
+    Details for {node?.info?.name || node?.id}
   </h2>
   <table style="width: auto;">
     <tbody>
       <tr
-        ><th>id:</th><td>{node?.id} ({node?.id ? decode(node?.id)[0] : 0})</td
+        ><th>id:</th><td>{node?.id}</td
         ></tr
       >
       <tr><th>board:</th><td>{node?.info?.board}</td></tr>

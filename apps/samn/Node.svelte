@@ -84,7 +84,7 @@
                 .light(node.id, limb.id, !limb.data.Actuator.Light)
                 .then((v) => {
                   nots.add(
-                    `${node.info.name} Light turned ${!limb.data.Actuator.Light ? "on" : "off"}`,
+                    `${node.info.name || ""} Light turned ${!limb.data.Actuator.Light ? "on" : "off"}`,
                   );
                 });
             }}

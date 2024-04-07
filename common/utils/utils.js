@@ -130,7 +130,7 @@ export function passed_since_pretty(v) {
 	const secs = Number(v)
 	if (!secs) return
 	let seconds = Date.now() / 1000 - secs
-	if (seconds < 60) seconds = 60
+	// if (seconds < 60) seconds = 60
 
 	for (const [unit, value] of Object.entries(SECONDS).reverse()) {
 		if (seconds >= value) {

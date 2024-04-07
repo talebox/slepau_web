@@ -43,7 +43,7 @@ export const actions = {
 			setStatus(fetchJson("/command/wait", {
 				body: {
 					for_id: node_id,
-					command: { SetLimb: [decode(limb_id)[0], { Actuator: { Light: value } }] },
+					command: { SetLimb: [limb_id, { Actuator: { Light: value } }] },
 				}
 			}), {timeout: 30 * 1000}).then(v => { db.maybe_request_views(); return v })
 	},
