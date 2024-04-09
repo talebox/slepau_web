@@ -6,7 +6,7 @@
     export let limb_id;
 
     $: incoming = db.subscribeTo(
-        `views/${node_id}/${limb_id}/${$period}/${$limit}`,
+        `views/nodes/${node_id}/${limb_id}/${$period}/${$limit}`,
     );
     let keys;
     let values;
@@ -26,14 +26,12 @@
     <Chart
         data={{
             labels: keys,
-            series: [values.map((v) => v.Sensor.data.Battery)],
+            series: [values.map((v) => v.Sensor.data?.Battery || 0)],
         }}
-        options= {
-            {
-                // high:100,
-                scaleMinSpace: 30
-            }
-        }
+        options={{
+            // high:100,
+            scaleMinSpace: 30,
+        }}
     />
 {:else if typeof first?.Sensor?.data?.TempHum !== "undefined"}
     <h4>Temperature °F / Humidity %</h4>
@@ -41,10 +39,14 @@
         data={{
             labels: keys,
             series: [
-                values.map(
-                    (v) => ((v.Sensor.data.TempHum[0] / 100) * 9) / 5 + 32,
+                values.map((v) =>
+                    v.Sensor.data
+                        ? ((v.Sensor.data.TempHum[0] / 100) * 9) / 5 + 32
+                        : 0,
                 ),
-                values.map((v) => v.Sensor.data.TempHum[1]),
+                values.map((v) =>
+                    v.Sensor.data ? v.Sensor.data.TempHum[1] : 0,
+                ),
             ],
         }}
     />
@@ -53,11 +55,7 @@
     <Chart
         data={{
             labels: keys,
-            series: [
-                values.map(
-                    (v) => v.Actuator.Light ? 1 : 0,
-                ),
-            ],
+            series: [values.map((v) => (v.Actuator.Light ? 1 : 0))],
         }}
     />
 {/if}

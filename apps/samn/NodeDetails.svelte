@@ -7,7 +7,7 @@
   export let id;
   let node;
 
-  let incoming = db.subscribeTo("node/" + id);
+  let incoming = db.subscribeTo("views/nodes/" + id);
 
   $: {
     if ($incoming) {

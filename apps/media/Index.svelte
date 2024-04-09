@@ -6,7 +6,7 @@
 	import All from "./All.svelte";
 	import { actions, db } from "./store";
 	import Details from "./Details.svelte";
-	import notifications from "../../common/stores/notifications";
+	import notifications from "@stores/notifications";
 	import Drawer from "./Drawer.svelte";
     import PagedView from "./PagedView.svelte";
 

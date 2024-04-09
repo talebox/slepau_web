@@ -23,11 +23,12 @@ class SamnDB extends SocketDB {
 		let m = super.on_message(text)
 
 		// Resource changes
-		if (m.resource && typeof m.value === "undefined") {
+		if (m.resource && !m.value) {
 			if (m.resource === "nodes") {
 				this.maybe_request_views()
 			} else if (m.resource.startsWith("nodes")) {
 				this.maybe_request_update(m.resource)
+				this.maybe_request_update("views/nodes")
 			}
 		}
 
@@ -40,12 +41,12 @@ export const db = new SamnDB()
 export const actions = {
 	setLimb: {
 		light: (node_id, limb_id, value) =>
-			setStatus(fetchJson("/command/wait", {
+			setStatus(fetchJson("/command", {
 				body: {
 					for_id: node_id,
 					command: { SetLimb: [limb_id, { Actuator: { Light: value } }] },
 				}
-			}), {timeout: 30 * 1000}).then(v => { db.maybe_request_views(); return v })
+			}), { on_resolve: "Light command queued" })
 	},
 }
 

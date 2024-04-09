@@ -8,6 +8,9 @@
   import HumIcon from "./icons/HumIcon.svelte";
   export let node;
 
+  const commands$ = db.subscribeTo("commands", { init_with: [] });
+  $: commands = $commands$;
+
   $: done_actions = node ? [] : [];
 
   $: battery =
@@ -77,19 +80,22 @@
         <!-- Actions -->
         {#if typeof limb.data.Actuator.Light !== "undefined"}
           <button
-            disabled={done_actions.includes(node.id + "_" + limb.id)}
+            disabled={!!commands.find((c) => c.for_id === node.id)}
             on:click={() => {
               done_actions = [...done_actions, node.id + "_" + limb.id];
-              actions.setLimb
-                .light(node.id, limb.id, !limb.data.Actuator.Light)
-                .then((v) => {
-                  nots.add(
-                    `${node.info.name || ""} Light turned ${!limb.data.Actuator.Light ? "on" : "off"}`,
-                  );
-                });
+              actions.setLimb.light(
+                node.id,
+                limb.id,
+                !limb.data.Actuator.Light,
+              );
+              // .then((v) => {
+              //   nots.add(
+              //     `${node.info.name || ""} Light turned ${!limb.data.Actuator.Light ? "on" : "off"}`,
+              //   );
+              // })
             }}
           >
-            {done_actions.includes(node.id + "_" + limb.id)
+            {!!commands.find((c) => c.for_id === node.id)
               ? "Turning light"
               : "Turn"}
             {!limb.data.Actuator.Light ? "On" : "Off"}
