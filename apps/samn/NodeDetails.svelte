@@ -1,8 +1,11 @@
 <script>
+  import { debounce } from "@utils/timeout";
   import { decode } from "proquint";
   import Limb from "./Limb.svelte";
-  import { db, period } from "./store";
-  import { passed_since_pretty, second_to_pretty } from "@utils/utils";
+  import { actions, db, period } from "./store";
+  import { second_to_pretty, fraction_digits_samn } from "@utils/utils";
+  import PassedSince from "@comps/PassedSince.svelte";
+  import { onDestroy } from "svelte";
 
   export let id;
   let node;
@@ -22,18 +25,27 @@
       ?.filter((limb) => !!limb?.data?.Sensor)
       ?.find((sensor) => typeof sensor.data.Sensor.data.Battery !== "undefined")
       ?.data.Sensor.data.Battery;
+
+  $: ui = node?.ui || {};
+
+  function ui_changed() {
+    debounce(() => actions.setUiData(node.id, ui));
+  }
 </script>
 
 <div class="container">
   <h2>
-    Details for {node?.info?.name || node?.id}
+    Details for {node?.ui?.name || node?.id}
   </h2>
+
+  <label
+    >Name
+    <input disabled={!node} bind:value={ui.name} on:input={ui_changed} placeholder="Cool Node"/>
+  </label>
+
   <table style="width: auto;">
     <tbody>
-      <tr
-        ><th>id:</th><td>{node?.id}</td
-        ></tr
-      >
+      <tr><th>id:</th><td>{node?.id}</td></tr>
       <tr><th>board:</th><td>{node?.info?.board}</td></tr>
       <tr
         ><th>uptime:</th><td
@@ -42,13 +54,15 @@
       >
       <tr
         ><th>last message:</th><td
-          >{node?.last
-            ? passed_since_pretty(node?.last / 1000000000)[0]
-            : 0}</td
+          ><PassedSince
+            epoch_seconds={node?.last && node.last / 1000000000}
+            fraction_digits={fraction_digits_samn}
+          /></td
         ></tr
       >
     </tbody>
   </table>
+
   <div
     style="display: flex; gap: 12px; justify-content: flex-end; align-items:center"
   >

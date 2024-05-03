@@ -119,6 +119,9 @@ export const SECONDS = {
 	M: 60 * 60 * 24 * 30.4,
 	Y: (new Date(2070, 0) - new Date(1970, 0)) / 1000 / 100 /** As of AD 2000 */,
 }
+export const fraction_digits_chunk = (unit, value) => ["M", "Y"].includes(unit) && value < 10 ? 1 : 0;
+export const fraction_digits_samn = (unit, value) => ["M", "Y", "d", "h", "m"].includes(unit) ? 1 : 0;
+
 // 31556925.445
 /**
  * Turns seconds since epoch to pretty time elapsed since then
@@ -126,23 +129,24 @@ export const SECONDS = {
  * @param {*} v
  * @returns [pretty time, millis until a change]
  */
-export function passed_since_pretty(v) {
+export function passed_since_pretty(v, fraction_digits = fraction_digits_chunk) {
 	const secs = Number(v)
 	if (!secs) return
 	let seconds = Date.now() / 1000 - secs
-	// if (seconds < 60) seconds = 60
-
+	if (seconds < 1) {
+		seconds = 0
+	}
 	for (const [unit, value] of Object.entries(SECONDS).reverse()) {
-		if (seconds >= value) {
+		if (seconds >= value || (seconds === 0 && unit === 's')) {
 			const v = seconds / value
-			const exponent = ["M", "Y"].includes(unit) && v < 10 ? 1 : 0
-			const accuracy = Math.pow(0.1, exponent)
+			const f_digits = fraction_digits(unit, v)
+			const accuracy = Math.pow(0.1, f_digits)
 			let secs_until = value * accuracy - (seconds % (value * accuracy))
 			if (secs_until > SECONDS.d) {
 				// To prevent overflow of the delay/interval
 				secs_until = SECONDS.d
 			}
-			return [v.toFixed(exponent) + " " + unit, secs_until * 1000]
+			return [v.toFixed(f_digits) + " " + unit, secs_until * 1000]
 		}
 	}
 }

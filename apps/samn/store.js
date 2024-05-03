@@ -27,8 +27,14 @@ class SamnDB extends SocketDB {
 			if (m.resource === "nodes") {
 				this.maybe_request_views()
 			} else if (m.resource.startsWith("nodes")) {
+				// Request update for resource
 				this.maybe_request_update(m.resource)
+				// Request update for nodes
 				this.maybe_request_update("views/nodes")
+				// Request update for any view that includes that specific node
+				Object.keys(this.subs)
+					.filter(v => v.startsWith("views/") && v.includes(m.resource))
+					.forEach(v => this.maybe_request_update(v))
 			}
 		}
 
@@ -48,6 +54,7 @@ export const actions = {
 				}
 			}), { on_resolve: "Light command queued" })
 	},
+	setUiData: (node_id, ui_data) => db.send({resource: `edit/${node_id}`, value: JSON.stringify(ui_data)})
 }
 
 export const period = writable(Number(localStorage.getItem("period")) || 3600);

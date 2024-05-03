@@ -6,6 +6,8 @@
   import LightIcon from "./icons/LightIcon.svelte";
   import TempIcon from "./icons/TempIcon.svelte";
   import HumIcon from "./icons/HumIcon.svelte";
+  import PassedSince from "@comps/PassedSince.svelte";
+  import { fraction_digits_samn } from "@utils/utils";
   export let node;
 
   const commands$ = db.subscribeTo("commands", { init_with: [] });
@@ -25,9 +27,15 @@
   <!-- Name + Battery -->
   <div style="display: flex;">
     <Link to={"node/" + node.id}
-      ><span>{node.info?.name ? node.info?.name : node?.id ? node.id : ""}</span
+      ><span>{node?.ui?.name || node?.id || ""}</span
       ></Link
     >
+    <div style="margin-left: 10px; opacity: .3">
+    <PassedSince
+      epoch_seconds={node?.last && node.last / 1000000000}
+      fraction_digits={fraction_digits_samn}
+    />
+    </div>
     <div style="flex-grow: 1;" />
     {#if typeof battery !== "undefined"}
       <span><BatteryIcon percentage={battery} /> {battery}%</span>
