@@ -40,7 +40,12 @@
 
   <label
     >Name
-    <input disabled={!node} bind:value={ui.name} on:input={ui_changed} placeholder="Cool Node"/>
+    <input
+      disabled={!node}
+      bind:value={ui.name}
+      on:input={ui_changed}
+      placeholder="Cool Node"
+    />
   </label>
 
   <table style="width: auto;">
@@ -68,7 +73,7 @@
   >
     Period of
     <select style="margin: 0;" bind:value={$period}>
-      {#each [[3600, "1hr"], [3600 * 24, "1d"], [3600 * 24 * 7, "1w"], [3600 * 24 * 30, "1m"]] as [value, name]}
+      {#each [[60 * 10, "10m"], [3600, "1hr"], [3600 * 24, "1d"], [3600 * 24 * 7, "1w"], [2_629_746 /** average month*/, "1M"]] as [value, name]}
         <option {value}>{name}</option>
       {/each}
     </select>
