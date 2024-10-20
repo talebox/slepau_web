@@ -17,13 +17,14 @@
     "@parcel/transformer-inline-string": "^2.9.3",
     "@parcel/transformer-sass": "^2.9.3",
     "@parcel/transformer-webmanifest": "^2.9.3",
-    "@plasmohq/parcel-transformer-svelte3": "^0.2.2",
     "autoprefixer": "^10.4.12",
     "cosmiconfig": "=8.2.0",
-    "parcel": "^2.9.3",
+    "parcel": "^2.12.0",
     "parcel-resolver-ignore": "^2.1.3",
     "parcel-transformer-markdown": "^2.1.1",
-    "sharp": "^0.31.1"
+    "parcel-transformer-svelte-v4": "^1.2.3",
+    "sharp": "^0.31.1",
+    "svelte": "^4"
   },
   "license": "MIT",
   "dependencies": {
@@ -35,8 +36,7 @@
     "frappe-charts": "^1.6.2",
     "geo-coordinates-parser": "1.5.8",
     "lodash": "^4.17.21",
-    "proquint": "https://github.com/rubend056/proquint-js",
-    "svelte": "^3.50.1"
+    "proquint": "https://github.com/rubend056/proquint-js"
   },
   "alias": {
     "@deps/*": "/deps/$1",
@@ -116,5 +116,8 @@
   },
   "parcelIgnore": [
     "^/media/.*$"
-  ]
+  ],
+  "@parcel/resolver-default": {
+    "packageExports": true
+  }
 }

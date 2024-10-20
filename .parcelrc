@@ -5,7 +5,7 @@
 	"resolvers": ["parcel-resolver-ignore", "..."],
 	"transformers": {
 		"*.svelte": [
-			"@plasmohq/parcel-transformer-svelte3"
+			"parcel-transformer-svelte-v4"
 		],
 		"raw:*": [
 			"@parcel/transformer-raw"
