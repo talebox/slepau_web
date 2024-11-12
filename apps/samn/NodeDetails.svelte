@@ -23,7 +23,7 @@
     node &&
     Object.values(node.limbs)
       ?.filter((limb) => !!limb?.data?.Sensor)
-      ?.find((sensor) => typeof sensor.data.Sensor.data.Battery !== "undefined")
+      ?.find((sensor) => typeof sensor.data.Sensor?.data?.Battery !== "undefined")
       ?.data.Sensor.data.Battery;
 
   $: ui = node?.ui || {};
@@ -60,7 +60,7 @@
       <tr
         ><th>last message:</th><td
           ><PassedSince
-            epoch_seconds={node?.last && node.last / 1000000000}
+            epoch_seconds={node?.last && node.last}
             fraction_digits={fraction_digits_samn}
           /></td
         ></tr

@@ -50,6 +50,20 @@
             ],
         }}
     />
+{:else if typeof first?.Sensor?.data?.Current !== "undefined"}
+    <h4>Current mA</h4>
+    <Chart
+        data={{
+            labels: keys,
+            series: [
+                values.map((v) =>
+                    v.Sensor.data
+                        ? v.Sensor.data.Current
+                        : 0,
+                ),
+            ],
+        }}
+    />
 {:else if typeof first?.Actuator?.Light !== "undefined"}
     <h4>Light (on/off)</h4>
     <Chart

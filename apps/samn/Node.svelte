@@ -19,22 +19,22 @@
     node &&
     Object.values(node.limbs)
       ?.filter((limb) => !!limb?.data?.Sensor)
-      ?.find((sensor) => typeof sensor.data.Sensor.data.Battery !== "undefined")
-      ?.data.Sensor.data.Battery;
+      ?.find(
+        (sensor) => typeof sensor.data.Sensor?.data?.Battery !== "undefined",
+      )?.data.Sensor.data.Battery;
 </script>
 
 <div class="container">
   <!-- Name + Battery -->
   <div style="display: flex;">
     <Link to={"node/" + node.id}
-      ><span>{node?.ui?.name || node?.id || ""}</span
-      ></Link
+      ><span>{node?.ui?.name || node?.id || ""}</span></Link
     >
     <div style="margin-left: 10px; opacity: .3">
-    <PassedSince
-      epoch_seconds={node?.last && node.last / 1000000000}
-      fraction_digits={fraction_digits_samn}
-    />
+      <PassedSince
+        epoch_seconds={node?.last && node.last}
+        fraction_digits={fraction_digits_samn}
+      />
     </div>
     <div style="flex-grow: 1;" />
     {#if typeof battery !== "undefined"}
@@ -72,6 +72,15 @@
               style="height:2em"
               humidity={limb.data.Sensor.data.TempHum[1]}
             />{limb.data.Sensor.data.TempHum[1]}%
+          </div>
+        </div>
+      {:else if limb.data.Sensor.data?.Current !== "undefined"}
+        <div style="margin-top: 4px;">
+          <div style="text-align: center;">
+            I = {limb.data.Sensor.data.Current}mA
+          </div>
+          <div class="cable">
+            <div class="charge"></div>
           </div>
         </div>
       {/if}
@@ -119,7 +128,7 @@
     margin: 0;
   }
   .container {
-    padding: 8px;
+    /* padding: 8px; */
     border-radius: 8px;
     background: #8882;
     border: 1px solid #8888;
@@ -131,5 +140,28 @@
   }
   .container:hover {
     background: #8883;
+  }
+  .cable {
+    width: 100%; /* Length of the cable */
+    height: 10px; /* Thickness of the cable */
+    background-color: #8882;
+    position: relative;
+  }
+  .charge {
+    width: 10px;           /* Size of the charge */
+    height: 10px;
+    background-color: limegreen;
+    position: absolute;
+    left: -10px;           /* Start position (outside the cable) */
+    top: 0;
+    animation: moveCharge 2s linear infinite;  /* Default speed is 2s */
+  }
+  @keyframes moveCharge {
+    0% {
+      left: -10px;
+    }
+    100% {
+      left: calc(100% + 10px);         /* Should match the cable's width */
+    }
   }
 </style>
