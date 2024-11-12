@@ -54,7 +54,15 @@ export const actions = {
 				}
 			}), { on_resolve: "Light command queued" })
 	},
-	setUiData: (node_id, ui_data) => db.send({resource: `edit/${node_id}`, value: JSON.stringify(ui_data)})
+	toggleLimb: (node_id, limb_id) => {
+		setStatus(fetchJson("/command", {
+			body: {
+				for_id: node_id,
+				command: { ToggleLimb: limb_id },
+			}
+		}), { on_resolve: "Light command queued" })
+	},
+	setUiData: (node_id, ui_data) => db.send({ resource: `edit/${node_id}`, value: JSON.stringify(ui_data) })
 }
 
 export const period = writable(Number(localStorage.getItem("period")) || 3600);
