@@ -31,5 +31,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    /* So that the image doesn't stretch */
+    object-fit: cover;
   }
 </style>

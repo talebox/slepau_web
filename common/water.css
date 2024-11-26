@@ -1,7 +1,7 @@
 @import './fonts/fonts.css';
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, OpenSans, NotoColorEmoji, 'Apple Color Emoji', system-ui, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, OpenSans, ColorEmojiCOLRv1, 'Apple Color Emoji', ColorEmoji, system-ui, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Segoe UI Emoji', sans-serif;
   line-height: 1.4;
   max-width: 800px;
   margin: 20px auto;
