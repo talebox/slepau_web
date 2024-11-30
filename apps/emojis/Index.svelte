@@ -7,5 +7,5 @@
 
 <Notifications />
 <Router basepath="emojis">
-	<Route component={Emojis}/>
+	<Route component={Emojis} max={500}/>
 </Router>
