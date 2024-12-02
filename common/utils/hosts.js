@@ -2,6 +2,7 @@
 
 let url = new URL(window.location.origin);
 
+// This URL_IS_LOCAL is to handle 
 globalThis.URL_IS_LOCAL = !url.hostname.includes("talebox.");
 // url.hostname.match(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/) || url.hostname === "localhost" || ;
 
@@ -12,7 +13,13 @@ function make_app(v, href) {
 	if (globalThis.URL_IS_LOCAL) {
 		url.pathname = "/" + (v === "talebox" ? "" : v);
 	} else {
-		url.hostname = url.hostname.replace(/.*(?=talebox\.\w+$)/, v === "talebox" ? "" : v + ".")
+		// Match specific app names
+		url.hostname = url.hostname.replace(/^(samn|chunk|media|auth|gibos|vreji|lasna)\./, "");
+		if (v !== 'talebox') {
+			url.hostname = v + "." + url.hostname;
+		}
+
+		// url.hostname = url.hostname.replace(/.*(?=talebox\.\w+$)/, v === "talebox" ? "" : v + ".")
 	}
 
 	if (href) {
