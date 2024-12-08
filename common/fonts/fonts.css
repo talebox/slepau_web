@@ -25,12 +25,20 @@
   font-display: swap;
 }
 
-/* The  */
+/* Noto color with COLRv1 format, way smaller when compressed */
 @font-face {
   font-family: "ColorEmojiCOLRv1";
   src:
     local("NotoColorEmojiCOLRv1"),
     url("Noto-COLRv1.woff2") format("woff2");
+  font-display: swap;
+}
+/* Monospace font from Github */
+@font-face {
+  font-family: "MonaspaceKrypton";
+  src:
+    local("MonaspaceKrypton"),
+    url("MonaspaceKrypton-Regular.woff2") format("woff2");
   font-display: swap;
 }
 

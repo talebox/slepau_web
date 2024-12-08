@@ -6,6 +6,13 @@
 	import All from "./All.svelte";
 	import notifications from "@stores/notifications";
 	import { db } from "./store";
+    import Schedule from "./Schedule.svelte";
+
+	function getProps({ isCurrent }) {
+		return {
+			style: `font-weight:${isCurrent ? "bold" : "initial"}`,
+		};
+	}
 
 	const commands$ = db.subscribeTo("commands", { init_with: [] });
 	$: commands = $commands$;
@@ -26,6 +33,20 @@
 <Status />
 <Notifications />
 <Router basepath="app">
+	<nav class="nav">
+		<Link {getProps} to="./">Dash</Link>
+		<Link {getProps} to="schedule">Schedule</Link>
+	</nav>
+
 	<Route path="node/:id" component={NodeDetails} />
+	<Route path="schedule" component={Schedule} />
 	<Route component={All} />
 </Router>
+
+<style>
+	.nav {
+		display: flex;
+		justify-content: space-around;
+		margin-bottom: 24px;
+	}
+</style>

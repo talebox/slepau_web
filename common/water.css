@@ -1,7 +1,25 @@
 @import './fonts/fonts.css';
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, OpenSans, ColorEmojiCOLRv1, 'Apple Color Emoji', ColorEmoji, system-ui, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Segoe UI Emoji', sans-serif;
+  font-family: 
+    -apple-system, 
+    BlinkMacSystemFont,
+    OpenSans,
+    ColorEmojiCOLRv1, 
+    'Apple Color Emoji',
+    ColorEmoji,
+
+    system-ui, 
+    'Segoe UI', 
+    'Roboto', 
+    'Oxygen', 
+    'Ubuntu', 
+    'Cantarell', 
+    'Fira Sans', 
+    'Droid Sans', 
+    'Helvetica Neue', 
+    'Segoe UI Emoji', 
+    sans-serif;
   line-height: 1.4;
   max-width: 800px;
   margin: 20px auto;
@@ -1141,6 +1159,7 @@ code {
   padding: 2.5px 5px;
   border-radius: 6px;
   font-size: 1em;
+  font-family: MonaspaceKrypton, monospace;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -1221,7 +1240,7 @@ var {
   color: #39a33c;
   color: var(--variable);
   font-style: normal;
-  font-family: monospace;
+  font-family: MonaspaceKrypton, monospace;
 }
 
 @media (prefers-color-scheme: dark) {

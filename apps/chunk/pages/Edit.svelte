@@ -677,6 +677,9 @@
 		z-index: 2;
 		overflow-y: visible;
 	}
+	.textarea {
+		font-family: MonaspaceKrypton, monospace;
+	}
 
 	.edit,
 	.preview-c {
