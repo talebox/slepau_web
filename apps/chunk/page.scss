@@ -15,6 +15,15 @@ body{
 	background: var(--button-hover);
 }
 
+@media print {
+	// Don't show edit button when printing the page
+	.edit-button {
+		display: none;
+	}
+}
+
+// The edit button gets this class added when
+// the user who is viewing the page can edit it.
 .visible {
 	display: initial;
 }
