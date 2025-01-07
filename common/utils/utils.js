@@ -116,6 +116,7 @@ export const SECONDS = {
 	m: 60,
 	h: 60 * 60,
 	d: 60 * 60 * 24,
+	w: 60 * 60 * 24 * 7,
 	M: 60 * 60 * 24 * 30.4,
 	Y: (new Date(2070, 0) - new Date(1970, 0)) / 1000 / 100 /** As of AD 2000 */,
 }
@@ -161,19 +162,19 @@ export function second_to_pretty(seconds, precision = 0) {
 	}
 }
 /**
- * Turns `\d{1,2}[mhdwMy]` into seconds. Ex `1m` -> `60`
+ * Turns `\d{1,2}[smhdwMY]` into seconds. Ex `1m` -> `60`
  * If `default` is supplied, this will be returned when the string can't be parsed
  */
 export function parse_seconds(v, _default = undefined) {
 	if (_default === undefined) _default = v
 	if (typeof v !== "string") return v
-	let match = /(\d{1,2})([mhdwMy])/.exec(v)
+	let match = /(\d{1,2})([smhdwMY])/.exec(v)
 	if (match) {
-		let [a, d, m] = match
-		const m_s = SECONDS[m]
-		const _d = Number(d)
-		if (m_s && !Number.isNaN(_d)) {
-			return _d * m_s
+		let [a, _d, _m] = match
+		const m = SECONDS[_m]
+		const d = Number(d)
+		if (m && Number.isFinite(_d)) {
+			return _d * m
 		}
 	}
 	return _default

@@ -181,7 +181,7 @@
 							Example: <code>12d</code> would be parsed to <code>1036800</code> seconds.
 						</p>
 						<p>
-							For details, this regex is used <code>{"\\d{1,2}[mhdwMy]"}</code>
+							For details, this regex is used <code>{"\\d{1,2}[smhdwMY]"}</code>
 						</p>
 						<input
 							class="border"
