@@ -6,7 +6,6 @@
 	import Edit from "./pages/Edit.svelte";
 	import Settings from "./pages/Settings.svelte";
 	import Preview from "./pages/Preview.svelte";
-
 	import Notifications from "@comps/Notifications.svelte";
 </script>
 

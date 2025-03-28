@@ -5,21 +5,22 @@ body {
     -apple-system, 
     BlinkMacSystemFont,
     OpenSans,
-    ColorEmojiCOLRv1, 
+    'Roboto', 
+    sans-serif,
     'Apple Color Emoji',
+    ColorEmojiCOLRv1, 
     ColorEmoji,
 
     system-ui, 
     'Segoe UI', 
-    'Roboto', 
+    
     'Oxygen', 
     'Ubuntu', 
     'Cantarell', 
     'Fira Sans', 
     'Droid Sans', 
     'Helvetica Neue', 
-    'Segoe UI Emoji', 
-    sans-serif;
+    'Segoe UI Emoji';
   line-height: 1.4;
   max-width: 800px;
   margin: 20px auto;
