@@ -81,8 +81,8 @@
       "source": [
         "apps/emojis/index.html"
       ],
-      "distDir": "./dist/talebox/emojis",
-      "publicUrl": "/emojis"
+      "distDir": "./dist/emojis",
+      "publicUrl": "/web/emojis"
     },
     "vreji": {
       "source": [
@@ -112,6 +112,13 @@
       ],
       "distDir": "./dist/gibos",
       "publicUrl": "/web/gibos"
+    },
+    "zarci": {
+      "source": [
+        "apps/zarci/index.html"
+      ],
+      "distDir": "./dist/zarci",
+      "publicUrl": "/web/zarci"
     }
   },
   "parcelIgnore": [

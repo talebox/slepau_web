@@ -15,7 +15,7 @@
 		]
 	},
 	"compressors": {
-		"*.{html,css,js,svg}": [
+		"*.{html,css,js,svg,db}": [
 			"...",
 			"@parcel/compressor-brotli"
 		]

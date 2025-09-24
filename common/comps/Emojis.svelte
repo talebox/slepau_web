@@ -1,24 +1,30 @@
 <script>
-    import { onMount } from "svelte";
-    import emojis from "./emojis.json";
+    import { onMount } from 'svelte';
+    // import emojis from "./emojis.json";
+    import init_search from './emoji_db';
     // If user clicks on emoji, let outer know
     export let on_emoji_selected = () => {};
     export let max = 100;
     // console.log(emojis);
-    let filter = "";
+    let filter = '';
     let more = false;
     let emojis_filtered = [];
     let search_input;
+    let emoji_search;
+    init_search().then((search) => (emoji_search = search));
     $: {
-        const _filtered = Object.entries(emojis).filter(([k, v]) =>
-            v.name.includes(filter),
-        );
-        more = _filtered.length > max;
-        if (more) _filtered.length = max;
-        emojis_filtered = _filtered;
+        // const _filtered = Object.entries(emojis).filter(([k, v]) =>
+        //     v.name.includes(filter),
+        // );
+        if (emoji_search && filter.length >= 3) {
+            const _filtered = emoji_search(filter);
+            more = _filtered.length > max;
+            if (more) _filtered.length = max;
+            emojis_filtered = _filtered;
+        }
     }
     onMount(() => {
-        search_input.focus();
+        search_input?.focus();
     });
 </script>
 
@@ -33,17 +39,15 @@
     margin:0;
     flex-grow:3;width:100%"
         placeholder="🔍 Search emoji..."
-        bind:value={filter}
-    />
+        bind:value={filter} />
     <slot />
 </div>
 
 <div
-    style="display: flex;flex-flow:row wrap;font-size: 28px;justify-content:space-between"
->
-    {#each emojis_filtered as [k, v]}
-        <div class="emoji" title={v.name} on:click={() => on_emoji_selected(k)}>
-            {k}
+    style="display: flex;flex-flow:row wrap;font-size: 28px;justify-content:space-between">
+    {#each emojis_filtered as {emoji,name}}
+        <div class="emoji" title="{name}" on:click={() => on_emoji_selected(emoji)}>
+            {emoji}
         </div>
     {/each}
     {#if more}

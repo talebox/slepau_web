@@ -4,10 +4,10 @@
 import { writable, get } from "svelte/store"
 import { fetchJson, fetchE } from "@utils/network"
 import { applyDiff } from "@utils/utils"
-import { setStatus } from "/common/stores/status"
+import { setStatus } from "@stores/status"
 import { SocketDB } from "@stores/socket"
 import media from "@stores/media"
-import { SECONDS } from "../../common/utils/utils"
+import { SECONDS } from "/common/utils/utils"
 
 class ChunkDB extends SocketDB {
 	constructor() {
@@ -85,7 +85,7 @@ export const actions = {
 	},
 	media: {
 		...media,
-		post_many: (...v) => media.post_many(...v).then(v => {db.maybe_request_views();return v})
+		post_many: (...v) => media.post_many(...v).then(v => { db.maybe_request_views(); return v })
 	},
 }
 
@@ -114,7 +114,7 @@ class UserData {
 			this.expiration = this.new_exp();
 			this.save()
 		}
-		
+
 	}
 
 	save() {
